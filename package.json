@@ -1,0 +1,19 @@
+{
+  "name": "math",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Math libary",
+  "main": "./dist/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "jest",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false --strict",
+    "typegen": "tsc --outFile dist/index.d.ts",
+    "build": "pnpm typegen && build"
+  },
+  "devDependencies": {
+    "typescript": "^4.8.4"
+  },
+  "author": "Marco Kammer",
+  "license": "MIT"
+}
