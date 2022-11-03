@@ -27,8 +27,8 @@ jobs:
 
       - name: run typecheck
         run: |
-          pnpm run typecheck
+          pnpm typecheck
 
-      - name: run lint
-        run: |
-          pnpm run lint
+      # - name: run test
+      #   run: |
+      #     pnpm test
