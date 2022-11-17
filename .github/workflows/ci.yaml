@@ -29,6 +29,6 @@ jobs:
         run: |
           pnpm typecheck
 
-      # - name: run test
-      #   run: |
-      #     pnpm test
+      - name: run test
+        run: |
+          pnpm test
