@@ -1,5 +1,7 @@
 # Math
 
+Game dev Math
+
 ### ToDo
 
 - [ ] Vector
@@ -9,6 +11,7 @@
   - [x] magnitude/squared magnitude
   - [x] normalize/normalized
   - [ ] distance?
+  - [ ] unit vectors
 - [ ] Matrix
   - [ ] new matrix
   - [ ] Matrix-Scalar operations (+, -, \*, /)
@@ -29,4 +32,3 @@
 - [ ] add bundler(babel, swc?)
 - [ ] fixed constants
 - [ ] calculus and trigonometry implement
-- [ ] single vector/matrix etc. to be every version(vec2,vec3...., mat2,mat3..., etc.)?

@@ -1,32 +1,36 @@
 import { EPSILON } from "./constants"
+import { MemoryPool } from "./pool"
 
 export interface Vector {
-    x: number,
-    y: number,
-    z: number,
-    w?: number
+    x: number
+    y: number
+    z: number
 }
 interface Vec {
     dim: Uint32Array
-    * elements: number
+    elements: number
 }
 
 // const VEC_UNDEFINED: Vec = {0, null} // undefined vector (no dimension)
 let ret: Vec
 const allocated = (dim: Uint32Array): Vec => {
-    ret.dim = dim
-    ret.elements = malloc(dim * sizeof(float))
+    const dimmed = (ret.dim = dim)
+    const _malloc = new MemoryPool(dimmed)
+    ret.elements = _malloc.allocate()
     return ret
 }
-export const allocate = (dim: number): Vector => {
-    let ret: Vector
-    ret = dim
+export const allocate = (dim: Uint32Array): Vec => {
+    ret.dim = dim
     ret.elements
     return ret
 }
 export const free = (v: Vector): void => { }
-export const constructDefaultVector = (dim: number, val: number): Vector => { }
-export const constructEmptyVector = (dim: number): Vector => { }
+export const constructDefaultVector = (dim: number, val: number): Vector => {
+    return { x: 0, y: 0, z: 0 }
+}
+export const constructEmptyVector = (dim: number): Vector => {
+    return { x: 0, y: 0, z: 0 }
+}
 // export const newVector = (dim: number, _): Vector => {
 //     return { x: 0, y: 0, z: 0 }
 // }
@@ -87,11 +91,14 @@ export const wedge = (v1: Vector, v2: Vector): Vector => {
     return v1
 }
 export const magnitude = (v: Vector): number => {
-    return Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z)
+    return Math.sqrt(magnitudeSqrt(v))
 }
 export const magnitudeSqrt = (v: Vector): number => {
     return v.x * v.x + v.y * v.y + v.z * v.z
 }
+// export const magnitudeSqrt = (v: Vector): number => {
+//     return dot(v, v)
+// }
 export const normalized = (v: Vector): Vector => {
     let len = magnitudeSqrt(v)
     if (len > 0) len = 1 / Math.sqrt(len)
