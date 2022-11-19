@@ -5,11 +5,11 @@ Game dev Math
 ### ToDo
 
 - [ ] Vector
-  - [x] new vector
-  - [x] Vector-Vector operations (+, -, .\*, ./, dot, cross and wedge)
+  - [ ] new vector
+  - [ ] Vector-Vector operations (+, -, .\*, ./, dot, cross and wedge)
   - [ ] Vector-Scalar operations (+, -, \*, /, ^)
   - [x] magnitude/squared magnitude
-  - [x] normalize/normalized
+  - [x] normalized
   - [ ] distance?
   - [ ] unit vectors
 - [ ] Matrix
