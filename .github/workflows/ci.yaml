@@ -21,11 +21,11 @@ jobs:
         with:
           node-version: ${{matrix.version}}
 
-      - name: install pnpm dependencies
-        run: pnpm install
+      - name: install npm dependencies
+        run: npm install
 
       - name: run typecheck
-        run: pnpm typecheck
+        run: npm run typecheck
 
       - name: run test
-        run: pnpm test
+        run: npm run test
