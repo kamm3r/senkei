@@ -5,7 +5,7 @@ Game dev Math
 ### ToDo
 
 - [ ] Vector
-  - [ ] new vector
+  - [x] new vector
   - [ ] Vector-Vector operations (+, -, .\*, ./, dot, cross and wedge)
   - [ ] Vector-Scalar operations (+, -, \*, /, ^)
   - [x] magnitude/squared magnitude

@@ -27,8 +27,11 @@ export interface Vec3 {
 // export const newVector = (dim: number, _): Vec3 => {
 //     return { x: 0, y: 0, z: 0 }
 // }
-export const newVector = (): Vec3 => {
-    return { x: 0, y: 0, z: 0 }
+export const newVector = (v?: Vec3): Vec3 => {
+    if (v === undefined) {
+        return { x: 0, y: 0, z: 0 }
+    }
+    return { x: v.x, y: v.y, z: v.z }
 }
 export const copy = (v: Vec3): Vec3 => {
     return { x: v.x, y: v.y, z: v.z }
