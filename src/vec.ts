@@ -107,8 +107,14 @@ export const dot = (v1: Vec3, v2: Vec3): number => {
 export const cross = (v1: Vec3, v2: Vec3): Vec3 => {
     return { x: (v1.y * v2.z) - (v1.z * v2.y), y: (v1.x * v2.z) - (v1.z * v2.x), z: (v1.x * v2.y) - (v1.y * v2.x) }
 }
-// export const wedge = (v1: Vec3, v2: Vec3): Vec3 => {
-//     return v1
+// also know as exterior product
+export const wedge = (v1: Vec3, v2: Vec3): { x: number, y: number, z: number, w: number } => {
+    const b = v1.x * v2.y - v1.y * v2.x
+    return { x: 0, y: 0, z: 0, w: b }
+}
+// migth be faster
+// export const magnitude = (v: Vec3): number => {
+//     return Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z)
 // }
 export const magnitude = (v: Vec3): number => {
     return Math.sqrt(magnitudeSqrt(v))
@@ -119,12 +125,20 @@ export const magnitudeSqrt = (v: Vec3): number => {
 // export const magnitudeSqrt = (v: Vec3): number => {
 //     return dot(v, v)
 // }
-export const normalized = (v: Vec3): Vec3 => {
-    let len = magnitudeSqrt(v)
-    if (len > 0) len = 1 / Math.sqrt(len)
+// export const normalized = (v: Vec3): Vec3 => {
+//     let len = magnitudeSqrt(v)
+//     if (len > 0) len = 1 / Math.sqrt(len)
 
-    return { x: v.x * len, y: v.y * len, z: v.z * len }
+//     return { x: v.x * len, y: v.y * len, z: v.z * len }
+// }
+export const normalized = (v: Vec3): Vec3 => {
+    const vLen = magnitude(v)
+    return { x: v.x / vLen, y: v.y / vLen, z: v.z / vLen }
 }
 // export const normalize = (v: Vec3): void => {
 
 // }
+
+export const negate = (v: Vec3): Vec3 => {
+    return { x: -v.x, y: -v.y, z: -v.z }
+}

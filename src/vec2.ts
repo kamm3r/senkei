@@ -4,8 +4,11 @@ export interface Vec2 {
     y: number
 }
 
-export const vec2 = (): Vec2 => {
-    return { x: 0, y: 0 }
+export const create = (x?: number, y?: number): Vec2 => {
+    if (x === undefined || y === undefined) {
+        return { x: 0, y: 0 }
+    }
+    return { x, y }
 }
 
 export const add = (v1: Vec2, v2: Vec2): Vec2 => {
@@ -28,14 +31,14 @@ export const magnitude = (v: Vec2): number => {
 export const magnitudeSqrt = (v: Vec2): number => {
     return v.x * v.x + v.y * v.y
 }
-export const normalized = (v1: Vec2): Vec2 => {
-    const v1Len = magnitude(v1)
-    return { x: v1.x / v1Len, y: v1.y / v1Len }
+export const normalized = (v: Vec2): Vec2 => {
+    const v1Len = magnitude(v)
+    return { x: v.x / v1Len, y: v.y / v1Len }
 }
 
 
-export const negate = (v1: Vec2): Vec2 => {
-    return { x: -v1.x, y: -v1.y }
+export const negate = (v: Vec2): Vec2 => {
+    return { x: -v.x, y: -v.y }
 }
 
 export const scalarProjection = (v1: Vec2, v2: Vec2): number => {

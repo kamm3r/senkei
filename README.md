@@ -2,16 +2,17 @@
 
 Game dev Math
 
-### ToDo
+## ToDo
 
 - [ ] Vector
   - [x] new vector
-  - [ ] Vector-Vector operations (+, -, .\*, ./, dot, cross and wedge)
-  - [ ] Vector-Scalar operations (+, -, \*, /, ^)
+  - [x] Vector-Vector operations (+, -, .\*, ./, dot, cross and wedge)
+  - [x] Vector-Scalar operations (+, -, \*, /, ^)
   - [x] magnitude/squared magnitude
   - [x] normalized
   - [ ] distance?
   - [ ] unit vectors
+  - [ ] lerp/slerp/inverse lerp
 - [ ] Matrix
   - [ ] new matrix
   - [ ] Matrix-Scalar operations (+, -, \*, /)
@@ -21,14 +22,15 @@ Game dev Math
 - [ ] Quaternion
   - [ ] new quaternion
 
-#### Test
+### Test
 
 - [ ] Vectors
 - [ ] Matrices
 - [ ] Quaternions
 
-#### general
+### general
 
 - [ ] add bundler(babel, swc?)
 - [ ] fixed constants
 - [ ] calculus and trigonometry implement
+- [ ] when current implemention is finished, make class version of it, and compare the performances between them
