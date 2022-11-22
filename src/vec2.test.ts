@@ -17,10 +17,16 @@ describe('Vec2', () => {
         const dist = vec2.distance(v1, v2)
         expect(dist).toBe(5)
     })
-    test('Normalize, v(2,3) values given', () => {
-        const v = vec2.create(2, 3)
-        const norm = vec2.normalize(v)
-        expect(norm.x).toBe(1)
-        expect(norm.y).toBe(1)
+    test('Normalized, v(3,1) values given', () => {
+        const v = vec2.create(3, 1)
+        const norm = vec2.normalized(v)
+        expect(parseFloat(norm.x.toFixed(3))).toBe(0.949)
+        expect(parseFloat(norm.y.toFixed(3))).toBe(0.316)
+    })
+    test('Unit vector, v(2,3) values given', () => {
+        const v = vec2.create(3, 1)
+        const uv = vec2.unitVector(v)
+        expect(parseFloat(uv.x.toFixed(3))).toBe(0.949)
+        expect(parseFloat(uv.y.toFixed(3))).toBe(0.316)
     })
 })

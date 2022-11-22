@@ -19,9 +19,11 @@ describe('Vec3', () => {
         const dist = vec3.distance(v1, v2)
         expect(dist).toBe(5)
     })
-    // test('Distance, v1(2,3,0) and v2(5,7,0) values given', () => {
-    //     const v = vec3.create(2, 3, 5)
-    //     const norm = vec3.normalized(v)
-    //     expect(norm).toBe(1)
-    // })
+    test('Normalized, v(3,1,2) values given', () => {
+        const v = vec3.create(3, 1, 2)
+        const norm = vec3.normalized(v)
+        expect(parseFloat(norm.x.toFixed(3))).toBe(0.802)
+        expect(parseFloat(norm.y.toFixed(3))).toBe(0.267)
+        expect(parseFloat(norm.z.toFixed(3))).toBe(0.535)
+    })
 })
