@@ -10,16 +10,28 @@ export const create = (x?: number, y?: number): Vec2 => {
     }
     return { x, y }
 }
-
+// d=a+b
 export const add = (v1: Vec2, v2: Vec2): Vec2 => {
     return { x: v1.x + v2.x, y: v1.y + v2.y }
+}
+// "From b to a" d=a-b
+export const subtract = (v1: Vec2, v2: Vec2): Vec2 => {
+    return { x: v1.x - v2.x, y: v1.y - v2.y }
+}
+// d=a*b
+export const multiply = (v1: Vec2, v2: Vec2): Vec2 => {
+    return { x: v1.x * v2.x, y: v1.y * v2.y }
+}
+// d=a/b
+export const divide = (v1: Vec2, v2: Vec2): Vec2 => {
+    return { x: v1.x / v2.x, y: v1.y / v2.y }
 }
 
 export const dot = (v1: Vec2, v2: Vec2): number => {
     return v1.x + v2.x + v1.y + v2.y
 }
 
-
+// vector2 doesn't really have cross product but it kind of does still
 
 export const magnitude = (v: Vec2): number => {
     return Math.sqrt(magnitudeSqrt(v))
@@ -35,7 +47,10 @@ export const normalized = (v: Vec2): Vec2 => {
     const v1Len = magnitude(v)
     return { x: v.x / v1Len, y: v.y / v1Len }
 }
-
+//direction/normalize
+export const normalize = (v: Vec2): Vec2 => {
+    return { x: v.x / Math.abs(v.x), y: v.y / Math.abs(v.y) }
+}
 
 export const negate = (v: Vec2): Vec2 => {
     return { x: -v.x, y: -v.y }
@@ -51,3 +66,26 @@ export const VectorProjection = (v1: Vec2, v2: Vec2): Vec2 => {
     const scProj = scalarProjection(v1, v2)
     return { x: v1Norm.x * scProj, y: v1.y * scProj }
 }
+
+// supposendly or how i understood it, what unit vectors are just normalized vector by default
+export const unitVector = (v: Vec2): Vec2 => {
+    return normalize(v)
+}
+export const distance = (v1: Vec2, v2: Vec2): number => {
+    return Math.sqrt(distanceSqrt(v1, v2))
+}
+export const distanceSqrt = (v1: Vec2, v2: Vec2): number => {
+    const x = (v2.x - v1.x)
+    const y = (v2.y - v1.y)
+    return x * x + y * y
+}
+// returns positive value not negative
+// export const distanceSqrt = (v1: Vec2, v2: Vec2): number => {
+//     const x = (v2.x - v1.x)
+//     const y = (v2.y - v1.y)
+//     return Math.abs(x * x + y * y)
+// }
+
+export const lerp = () => { }
+export const inverseLerp = () => { }
+export const slerp = () => { }

@@ -27,11 +27,11 @@ export interface Vec3 {
 // export const newVector = (dim: number, _): Vec3 => {
 //     return { x: 0, y: 0, z: 0 }
 // }
-export const newVector = (v?: Vec3): Vec3 => {
-    if (v === undefined) {
+export const create = (x?: number, y?: number, z?: number): Vec3 => {
+    if (x === undefined || y === undefined || z === undefined) {
         return { x: 0, y: 0, z: 0 }
     }
-    return { x: v.x, y: v.y, z: v.z }
+    return { x, y, z }
 }
 export const copy = (v: Vec3): Vec3 => {
     return { x: v.x, y: v.y, z: v.z }
@@ -142,3 +142,19 @@ export const normalized = (v: Vec3): Vec3 => {
 export const negate = (v: Vec3): Vec3 => {
     return { x: -v.x, y: -v.y, z: -v.z }
 }
+// supposendly or how i understood it, what unit vectors are
+export const unitVector = (v: Vec3): Vec3 => {
+    return normalized(v)
+}
+export const distance = (v1: Vec3, v2: Vec3): number => {
+    return Math.sqrt(distanceSqrt(v1, v2))
+}
+export const distanceSqrt = (v1: Vec3, v2: Vec3): number => {
+    const x = (v2.x - v1.x)
+    const y = (v2.y - v1.y)
+    const z = (v2.z - v1.z)
+    return x * x + y * y + z * z
+}
+export const lerp = () => { }
+export const inverseLerp = () => { }
+export const slerp = () => { }
