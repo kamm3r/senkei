@@ -135,16 +135,16 @@ export const normalized = (v: Vec3): Vec3 => {
     const vLen = magnitude(v)
     return { x: v.x / vLen, y: v.y / vLen, z: v.z / vLen }
 }
-// export const normalize = (v: Vec3): void => {
-
-// }
+export const normalize = (v: Vec3): Vec3 => {
+    return { x: v.x / Math.abs(v.x), y: v.y / Math.abs(v.y), z: v.z / Math.abs(v.z) }
+}
 
 export const negate = (v: Vec3): Vec3 => {
     return { x: -v.x, y: -v.y, z: -v.z }
 }
 // supposendly or how i understood it, what unit vectors are
 export const unitVector = (v: Vec3): Vec3 => {
-    return normalized(v)
+    return normalize(v)
 }
 export const distance = (v1: Vec3, v2: Vec3): number => {
     return Math.sqrt(distanceSqrt(v1, v2))

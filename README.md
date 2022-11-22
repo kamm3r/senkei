@@ -10,8 +10,9 @@ Game dev Math
   - [x] Vector-Scalar operations (+, -, \*, /, ^)
   - [x] magnitude/squared magnitude
   - [x] normalized
-  - [ ] distance?
-  - [ ] unit vectors
+  - [x] normalize
+  - [x] distance
+  - [x] unit vectors
   - [ ] lerp/slerp/inverse lerp
 - [ ] Matrix
   - [ ] new matrix
