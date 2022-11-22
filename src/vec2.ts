@@ -10,6 +10,18 @@ export const create = (x?: number, y?: number): Vec2 => {
     }
     return { x, y }
 }
+export const scalarAddition = (v: Vec2, k: number): Vec2 => {
+    return { x: v.x + k, y: v.y + k }
+}
+export const scalarSubtraction = (v: Vec2, k: number): Vec2 => {
+    return { x: v.x - k, y: v.y - k }
+}
+export const scalarMultiplication = (v: Vec2, k: number): Vec2 => {
+    return { x: v.x * k, y: v.y * k }
+}
+export const scalarDivision = (v: Vec2, k: number): Vec2 => {
+    return { x: v.x / k, y: v.y / k }
+}
 // d=a+b
 export const add = (v1: Vec2, v2: Vec2): Vec2 => {
     return { x: v1.x + v2.x, y: v1.y + v2.y }
