@@ -33,6 +33,14 @@ export const create = (x?: number, y?: number, z?: number): Vec3 => {
     }
     return { x, y, z }
 }
+export const back = (): Vec3 => ({ x: 0, y: 0, z: -1 })
+export const down = (): Vec3 => ({ x: 0, y: -1, z: 0 })
+export const forward = (): Vec3 => ({ x: 0, y: 0, z: 1 })
+export const left = (): Vec3 => ({ x: -1, y: 0, z: 0 })
+export const right = (): Vec3 => ({ x: 1, y: 0, z: 0 })
+export const up = (): Vec3 => ({ x: 0, y: 1, z: 0 })
+export const one = (): Vec3 => ({ x: 1, y: 1, z: 1 })
+export const zero = (): Vec3 => ({ x: 0, y: 0, z: 0 })
 export const copy = (v: Vec3): Vec3 => {
     return { x: v.x, y: v.y, z: v.z }
 }

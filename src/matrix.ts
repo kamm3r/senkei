@@ -89,17 +89,6 @@ export const matrix = (rows: number, cols: number, data: number[][]): IMatrix =>
 
 
 export const create = (elements = [0, 0, 0, 0, 0, 0, 0, 0, 0]): number[] => {
-    // const foo = new Matrixs(3, 3)
-    const foo = mat3(5, 4)
-    // console.log('matrix', foo);
-    // console.log('set identity', foo.setAsIdentity());
-    // console.log('dimension of the matrix', Matrixs.identity(3));
-    console.log('matrix old', _data);
-    // console.log('function matrix', mat3(5, 4));
-    console.log('matrix', matrix(5, 4, foo.data));
-    console.log('matrix select', foo.data[2][1])
 
     return elements
 }
-
-    // console.log('matrix', _data);

@@ -1,3 +1,5 @@
+export const Deg2Rad = 0.01745329
+export const Rad2Deg = 57.29578
 export const EPSILON = 0.000001
 export let ARRAY_TYPE = typeof Float32Array !== 'undefined' ? Float32Array : Array;
 
@@ -14,9 +16,27 @@ export const setMatrixArrayType = (type: typeof ARRAY_TYPE): void => {
  */
 
 export const toRadian = (a: number): number => {
-    const degree = Math.PI / 180
-    return a * degree
+    return Deg2Rad * a
 }
+
+/**
+ * Convert Radian to Degree
+ * @param {Number} a Angle in Degrees 
+ */
+
+export const toDegree = (a: number): number => {
+    return Rad2Deg * a
+}
+
+// export const smoothDamp = (current:number,target:number, currentVelocity:number, smoothTime:number, maxSpeed = 90 /*infinity??*/, deltaTime: number): number => {
+//     return 4
+// }
+// export const smoothDampAngle = (current:number,target:number, currentVelocity:number, smoothTime:number, maxSpeed = 90 /*infinity??*/, deltaTime: number): number => {
+//     return 2
+// }
+// export const smoothStep = (from: number, to:number, t:number):number => {
+//     return 1
+// }
 
 /**
  * Tests whether or not the arguments have approximately the same value,within an absolute
