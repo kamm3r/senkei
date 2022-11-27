@@ -122,4 +122,5 @@ describe('Vec2', () => {
         const dist = vec2.distanceSqrt(v1, v2)
         expect(dist).toBe(25)
     })
+
 })

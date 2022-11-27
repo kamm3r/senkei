@@ -5,12 +5,6 @@ export interface Vec4 {
     w: number
 }
 
-// export const create = (x?: number, y?: number, z?: number, w?: number): Vec4 => {
-// if (x === undefined || y === undefined || z === undefined || w === undefined) {
-//     return { x: 0, y: 0, z: 0, w: 0 }
-// }
-//  return { x, y, z, w }
-// }
 export const create = (x = 0, y = 0, z = 0, w = 0): Vec4 => {
     return { x, y, z, w }
 }

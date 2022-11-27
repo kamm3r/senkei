@@ -1,8 +1,15 @@
+export const Inifinity = Number.POSITIVE_INFINITY
+export const NegativeInifinity = Number.NEGATIVE_INFINITY
+export const TAU = 6.28318530717959
+export const GOLDEN_RATIO = 1.61803398875
 export const Deg2Rad = 0.01745329
 export const Rad2Deg = 57.29578
-export const EPSILON = 0.000001
-export let ARRAY_TYPE = typeof Float32Array !== 'undefined' ? Float32Array : Array;
+export const EPSILON = Number.EPSILON
+// export const EPSILON = 0.000001
+// <summary>A very small value, used for various floating point inaccuracy thresholds</summary>
+// public static readonly float Epsilon = UnityEngineInternal.MathfInternal.IsFlushToZeroEnabled ? UnityEngineInternal.MathfInternal.FloatMinNormal : UnityEngineInternal.MathfInternal.FloatMinDenormal;
 
+export let ARRAY_TYPE = typeof Float32Array !== 'undefined' ? Float32Array : Array;
 /**
  * Sets the type of array used when creating new vectors and matrices
  * @param {Float32ArrayConstructor | ArrayConstructor} type Array type, such as Float32Array or Array
