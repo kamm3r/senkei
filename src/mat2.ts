@@ -4,6 +4,8 @@ export interface Mat2 {
     data: number[][]
 }
 
+type mat2 = Float32Array
+
 export const create = (rows: number, cols: number, data = [[0, 0], [0, 0]]): number[][] => {
     let _data: number[][] = []
     if (data) {
@@ -12,10 +14,10 @@ export const create = (rows: number, cols: number, data = [[0, 0], [0, 0]]): num
     return _data = new Array<number[]>(rows).fill([]).map(() => new Array<number>(cols).fill(0))
 }
 
-export const creates = () => {
+export const creates = (size: number): mat2 => {
     // let a = new Float32Array(4)
     // let b = new Float32Array(2)
-    let _data = new Float32Array(4)
+    let data = new Float32Array(size)
     // for (let row = 0; row < 2; row++) {
     // _data.set(a.subarray(0, 2))
     // for (let col = 0; col < 2; col++) {
@@ -25,7 +27,7 @@ export const creates = () => {
     // _data
     // }
     // }
-    return _data
+    return data
 }
 
 export const getRows = (a: number[][]) => {

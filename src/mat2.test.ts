@@ -10,8 +10,7 @@ describe('Mat2', () => {
         expect(mat).toStrictEqual([[1, 0], [1, 0]])
     })
     test('creates, values given', () => {
-        const mat = mat2.creates()
-
+        const mat = mat2.creates(4)
         expect(mat[0]).toBe(0)
         expect(mat[1]).toBe(0)
         expect(mat[2]).toBe(0)

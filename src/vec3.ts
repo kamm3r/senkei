@@ -1,23 +1,34 @@
-import { EPSILON } from "./constants"
+import { clamp, EPSILON, Infinity, NegativeInfinity, Rad2Deg } from "./constants"
 
 export interface Vec3 {
     x: number
     y: number
     z: number
 }
+type i8 = Int8Array
+type u8 = Uint8Array
+type i16 = Int16Array
+type u16 = Uint16Array
+type i32 = Int32Array
+type u32 = Uint32Array
+type f32 = Float32Array
+type f64 = Float64Array
+type i64 = BigInt64Array
+type u64 = BigUint64Array
 // export const create = (x?: number, y?: number, z?: number): Vec3 => {
 //     if (x === undefined || y === undefined || z === undefined) {
 //         return { x: 0, y: 0, z: 0 }
 //     }
 //     return { x, y, z }
 // }
+
+type vec<T> = T
+
+
 export const create = (x = 0, y = 0, z = 0): Vec3 => {
     return { x, y, z }
 }
-// float32array
-export const creates = (x = 0, y = 0, z = 0): Float32Array => {
-    return new Float32Array([x, y, z])
-}
+
 export const back = (): Vec3 => ({ x: 0, y: 0, z: -1 })
 export const down = (): Vec3 => ({ x: 0, y: -1, z: 0 })
 export const forward = (): Vec3 => ({ x: 0, y: 0, z: 1 })
@@ -26,8 +37,9 @@ export const right = (): Vec3 => ({ x: 1, y: 0, z: 0 })
 export const up = (): Vec3 => ({ x: 0, y: 1, z: 0 })
 export const one = (): Vec3 => ({ x: 1, y: 1, z: 1 })
 export const zero = (): Vec3 => ({ x: 0, y: 0, z: 0 })
-export const negativeInfinity = (): Vec3 => ({ x: Number.NEGATIVE_INFINITY, y: Number.NEGATIVE_INFINITY, z: Number.NEGATIVE_INFINITY })
-export const positiveInfinity = (): Vec3 => ({ x: Number.POSITIVE_INFINITY, y: Number.POSITIVE_INFINITY, z: Number.POSITIVE_INFINITY })
+export const negativeInfinity = (): Vec3 => ({ x: NegativeInfinity, y: NegativeInfinity, z: NegativeInfinity })
+export const positiveInfinity = (): Vec3 => ({ x: Infinity, y: Infinity, z: Infinity })
+
 export const copy = (a: Vec3, b: Vec3): Vec3 => {
     return { x: a.x = b.x, y: a.y = b.y, z: a.z = b.z }
 }
@@ -116,25 +128,37 @@ export const magnitudeSqrt = (v: Vec3): number => {
 }
 //	Returns a copy of vector with its magnitude clamped to maxLength.
 export const clampMagnitude = (v: Vec3, maxLength: number): Vec3 => {
-    return { x: 0, y: 0, z: 0 }
+    let sqrtmag = magnitudeSqrt(v)
+    if (sqrtmag > maxLength * maxLength) {
+        let mag = Math.sqrt(sqrtmag)
+        let normx = v.x / mag
+        let normy = v.y / mag
+        let normz = v.z / mag
+        return { x: normx / maxLength, y: normy / maxLength, z: normz / maxLength }
+    }
+    return v
 }
-// export const magnitudeSqrt = (v: Vec3): number => {
-//     return dot(v, v)
-// }
-// export const normalized = (v: Vec3): Vec3 => {
-//     let len = magnitudeSqrt(v)
-//     if (len > 0) len = 1 / Math.sqrt(len)
-
-//     return { x: v.x * len, y: v.y * len, z: v.z * len }
+// export const clampMagnitude = (v: Vec3, min: number, max: number): Vec3 => {
+//     let mag = magnitudeSqrt(v)
+//     return mag < min ? ({ x: v.x / mag, y: v.y / mag, z: v.z / mag }) * min : mag > max ? (v / mag) * max : v;
 // }
 //Returns this vector with a magnitude of 1
 export const normalized = (v: Vec3): Vec3 => {
     const vLen = magnitude(v)
-    return { x: v.x / vLen, y: v.y / vLen, z: v.z / vLen }
+    if (vLen > 0.00001) {
+        return { x: v.x / vLen, y: v.y / vLen, z: v.z / vLen }
+    } else {
+        return zero()
+    }
 }
 //Makes this vector have a magnitude of 1.
 export const normalize = (v: Vec3): void => {
-    { v.x / Math.abs(v.x), v.y / Math.abs(v.y), v.z / Math.abs(v.z) }
+    let mag = magnitude(v)
+    if (mag > 0.00001) {
+        { v.x / mag, v.y / mag, v.z / mag }
+    } else {
+        zero()
+    }
 }
 
 export const negate = (v: Vec3): Vec3 => {
@@ -184,30 +208,141 @@ export const slerpUnclamped = (a: Vec3, b: Vec3, t: number): Vec3 => {
 }
 //	Calculates the angle between vectors from and.
 export const angle = (from: Vec3, to: Vec3): number => {
-    const mag = Math.sqrt((from.x * from.x + from.y * from.y + from.z * from.z) * (to.x * to.x + to.y * to.y + to.z * to.z))
-    const cosine = mag && dot(from, to) / mag
-    return Math.acos(Math.min(Math.max(cosine, -1), 1))
+    const denominator = Math.sqrt(magnitudeSqrt(from) * magnitudeSqrt(to))
+    let Dot = clamp(dot(from, to) / denominator, -1, 1)
+    return Math.acos(Dot) * Rad2Deg
 }
 //Calculates the signed angle between vectors from and to in relation to axis.
 export const signedAngle = (from: Vec3, to: Vec3, axis: Vec3): number => {
-    return 2
+    let unsignedAngle = angle(from, to);
+    let cx = from.y * to.z - from.z * to.y;
+    let cy = from.z * to.x - from.x * to.z;
+    let cz = from.x * to.y - from.y * to.x;
+    let sign = Math.sign(axis.x * cx + axis.y * cy + axis.z * cz);
+    return unsignedAngle * sign
 }
 //	Multiplies two vectors component-wise.
 export const scale = (a: Vec3, b: Vec3): Vec3 => {
     return { x: a.x * b.x, y: a.y * b.y, z: a.z * b.z }
 }
 //Calculate a position between the points specified by current and target, moving no farther than the distance specified by maxDistanceDelta.
-export const MoveTowards = () => { }
+/**
+ * 
+ * @param current The position to move from.
+ * @param target The position to move towards.
+ * @param maxDistanceDelta:Distance to move current per call.
+ * @returns 
+ */
+export const MoveTowards = (current: Vec3, target: Vec3, maxDistanceDelta: number): Vec3 => {
+    let vx = target.x - current.x;
+    let vy = target.y - current.y;
+    let vz = target.z - current.z;
+
+    let sqrtDist = vx * vx + vy * vy + vz * vz;
+    if (sqrtDist === 0 || (maxDistanceDelta >= 0 && sqrtDist <= maxDistanceDelta * maxDistanceDelta)) target
+    let dist = Math.sqrt(sqrtDist)
+    return { x: current.x + vx / dist * maxDistanceDelta, y: current.y + vy / dist * maxDistanceDelta, z: current.z + vz / dist * maxDistanceDelta }
+}
 //Reflects a vector off the plane defined by a normal.
-export const reflect = () => { }
+export const reflect = (inDirection: Vec3, inNormal: Vec3): Vec3 => {
+    let factor = -2 * dot(inNormal, inDirection)
+    return {
+        x: factor * inNormal.x + inDirection.x,
+        y: factor * inNormal.y + inDirection.y,
+        z: factor * inNormal.z + inDirection.z
+    }
+}
 // Rotates a vector current towards target.
 export const rotateTowards = () => { }
 // Projects a vector onto another vector.
-export const Project = () => { }
+export const Project = (v: Vec3, onNormal: Vec3): Vec3 => {
+    let sqrtMag = dot(onNormal, onNormal)
+    if (sqrtMag < EPSILON) {
+        return zero()
+    }
+    else {
+        let Dot = dot(v, onNormal)
+        return { x: v.x - onNormal.x * Dot / sqrtMag, y: v.y - onNormal.y * Dot / sqrtMag, z: v.z - onNormal.z * Dot / sqrtMag }
+    }
+}
 //Projects a vector onto a plane defined by a normal orthogonal to the plane.
-export const ProjectOnPlane = () => { }
+export const ProjectOnPlane = (v: Vec3, planeNormal: Vec3): Vec3 => {
+    let sqrtMag = dot(planeNormal, planeNormal)
+    if (sqrtMag < EPSILON) {
+        return v
+    }
+    else {
+        let Dot = dot(v, planeNormal)
+        return { x: planeNormal.x * Dot / sqrtMag, y: planeNormal.y * Dot / sqrtMag, z: planeNormal.z * Dot / sqrtMag }
+    }
+}
 //Gradually changes a vector towards a desired goal over time.
-export const smoothDamp = () => { }
+export const smoothDamps = (current: Vec3, target: Vec3, currentVelocity: Vec3, smoothTime: number, maxSpeed: number, deltaTime: number): Vec3 => {
+    let output_x = 0;
+    let output_y = 0;
+    let output_z = 0;
+
+    // Based on Game Programming Gems 4 Chapter 1.10
+    smoothTime = Math.max(0.0001, smoothTime);
+    let omega = 2 / smoothTime;
+
+    let x = omega * deltaTime;
+    let exp = 1 / (1 + x + 0.48 * x * x + 0.235 * x * x * x);
+
+    let change_x = current.x - target.x;
+    let change_y = current.y - target.y;
+    let change_z = current.z - target.z;
+    const og = create()
+    let originalTo = copy(og, target);
+
+    // Clamp maximum speed
+    let maxChange = maxSpeed * smoothTime;
+
+    let maxChangeSq = maxChange * maxChange;
+    let sqrmag = change_x * change_x + change_y * change_y + change_z * change_z;
+    if (sqrmag > maxChangeSq) {
+        let mag = Math.sqrt(sqrmag);
+        change_x = change_x / mag * maxChange;
+        change_y = change_y / mag * maxChange;
+        change_z = change_z / mag * maxChange;
+    }
+
+    target.x = current.x - change_x;
+    target.y = current.y - change_y;
+    target.z = current.z - change_z;
+
+    let temp_x = (currentVelocity.x + omega * change_x) * deltaTime;
+    let temp_y = (currentVelocity.y + omega * change_y) * deltaTime;
+    let temp_z = (currentVelocity.z + omega * change_z) * deltaTime;
+
+    currentVelocity.x = (currentVelocity.x - omega * temp_x) * exp;
+    currentVelocity.y = (currentVelocity.y - omega * temp_y) * exp;
+    currentVelocity.z = (currentVelocity.z - omega * temp_z) * exp;
+
+    output_x = target.x + (change_x + temp_x) * exp;
+    output_y = target.y + (change_y + temp_y) * exp;
+    output_z = target.z + (change_z + temp_z) * exp;
+
+    // Prevent overshooting
+    let origMinusCurrent_x = originalTo.x - current.x;
+    let origMinusCurrent_y = originalTo.y - current.y;
+    let origMinusCurrent_z = originalTo.z - current.z;
+    let outMinusOrig_x = output_x - originalTo.x;
+    let outMinusOrig_y = output_y - originalTo.y;
+    let outMinusOrig_z = output_z - originalTo.z;
+
+    if (origMinusCurrent_x * outMinusOrig_x + origMinusCurrent_y * outMinusOrig_y + origMinusCurrent_z * outMinusOrig_z > 0) {
+        output_x = originalTo.x;
+        output_y = originalTo.y;
+        output_z = originalTo.z;
+
+        currentVelocity.x = (output_x - originalTo.x) / deltaTime;
+        currentVelocity.y = (output_y - originalTo.y) / deltaTime;
+        currentVelocity.z = (output_z - originalTo.z) / deltaTime;
+    }
+
+    return { x: output_x, y: output_y, z: output_z };
+}
 //Returns a vector that is made from the largest components of two vectors.
 export const max = (lhs: Vec3, rhs: Vec3): Vec3 => {
     // maybe right need to think about it

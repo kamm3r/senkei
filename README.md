@@ -12,10 +12,11 @@ Game dev Math
   - [x] normalized
   - [x] distance
   - [x] unit vectors
-  - [ ] lerp/slerp/inverse lerp
+  - [x] lerp
+  - [ ] slerp/inverse lerp
   - [ ] transforms
-  - [ ] scale
-  - [ ] angle between vecs
+  - [x] scale
+  - [x] angle between vecs
 - [ ] Matrix
   - [ ] new matrix
     - [ ] 2x2

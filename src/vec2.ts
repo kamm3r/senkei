@@ -1,4 +1,4 @@
-import { Inifinity, NegativeInifinity } from "./constants"
+import { Infinity, NegativeInfinity } from "./constants"
 import { Vec3 } from "./vec3"
 
 export interface Vec2 {
@@ -6,49 +6,61 @@ export interface Vec2 {
     y: number
 }
 
+type vec2 = Float32Array
+
 export const create = (x = 0, y = 0): Vec2 => {
     return { x, y }
+}
+export const creates = (x = 0, y = 0): vec2 => {
+    return new Float32Array([x, y])
 }
 /**
  * 
  * Shorthand for writing Vector2(0, -1).
  */
 export const down = (): Vec2 => ({ x: 0, y: -1 })
+export const downs = (): vec2 => (new Float32Array([0, -1]))
 /**
  * 
  * Shorthand for writing Vector2(-1, 0).
  */
 export const left = (): Vec2 => ({ x: -1, y: 0 })
+export const lefts = (): vec2 => (new Float32Array([-1, 0]))
 /**
  * 
  * Shorthand for writing Vector2(1, 0).
  */
 export const right = (): Vec2 => ({ x: 1, y: 0 })
+export const rights = (): vec2 => (new Float32Array([1, 0]))
+
 /**
  * 
  * Shorthand for writing Vector2(0, 1).
  */
 export const up = (): Vec2 => ({ x: 0, y: 1 })
+export const ups = (): vec2 => (new Float32Array([0, 1]))
 /**
  * 
  * Shorthand for writing Vector2(1, 1).
  */
 export const one = (): Vec2 => ({ x: 1, y: 1 })
+export const ones = (): vec2 => (new Float32Array([1, 1]))
 /**
  * 
  * Shorthand for writing Vector2(0, 0).
  */
 export const zero = (): Vec2 => ({ x: 0, y: 0 })
+export const zeros = (): vec2 => (new Float32Array([0, 0]))
 /**
  * 
  * Shorthand for writing Vector2(float.NegativeInfinity, float.NegativeInfinity).
  */
-export const negativeInfinity = (): Vec2 => ({ x: NegativeInifinity, y: NegativeInifinity })
+export const negativeInfinity = (): Vec2 => ({ x: NegativeInfinity, y: NegativeInfinity })
 /**
  * 
  * Shorthand for writing Vector2(float.PositiveInfinity, float.PositiveInfinity).
  */
-export const positiveInfinity = (): Vec2 => ({ x: Inifinity, y: Inifinity })
+export const positiveInfinity = (): Vec2 => ({ x: Infinity, y: Infinity })
 export const copy = (a: Vec2, b: Vec2): Vec2 => {
     return { x: a.x = b.x, y: a.y = b.y }
 }
@@ -197,7 +209,7 @@ export const reflect = (inDirection: Vec2, inNormal: Vec2): Vec2 => {
  * @param deltaTime The time since the last call to this function. By default Time.deltaTime.
  * @returns vec2
  */
-export const smoothDamp = (current: Vec2, target: Vec2, currentVelocity: Vec2, smoothTime: number, maxSpeed = Inifinity, deltaTime: number): Vec2 => {
+export const smoothDamp = (current: Vec2, target: Vec2, currentVelocity: Vec2, smoothTime: number, maxSpeed = Infinity, deltaTime: number): Vec2 => {
     return { x: 0, y: 0 }
 }
 //Returns a vector that is made from the largest components of two vectors.

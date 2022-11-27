@@ -162,6 +162,3 @@ export const create = (elements = [0, 0, 0, 0, 0, 0, 0, 0, 0]): number[] => {
 
     return elements
 }
-
-const mat2x3 = [0, 0, 0, 0, 0, 0]
-const mats2x3 = [[0, 0, 0], [0, 0, 0]]

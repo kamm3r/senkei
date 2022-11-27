@@ -13,21 +13,6 @@ describe('Vec3', () => {
         expect(v.y).toBe(2)
         expect(v.z).toBe(3)
     })
-    test('FLoat32Array, 1,2,3 values given', () => {
-        const v = vec3.creates(1, 2, 3)
-        console.log(v);
-        expect(v[0]).toBe(1)
-        expect(v[1]).toBe(2)
-        expect(v[2]).toBe(3)
-    })
-    test('FLoat32Array, no values given', () => {
-        const v = vec3.creates()
-        console.log(v);
-
-        expect(v[0]).toBe(0)
-        expect(v[1]).toBe(0)
-        expect(v[2]).toBe(0)
-    })
     test('back static vector', () => {
         const v = vec3.back()
         expect(v.x).toBe(0)
