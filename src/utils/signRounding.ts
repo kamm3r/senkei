@@ -1,0 +1,1 @@
+export const Floor = (value: number): number => Math.floor(value)

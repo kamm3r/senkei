@@ -1,4 +1,4 @@
-import { EPSILON, Infinity, NegativeInfinity, Vec } from "./constants"
+import { EPSILON, Infinity, NegativeInfinity, Vec } from "./utils/constants"
 
 type i8 = Int8Array
 type i16 = Int16Array

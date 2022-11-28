@@ -1,4 +1,4 @@
-import { clamp, EPSILON, Infinity, NegativeInfinity, Rad2Deg } from "./constants"
+import { clamp, EPSILON, Infinity, NegativeInfinity, Rad2Deg } from "./utils/constants"
 
 export interface Vec3 {
     x: number

@@ -38,9 +38,9 @@ describe('Vec4', () => {
     test('Normalized, v(3,1,2,4) values given', () => {
         const v = Vec4.create(3, 1, 2, 4)
         const norm = Vec4.normalized(v)
-        expect(parseFloat(norm.x.toFixed(3))).toBe(0.802)
-        expect(parseFloat(norm.y.toFixed(3))).toBe(0.267)
-        expect(parseFloat(norm.z.toFixed(3))).toBe(0.535)
-        expect(parseFloat(norm.w.toFixed(3))).toBe(1.069)
+        expect(parseFloat(norm.x.toFixed(3))).toBe(0.548)
+        expect(parseFloat(norm.y.toFixed(3))).toBe(0.183)
+        expect(parseFloat(norm.z.toFixed(3))).toBe(0.365)
+        expect(parseFloat(norm.w.toFixed(3))).toBe(0.730)
     })
 })
