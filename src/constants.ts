@@ -1,17 +1,17 @@
 export const Infinity = Number.POSITIVE_INFINITY
 export const NegativeInfinity = Number.NEGATIVE_INFINITY
 export const TAU = 6.28318530717959
+export const PI = Math.PI
 export const GOLDEN_RATIO = 1.61803398875
 export const Deg2Rad = 0.01745329
 export const Rad2Deg = 57.29578
 export const EPSILON = Number.EPSILON
-// export const EPSILON = 0.000001
-// <summary>A very small value, used for various floating point inaccuracy thresholds</summary>
-// public static readonly float Epsilon = UnityEngineInternal.MathfInternal.IsFlushToZeroEnabled ? UnityEngineInternal.MathfInternal.FloatMinNormal : UnityEngineInternal.MathfInternal.FloatMinDenormal;
+export const kEpsilon = 0.000001
 
 export const Mat = Float32Array
 export const Vec = Float32Array
-// export const Vec = Uint32Array
+
+export const approximately = (a: number, b: number): boolean => Math.abs(b - a) < Math.max(kEpsilon * Math.max(Math.abs(a), Math.abs(a)), kEpsilon * 8)
 
 /**
  * Convert Degree to Radian
@@ -50,6 +50,7 @@ export const clamp01 = (value: number): number => {
         return value
     }
 }
+export const clampNeg1to1 = (value: number): number => value < -1 ? -1 : value > 1 ? 1 : value;
 //Returns the value clamped between 0 and 1
 export const clamp02 = (value: number): number => value < 0 ? 0 : value > 1 ? 1 : value;
 export const repeat = (t: number, length: number): number => {
@@ -120,9 +121,22 @@ export const smoothStep = (from: number, to: number, t: number): number => {
 
 export const inverseLerp = (a: number, b: number, value: number): number => (value - a) / (b - a);
 // Calculates the shortest difference between two given angles.
-export const deltaAngle = (current: number, target: number): number => {
-    let delta = repeat((target - current), 360)
-    if (delta > 180) delta -= 360
-    return delta
+// export const deltaAngle = (current: number, target: number): number => {
+//     let delta = repeat((target - current), 360)
+//     if (delta > 180) delta -= 360
+//     return delta
+// }
+export const deltaAngle = (a: number, b: number): number => repeat((b - a + PI), TAU) - PI
+export const smooth01 = (x: number): number => x * x * (3 - 2 * x)
+export const smoother01 = (x: number): number => x * x * x * (x * (x * 6 - 15) + 10)
+export const smoothCos01 = (x: number): number => Math.cos(x * PI) * -0.5 + 0.5
+export const gamma = (value: number, absmax: number, gamma: number): number => {
+    const negative = value < 0
+    const absval = Math.abs(value)
+    if (absval > absmax) {
+        return negative ? -absval : absval
+    }
+    const result = Math.pow(absval / absmax, gamma) * absmax
+    return negative ? -result : result
 }
-export const deltaAngles = (a: number, b: number): number => repeat((b - a + Math.PI), TAU) - Math.PI
+
