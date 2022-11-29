@@ -1,4 +1,6 @@
-import { clamp, EPSILON, Infinity, NegativeInfinity, Rad2Deg } from "./utils/constants"
+import { clamp } from "./utils/clamp"
+import { Rad2Deg } from "./utils/constants"
+import { EPSILON, Infinity, NegativeInfinity } from "./utils/floatingPoints"
 
 export interface Vec3 {
     x: number
@@ -24,9 +26,16 @@ type u64 = BigUint64Array
 
 type vec<T> = T
 
+const float32 = new Float32Array(3)
+
+type vec3 = typeof float32
+
 
 export const create = (x = 0, y = 0, z = 0): Vec3 => {
     return { x, y, z }
+}
+export const creates = (x = 0, y = 0, z = 0): vec3 => {
+    return new Float32Array([x, y, z])
 }
 
 export const back = (): Vec3 => ({ x: 0, y: 0, z: -1 })

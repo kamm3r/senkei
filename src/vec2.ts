@@ -1,4 +1,4 @@
-import { Infinity, NegativeInfinity } from "./utils/constants"
+import { Infinity, NegativeInfinity } from "./utils/floatingPoints"
 import { Vec3 } from "./vec3"
 
 export interface Vec2 {

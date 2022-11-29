@@ -1,18 +1,9 @@
 import * as vec2 from '../vec2'
 import * as vec3 from '../vec3'
 import * as vec4 from '../vec4'
-import { toDegree, toRadian } from './constants'
 import { Sqrt, Sqrt2, Sqrt3, Sqrt4 } from './mathOperation'
 
-describe('constant', () => {
-    test('to Degree, 45 values given', () => {
-        const deg = toDegree(45)
-        expect(parseFloat(deg.toFixed(3))).toBe(2578.310)
-    })
-    test('to Radian, 45 values given', () => {
-        const rad = toRadian(45)
-        expect(parseFloat(rad.toFixed(3))).toBe(0.785)
-    })
+describe('Squared', () => {
     test('squirt overload, return{number}', () => {
         const rad = Sqrt(1403)
 

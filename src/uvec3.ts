@@ -1,4 +1,6 @@
-import { EPSILON, Infinity, NegativeInfinity, Vec } from "./utils/constants"
+import { Vec } from "./utils/constants"
+import { NegativeInfinity } from "./utils/floatingPoints"
+
 
 type i8 = Int8Array
 type i16 = Int16Array

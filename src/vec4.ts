@@ -1,4 +1,5 @@
-import { clamp01, Infinity, NegativeInfinity } from "./utils/constants"
+import { clamp01 } from "./utils/clamp"
+import { Infinity, NegativeInfinity } from "./utils/floatingPoints"
 import { Vec2 } from "./vec2"
 import { Vec3 } from "./vec3"
 

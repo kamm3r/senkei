@@ -37,8 +37,8 @@ export const Factorial = (value: number) => {
     if (value <= 12)
         return factorialInt[value];
     if (value <= 20)
-        throw new OverflowException($"The Factorial of {value} is too big for integer representation, please use {nameof(FactorialLong)} instead");
-    throw new OverflowException($"The Factorial of {value} is too big for integer representation");
+        throw new Error("The Factorial of {value} is too big for integer representation, please use {nameof(FactorialLong)} instead");
+    throw new Error("The Factorial of {value} is too big for integer representation");
 }
 /**
  * 
@@ -48,7 +48,7 @@ export const Factorial = (value: number) => {
 export const FactorialLong = (value: number) => {
     if (value <= 20)
         return factorialLong[value];
-    throw new OverflowException($"The Factorial of {value} is too big for integer representation, even unsigned longs, soooo, rip");
+    throw new Error("The Factorial of {value} is too big for integer representation, even unsigned longs, soooo, rip");
 }
 
 const factorialLong = [
