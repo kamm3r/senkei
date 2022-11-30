@@ -17,10 +17,14 @@ export const creates = (x = 0, y = 0, z = 0, w = 0): vec4 => {
     v[3] = w
     return v
 }
-export const one = (): Vec4 => ({ x: 1, y: 1, z: 1, w: 1 })
-export const zero = (): Vec4 => ({ x: 0, y: 0, z: 0, w: 0 })
-export const negativeInfinity = (): Vec4 => ({ x: NegativeInfinity, y: NegativeInfinity, z: NegativeInfinity, w: NegativeInfinity })
-export const positiveInfinity = (): Vec4 => ({ x: Infinity, y: Infinity, z: Infinity, w: Infinity })
+export const one = (): vec4 => new Float32Array([1, 1, 1, 1])
+export const zero = (): vec4 => new Float32Array([0, 0, 0, 0])
+export const negativeInfinity = (): vec4 => new Float32Array([NegativeInfinity, NegativeInfinity, NegativeInfinity, NegativeInfinity])
+export const positiveInfinity = (): vec4 => new Float32Array([Infinity, Infinity, Infinity, Infinity])
+// export const one = (): Vec4 => ({ x: 1, y: 1, z: 1, w: 1 })
+// export const zero = (): Vec4 => ({ x: 0, y: 0, z: 0, w: 0 })
+// export const negativeInfinity = (): Vec4 => ({ x: NegativeInfinity, y: NegativeInfinity, z: NegativeInfinity, w: NegativeInfinity })
+// export const positiveInfinity = (): Vec4 => ({ x: Infinity, y: Infinity, z: Infinity, w: Infinity })
 
 export const scalarAddition = (v: Vec4, k: number): Vec4 => {
     return { x: v.x + k, y: v.y + k, z: v.z + k, w: v.w + k }
@@ -73,10 +77,22 @@ export const normalized = (v: Vec4): Vec4 => {
     const vLen = magnitude(v)
     return { x: v.x / vLen, y: v.y / vLen, z: v.z / vLen, w: v.w / vLen }
 }
-export const normalize = (v: Vec4): Vec4 => {
-    const mag = magnitude(v)
+// export const normalize = (v: Vec4): Vec4 => {
+//     const mag = magnitude(v)
+//     if (mag > 0.00001) {
+//         return { x: v.x / mag, y: v.y / mag, z: v.z / mag, w: v.w / mag }
+//     } else {
+//         return zero()
+//     }
+// }
+export const normalize = (out: vec4, v: vec4): vec4 => {
+    const mag = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2] + v[3] * v[3])
     if (mag > 0.00001) {
-        return { x: v.x / mag, y: v.y / mag, z: v.z / mag, w: v.w / mag }
+        out[0] = v[0] / mag
+        out[1] = v[1] / mag
+        out[2] = v[2] / mag
+        out[3] = v[3] / mag
+        return out
     } else {
         return zero()
     }

@@ -1,5 +1,5 @@
-import { Quat } from "../types";
-import { normalized, Vec2 } from "../vec2";
+import { Quat, Vec2 } from "../types";
+import { normalized } from "../vec2";
 import { clamp01 } from "./clamp";
 import { PI, TAU } from "./constants";
 import { inverseLerpClamped } from "./interpolation";

@@ -8,7 +8,7 @@ Game dev Math
   - [x] new vector
     - [x] vec2
     - [x] vec3
-    - [ ] vec4
+    - [x] vec4
   - [x] Vector-Vector operations (+, -, .\*, ./, dot, cross and wedge)
   - [x] Vector-Scalar operations (+, -, \*, /, ^)
   - [x] magnitude/squared magnitude
@@ -33,21 +33,19 @@ Game dev Math
 - [ ] Matrix
   - [x] new matrix
     - [x] 2x2
-    - [ ] 2x3
+    - [x] 2x3
     - [x] 3x3
-    - [ ] 3x4
-    - [ ] 4x4
+    - [x] 3x4
+    - [x] 4x4
   - [ ] Matrix-Scalar operations (+, -, \*, /)
   - [ ] Matrix-Vector multiplication
   - [ ] Matrix-Matrix multiplication
-  - [ ] Matrix operations
   - [ ] local to world
   - [ ] world to local
   - [ ] inverse matrix
   - [ ] transform
   - [ ] projection matrix
   - [ ] identity matrix
-  - [ ] multiply point 3x4
 - [ ] Quaternion
   - [ ] new quaternion
 

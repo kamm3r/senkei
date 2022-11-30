@@ -1,7 +1,4 @@
-import { Color } from "../types"
-import { Vec2 } from "../vec2"
-import { Vec3 } from "../vec3"
-import { Vec4 } from "../vec4"
+import { Color, Vec2, Vec3, Vec4 } from "../types"
 
 //A very small value, used for various floating point inaccuracy thresholds
 export const EPSILON = Number.EPSILON

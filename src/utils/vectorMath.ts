@@ -1,4 +1,5 @@
-import { magnitude, Vec2 } from "../vec2";
+import { Vec2 } from "../types";
+import { magnitude } from "../vec2";
 //The determinant is equivalent to the dot product, but with one vector rotated 90 degrees.
 // Note that det(a,b) != det(b,a). It's equivalent to a.x * b.y - a.y * b.x.
 // It is also known as the 2D Cross Product, Wedge Product, Outer Product and Perpendicular Dot Product

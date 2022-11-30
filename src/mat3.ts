@@ -38,7 +38,7 @@
 
 type mat3 = Float32Array
 
-export const create = (m00: number, m01: number, m02: number, m10: number, m11: number, m12: number, m30: number, m31: number, m32: number): mat3 => {
+export const create = (m00: number, m01: number, m02: number, m10: number, m11: number, m12: number, m20: number, m21: number, m22: number): mat3 => {
     // export const create = (m00: number,m01: number,m02: number,m10: number,m11: number,m12: number,m30: number,m31: number,m32: number): mat3 => {
-    return new Float32Array([m00, m01, m02, m10, m11, m12, m30, m31, m32])
+    return new Float32Array([m00, m01, m02, m10, m11, m12, m20, m21, m22])
 }
