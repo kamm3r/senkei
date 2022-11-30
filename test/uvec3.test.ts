@@ -1,4 +1,4 @@
-import * as vec3 from './uvec3'
+import * as vec3 from '../src/uvec3'
 describe('uvec3', () => {
     test('FLoat32Array, no values given', () => {
         const v = vec3._new()

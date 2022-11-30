@@ -1,4 +1,4 @@
-import * as mat3 from './mat3'
+import * as mat3 from '../src/mat3'
 
 describe('Mat3', () => {
     test('create, no values given default to [0, 0, 0, 0, 0, 0, 0, 0, 0]', () => {

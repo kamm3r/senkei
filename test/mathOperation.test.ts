@@ -1,7 +1,7 @@
-import * as vec2 from '../vec2'
-import * as vec3 from '../vec3'
-import * as vec4 from '../vec4'
-import { Sqrt, Sqrt2, Sqrt3, Sqrt4 } from './mathOperation'
+import * as vec2 from '../src/vec2'
+import * as vec3 from '../src/vec3'
+import * as vec4 from '../src/vec4'
+import { Sqrt, Sqrt2, Sqrt3, Sqrt4 } from '../src/utils/mathOperation'
 
 describe('Squared', () => {
     test('squirt overload, return{number}', () => {

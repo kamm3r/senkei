@@ -6,6 +6,9 @@ Game dev Math
 
 - [ ] Vector
   - [x] new vector
+    - [x] vec2
+    - [x] vec3
+    - [ ] vec4
   - [x] Vector-Vector operations (+, -, .\*, ./, dot, cross and wedge)
   - [x] Vector-Scalar operations (+, -, \*, /, ^)
   - [x] magnitude/squared magnitude
@@ -13,14 +16,26 @@ Game dev Math
   - [x] distance
   - [x] unit vectors
   - [x] lerp
-  - [ ] slerp/inverse lerp
+  - [x] lerp clamped
+  - [ ] slerp clamped
+  - [ ] slerp
+  - [x] inverse lerp
   - [ ] transforms
   - [x] scale
   - [x] angle between vecs
+  - [x] signed angle
+  - [x] move towards
+  - [x] reflect
+  - [ ] rotate towards
+  - [x] project
+  - [x] project on plane
+  - [x] smooth damp
 - [ ] Matrix
-  - [ ] new matrix
-    - [ ] 2x2
-    - [ ] 3x3
+  - [x] new matrix
+    - [x] 2x2
+    - [ ] 2x3
+    - [x] 3x3
+    - [ ] 3x4
     - [ ] 4x4
   - [ ] Matrix-Scalar operations (+, -, \*, /)
   - [ ] Matrix-Vector multiplication
@@ -45,6 +60,6 @@ Game dev Math
 #### general
 
 - [x] add bundler(babel, swc?)
-- [ ] fixed constants
+- [x] fix constants
 - [ ] calculus and trigonometry implement
 - [ ] when current implemention is finished, make class version of it, and compare the performances between them

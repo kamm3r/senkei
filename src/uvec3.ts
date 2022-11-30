@@ -1,19 +1,7 @@
 import { Vec } from "./utils/constants"
 import { NegativeInfinity } from "./utils/floatingPoints"
 
-
-type i8 = Int8Array
-type i16 = Int16Array
-type i32 = Int32Array
-type i64 = BigInt64Array
-
-type u8 = Uint8Array
-type u16 = Uint16Array
-type u32 = Uint32Array
-type u64 = BigUint64Array
-
 type f32 = Float32Array
-type f64 = Float64Array
 
 type vec<T> = T
 

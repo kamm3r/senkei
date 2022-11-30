@@ -1,4 +1,4 @@
-import * as vec3 from "./vec3"
+import * as vec3 from "../src/vec3"
 
 describe('Vec3', () => {
     test('create, no values given', () => {

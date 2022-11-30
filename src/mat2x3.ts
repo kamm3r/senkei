@@ -7,14 +7,6 @@
 // y |m10 m11|  
 // z |m20 m21|         
 // Matrix 3x2
-export interface Mat2x3 {
-    m00: number
-    m01: number
-    m02: number
-    m10: number
-    m11: number
-    m12: number
-}
 
 const float32 = new Float32Array(6)
 

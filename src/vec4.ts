@@ -1,17 +1,21 @@
+import type { Vec2, Vec3, Vec4 } from "./types"
 import { clamp01 } from "./utils/clamp"
 import { Infinity, NegativeInfinity } from "./utils/floatingPoints"
-import { Vec2 } from "./vec2"
-import { Vec3 } from "./vec3"
 
-export interface Vec4 {
-    x: number
-    y: number
-    z: number
-    w: number
-}
+type vec4 = Float32Array
+type vec4s = [number, number, number, number]
 
 export const create = (x = 0, y = 0, z = 0, w = 0): Vec4 => {
     return { x, y, z, w }
+}
+// export const creates = (x = 0, y = 0, z = 0, w = 0): vec4 => {
+export const creates = (x = 0, y = 0, z = 0, w = 0): vec4 => {
+    const v = new Float32Array(4)
+    v[0] = x
+    v[1] = y
+    v[2] = z
+    v[3] = w
+    return v
 }
 export const one = (): Vec4 => ({ x: 1, y: 1, z: 1, w: 1 })
 export const zero = (): Vec4 => ({ x: 0, y: 0, z: 0, w: 0 })

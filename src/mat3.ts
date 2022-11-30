@@ -36,20 +36,7 @@
 //     inverse() { }
 // }
 
-export interface Mat3 {
-    m00: number
-    m01: number
-    m02: number
-    m10: number
-    m11: number
-    m12: number
-    m30: number
-    m31: number
-    m32: number
-}
-const float32 = new Float32Array(9)
-
-type mat3 = typeof float32
+type mat3 = Float32Array
 
 export const create = (m00: number, m01: number, m02: number, m10: number, m11: number, m12: number, m30: number, m31: number, m32: number): mat3 => {
     // export const create = (m00: number,m01: number,m02: number,m10: number,m11: number,m12: number,m30: number,m31: number,m32: number): mat3 => {

@@ -1,9 +1,3 @@
-export interface Mat2 {
-    m00: number
-    m01: number
-    m10: number
-    m11: number
-}
 
 type f32 = Float32Array
 

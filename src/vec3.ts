@@ -1,35 +1,9 @@
+import type { Vec3 } from "./types"
 import { clamp } from "./utils/clamp"
 import { Rad2Deg } from "./utils/constants"
 import { EPSILON, Infinity, NegativeInfinity } from "./utils/floatingPoints"
 
-export interface Vec3 {
-    x: number
-    y: number
-    z: number
-}
-type i8 = Int8Array
-type u8 = Uint8Array
-type i16 = Int16Array
-type u16 = Uint16Array
-type i32 = Int32Array
-type u32 = Uint32Array
-type f32 = Float32Array
-type f64 = Float64Array
-type i64 = BigInt64Array
-type u64 = BigUint64Array
-// export const create = (x?: number, y?: number, z?: number): Vec3 => {
-//     if (x === undefined || y === undefined || z === undefined) {
-//         return { x: 0, y: 0, z: 0 }
-//     }
-//     return { x, y, z }
-// }
-
-type vec<T> = T
-
-const float32 = new Float32Array(3)
-
-type vec3 = typeof float32
-
+type vec3 = Float32Array
 
 export const create = (x = 0, y = 0, z = 0): Vec3 => {
     return { x, y, z }

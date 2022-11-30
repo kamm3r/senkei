@@ -1,10 +1,5 @@
 import { Infinity, NegativeInfinity } from "./utils/floatingPoints"
-import { Vec3 } from "./vec3"
-
-export interface Vec2 {
-    x: number
-    y: number
-}
+import type { Vec2, Vec3 } from "./types"
 
 type vec2 = Float32Array
 
