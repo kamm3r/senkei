@@ -57,43 +57,22 @@ export const negativeInfinity = (): Vec2 => ({ x: NegativeInfinity, y: NegativeI
  * Shorthand for writing Vector2(float.PositiveInfinity, float.PositiveInfinity).
  */
 export const positiveInfinity = (): Vec2 => ({ x: Infinity, y: Infinity })
-export const copy = (a: Vec2, b: Vec2): Vec2 => {
-    return { x: a.x = b.x, y: a.y = b.y }
-}
-export const scalarAddition = (v: Vec2, k: number): Vec2 => {
-    return { x: v.x + k, y: v.y + k }
-}
-export const scalarSubtraction = (v: Vec2, k: number): Vec2 => {
-    return { x: v.x - k, y: v.y - k }
-}
-export const scalarMultiplication = (v: Vec2, k: number): Vec2 => {
-    return { x: v.x * k, y: v.y * k }
-}
-export const scalarDivision = (v: Vec2, k: number): Vec2 => {
-    return { x: v.x / k, y: v.y / k }
-}
+export const copy = (a: Vec2, b: Vec2): Vec2 => create(a.x = b.x, a.y = b.y)
+export const scalarAddition = (v: Vec2, k: number): Vec2 => create(v.x + k, v.y + k)
+export const scalarSubtraction = (v: Vec2, k: number): Vec2 => create(v.x - k, v.y - k)
+export const scalarMultiplication = (v: Vec2, k: number): Vec2 => create(v.x * k, v.y * k)
+export const scalarDivision = (v: Vec2, k: number): Vec2 => create(v.x / k, v.y / k)
 // d=a+b
-export const add = (v1: Vec2, v2: Vec2): Vec2 => {
-    return { x: v1.x + v2.x, y: v1.y + v2.y }
-}
+export const add = (v1: Vec2, v2: Vec2): Vec2 => create(v1.x + v2.x, v1.y + v2.y)
 // "From b to a" d=a-b
-export const subtract = (v1: Vec2, v2: Vec2): Vec2 => {
-    return { x: v1.x - v2.x, y: v1.y - v2.y }
-}
+export const subtract = (v1: Vec2, v2: Vec2): Vec2 => create(v1.x - v2.x, v1.y - v2.y)
 // d=a*b
-export const multiply = (v1: Vec2, v2: Vec2): Vec2 => {
-    return { x: v1.x * v2.x, y: v1.y * v2.y }
-}
+export const multiply = (v1: Vec2, v2: Vec2): Vec2 => create(v1.x * v2.x, v1.y * v2.y)
 // d=a/b
-export const divide = (v1: Vec2, v2: Vec2): Vec2 => {
-    return { x: v1.x / v2.x, y: v1.y / v2.y }
-}
-export const toVec2 = (v: Vec3): Vec2 => {
-    return { x: v.x, y: v.y }
-}
-export const toVec3 = (v: Vec2): Vec3 => {
-    return { x: v.x, y: v.y, z: 0 }
-}
+export const divide = (v1: Vec2, v2: Vec2): Vec2 => create(v1.x / v2.x, v1.y / v2.y)
+export const toVec2 = (v: Vec3): Vec2 => create(v.x, v.y)
+export const toVec3 = (v: Vec2): Vec3 => ({ x: v.x, y: v.y, z: 0 })
+export const clamp = (v: Vec2, min: Vec2, max: Vec2): Vec2 => create(v.x < min.x ? min.x : v.x > max.x ? max.x : v.x, v.y < min.y ? min.y : v.y > max.y ? max.y : v.y)
 // a dot b 
 // use cause 
 export const dot = (v1: Vec2, v2: Vec2): number => {

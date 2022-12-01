@@ -1,5 +1,5 @@
 import type { Vec3 } from "./types"
-import { clamp } from "./utils/clamp"
+import * as math from "./utils/clamp"
 import { Rad2Deg } from "./utils/constants"
 import { EPSILON, Infinity, kEpsilon, NegativeInfinity } from "./utils/floatingPoints"
 import { Lerp } from "./utils/interpolation"
@@ -57,7 +57,7 @@ export const subtract = (v1: Vec3, v2: Vec3): Vec3 => create(v1.x - v2.x, v1.y -
 export const multiply = (v1: Vec3, v2: Vec3): Vec3 => create(v1.x * v2.x, v1.y * v2.y, v1.z * v2.z)
 
 export const divide = (v1: Vec3, v2: Vec3): Vec3 => create(v1.x / v2.x, v1.y / v2.y, v1.z / v2.z)
-
+export const clamp = (v: Vec3, min: Vec3, max: Vec3): Vec3 => create(v.x < min.x ? min.x : v.x > max.x ? max.x : v.x, v.y < min.y ? min.y : v.y > max.y ? max.y : v.y, v.z < min.z ? min.z : v.z > max.z ? max.z : v.z)
 // Dot Product of two vectors.
 export const dot = (v1: Vec3, v2: Vec3): number => v1.x * v2.x + v1.y * v2.y + v1.z * v2.z
 // export const orthogonal = (v1: Vec3, v2: Vec3): boolean => {
@@ -139,7 +139,7 @@ export const slerpUnclamped = (a: Vec3, b: Vec3, t: number): Vec3 => {
 //	Calculates the angle between vectors from and.
 export const angle = (from: Vec3, to: Vec3): number => {
     const denominator = Math.sqrt(magnitudeSqrt(from) * magnitudeSqrt(to))
-    let Dot = clamp(dot(from, to) / denominator, -1, 1)
+    let Dot = math.clamp(dot(from, to) / denominator, -1, 1)
     return Math.acos(Dot) * Rad2Deg
 }
 //Calculates the signed angle between vectors from and to in relation to axis.

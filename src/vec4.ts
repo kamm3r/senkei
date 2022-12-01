@@ -26,52 +26,23 @@ export const positiveInfinity = (): vec4 => new Float32Array([Infinity, Infinity
 // export const negativeInfinity = (): Vec4 => ({ x: NegativeInfinity, y: NegativeInfinity, z: NegativeInfinity, w: NegativeInfinity })
 // export const positiveInfinity = (): Vec4 => ({ x: Infinity, y: Infinity, z: Infinity, w: Infinity })
 
-export const scalarAddition = (v: Vec4, k: number): Vec4 => {
-    return { x: v.x + k, y: v.y + k, z: v.z + k, w: v.w + k }
-}
-export const scalarSubtraction = (v: Vec4, k: number): Vec4 => {
-    return { x: v.x - k, y: v.y - k, z: v.z - k, w: v.w - k }
-}
-export const scalarMultiplication = (v: Vec4, k: number): Vec4 => {
-    return { x: v.x * k, y: v.y * k, z: v.z * k, w: v.w * k }
-}
-export const scalarDivision = (v: Vec4, k: number): Vec4 => {
-    return { x: v.x / k, y: v.y / k, z: v.z / k, w: v.w / k }
-}
-export const add = (v1: Vec4, v2: Vec4): Vec4 => {
-    return { x: v1.x + v2.x, y: v1.y + v2.y, z: v1.z + v2.z, w: v1.w + v2.w }
-}
-export const subtract = (v1: Vec4, v2: Vec4): Vec4 => {
-    return { x: v1.x - v2.x, y: v1.y - v2.y, z: v1.z - v2.z, w: v1.w - v2.w }
-}
-export const multiply = (v1: Vec4, v2: Vec4): Vec4 => {
-    return { x: v1.x * v2.x, y: v1.y * v2.y, z: v1.z * v2.z, w: v1.w * v2.w }
-}
-export const divide = (v1: Vec4, v2: Vec4): Vec4 => {
-    return { x: v1.x / v2.x, y: v1.y / v2.y, z: v1.z / v2.z, w: v1.w / v2.w }
-}
-export const toVec2 = (v: Vec4): Vec2 => {
-    return { x: v.x, y: v.y }
-}
-export const toVec3 = (v: Vec4): Vec3 => {
-    return { x: v.x, y: v.y, z: v.z }
-}
-export const vec3toVec4 = (v: Vec3): Vec4 => {
-    return { x: v.x, y: v.y, z: v.z, w: 0 }
-}
-export const vec2toVec4 = (v: Vec2): Vec4 => {
-    return { x: v.x, y: v.y, z: 0, w: 0 }
-}
-export const dot = (v1: Vec4, v2: Vec4): number => {
-    return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w
-}
+export const scalarAddition = (v: Vec4, k: number): Vec4 => create(v.x + k, v.y + k, v.z + k, v.w + k)
+export const scalarSubtraction = (v: Vec4, k: number): Vec4 => create(v.x - k, v.y - k, v.z - k, v.w - k)
+export const scalarMultiplication = (v: Vec4, k: number): Vec4 => create(v.x * k, v.y * k, v.z * k, v.w * k)
+export const scalarDivision = (v: Vec4, k: number): Vec4 => create(v.x / k, v.y / k, v.z / k, v.w / k)
+export const add = (v1: Vec4, v2: Vec4): Vec4 => create(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z, v1.w + v2.w)
+export const subtract = (v1: Vec4, v2: Vec4): Vec4 => create(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z, v1.w - v2.w)
+export const multiply = (v1: Vec4, v2: Vec4): Vec4 => create(v1.x * v2.x, v1.y * v2.y, v1.z * v2.z, v1.w * v2.w)
+export const divide = (v1: Vec4, v2: Vec4): Vec4 => create(v1.x / v2.x, v1.y / v2.y, v1.z / v2.z, v1.w / v2.w)
+export const toVec2 = (v: Vec4): Vec2 => ({ x: v.x, y: v.y })
+export const toVec3 = (v: Vec4): Vec3 => ({ x: v.x, y: v.y, z: v.z })
+export const vec3toVec4 = (v: Vec3): Vec4 => create(v.x, v.y, v.z, 0)
+export const vec2toVec4 = (v: Vec2): Vec4 => create(v.x, v.y, 0, 0)
+export const dot = (v1: Vec4, v2: Vec4): number => v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w
+export const clamp4 = (v: Vec4, min: Vec4, max: Vec4): Vec4 => create(v.x < min.x ? min.x : v.x > max.x ? max.x : v.x, v.y < min.y ? min.y : v.y > max.y ? max.y : v.y, v.z < min.z ? min.z : v.z > max.z ? max.z : v.z, v.w < min.w ? min.w : v.w > max.w ? max.w : v.w)
 
-export const magnitude = (v: Vec4): number => {
-    return Math.sqrt(magnitudeSqrt(v))
-}
-export const magnitudeSqrt = (v: Vec4): number => {
-    return v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w
-}
+export const magnitude = (v: Vec4): number => Math.sqrt(magnitudeSqrt(v))
+export const magnitudeSqrt = (v: Vec4): number => v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w
 
 export const normalized = (v: Vec4): Vec4 => {
     const vLen = magnitude(v)
