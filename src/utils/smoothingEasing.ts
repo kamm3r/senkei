@@ -16,3 +16,10 @@ export const gamma = (value: number, absmax: number, gamma: number): number => {
     const result = Math.pow(absval / absmax, gamma) * absmax
     return negative ? -result : result
 }
+
+export const smoothStep = (from: number, to: number, t: number): number => {
+    if (t < from) 0;
+    if (t >= to) 1;
+    t = (t - from) / (to - from)
+    return t * t * (3 - 2 * t)
+}

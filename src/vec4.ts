@@ -1,6 +1,6 @@
 import type { Vec2, Vec3, Vec4 } from "./types"
-import { clamp01 } from "./utils/clamp"
 import { Infinity, NegativeInfinity } from "./utils/floatingPoints"
+import { Lerp } from "./utils/interpolation"
 
 type vec4 = Float32Array
 type vec4s = [number, number, number, number]
@@ -107,13 +107,11 @@ export const distanceSqrt = (v1: Vec4, v2: Vec4): number => {
     const w = (v2.w - v1.w)
     return x * x + y * y + z * z + w * w
 }
-export const lerp = (a: Vec4, b: Vec4, t: number): Vec4 => {
-    t = clamp01(t)
-    return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t, z: a.z + (b.z - a.z) * t, w: a.w + (b.w - a.w) * t }
-}
+export const lerp = (a: Vec4, b: Vec4, t: Vec4): Vec4 => create(Lerp(a.x, b.x, t.x), Lerp(a.y, b.y, t.y), Lerp(a.z, b.z, t.z), Lerp(a.w, b.w, t.w))
 export const lerpUnclamped = (a: Vec4, b: Vec4, t: number): Vec4 => {
     return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t, z: a.z + (b.z - a.z) * t, w: a.w + (b.w - a.w) * t }
 }
+export const inverseLerp = (a: Vec4, b: Vec4, v: Vec4): Vec4 => create((v.x - a.x) / (b.x - a.x), (v.y - a.y) / (b.y - a.y), (v.z - a.z) / (b.z - a.z), (v.w - a.w) / (b.w - a.w))
 export const MoveTowards = (current: Vec4, target: Vec4, maxDistanceDelta: number): Vec4 => {
     const vx = target.x - current.x;
     const vy = target.y - current.y;

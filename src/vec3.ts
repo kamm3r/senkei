@@ -2,6 +2,7 @@ import type { Vec3 } from "./types"
 import { clamp } from "./utils/clamp"
 import { Rad2Deg } from "./utils/constants"
 import { EPSILON, Infinity, kEpsilon, NegativeInfinity } from "./utils/floatingPoints"
+import { Lerp } from "./utils/interpolation"
 
 type vec3 = Float32Array
 
@@ -119,18 +120,14 @@ export const unitVector = (v: Vec3): Vec3 => normalized(v)
 type Distance = (v1: Vec3, v2: Vec3) => number
 export const distance: Distance = (v1, v2) => Math.sqrt(distanceSqrt(v1, v2))
 // export const distance = (v1: vec3, v2: vec3): number => Math.sqrt(distanceSqrt(v1, v2))
-export const distanceSqrt = (v1: Vec3, v2: Vec3): number => {
-    return (v2.x - v1.x) * (v2.x - v1.x) + (v2.y - v1.y) * (v2.y - v1.y) + (v2.z - v1.z) * (v2.z - v1.z)
-}
+export const distanceSqrt = (v1: Vec3, v2: Vec3): number => (v2.x - v1.x) * (v2.x - v1.x) + (v2.y - v1.y) * (v2.y - v1.y) + (v2.z - v1.z) * (v2.z - v1.z)
 //Linearly interpolates between two points.
-export const lerp = (a: Vec3, b: Vec3, t: number): Vec3 => {
-    return { x: a.x + t * (b.x - a.x), y: a.y + t * (b.y - a.y), z: a.z + t * (b.z - a.z) }
-}
+export const lerp = (a: Vec3, b: Vec3, t: Vec3): Vec3 => create(Lerp(a.x, b.x, t.x), Lerp(a.y, b.y, t.y), Lerp(a.z, b.z, t.z))
 //Linearly interpolates between two vectors.
 export const lerpUnclamped = (a: Vec3, b: Vec3, t: number): Vec3 => {
     return { x: 1, y: 1, z: 1 }
 }
-export const inverseLerp = () => { }
+export const inverseLerp = (a: Vec3, b: Vec3, v: Vec3): Vec3 => create((v.x - a.x) / (b.x - a.x), (v.y - a.y) / (b.y - a.y), (v.z - a.z) / (b.z - a.z))
 // Spherically interpolates between two vectors??points.
 export const slerp = (a: Vec3, b: Vec3, t: number): Vec3 => {
     return { x: 1, y: 1, z: 1 }

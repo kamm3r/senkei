@@ -15,12 +15,3 @@ export const Deg2Rad = 0.01745329
 // Multiply an angle in radians by this, to convert it to degrees
 export const Rad2Deg = 57.29578
 
-export const Mat = Float32Array
-export const Vec = Float32Array
-
-export const smoothStep = (from: number, to: number, t: number): number => {
-    if (t < from) 0;
-    if (t >= to) 1;
-    t = (t - from) / (to - from)
-    return t * t * (3 - 2 * t)
-}

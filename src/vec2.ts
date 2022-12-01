@@ -1,5 +1,6 @@
 import { Infinity, NegativeInfinity } from "./utils/floatingPoints"
 import type { Vec2, Vec3 } from "./types"
+import { Lerp } from "./utils/interpolation"
 
 type vec2 = Float32Array
 
@@ -145,14 +146,12 @@ export const distanceSqrt = (v1: Vec2, v2: Vec2): number => {
 }
 
 //Linearly interpolates between two points.
-export const lerp = (a: Vec2, b: Vec2, t: number): Vec2 => {
-    return { x: a.x + t * (b.x - a.x), y: a.y + t * (b.y - a.y) }
-}
+export const lerp = (a: Vec2, b: Vec2, t: Vec2): Vec2 => create(Lerp(a.x, b.x, t.x), Lerp(a.y, b.y, t.y))
 //Linearly interpolates between two vectors.
 export const lerpUnclamped = (a: Vec2, b: Vec2, t: number): Vec2 => {
     return { x: 1, y: 1 }
 }
-export const inverseLerp = () => { }
+export const inverseLerp = (a: Vec2, b: Vec2, v: Vec2): Vec2 => create((v.x - a.x) / (b.x - a.x), (v.y - a.y) / (b.y - a.y))
 /**
  * Gets the unsigned angle in degrees between from and to.
  * @param from The vector from which the angular difference is measured.
