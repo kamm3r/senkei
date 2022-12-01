@@ -1,6 +1,7 @@
 import { Infinity, NegativeInfinity } from "./utils/floatingPoints"
 import type { Vec2, Vec3 } from "./types"
 import { Lerp } from "./utils/interpolation"
+import * as math from "./utils/abs"
 
 type vec2 = Float32Array
 
@@ -73,6 +74,10 @@ export const divide = (v1: Vec2, v2: Vec2): Vec2 => create(v1.x / v2.x, v1.y / v
 export const toVec2 = (v: Vec3): Vec2 => create(v.x, v.y)
 export const toVec3 = (v: Vec2): Vec3 => ({ x: v.x, y: v.y, z: 0 })
 export const clamp = (v: Vec2, min: Vec2, max: Vec2): Vec2 => create(v.x < min.x ? min.x : v.x > max.x ? max.x : v.x, v.y < min.y ? min.y : v.y > max.y ? max.y : v.y)
+export const clamp01 = (v: Vec2): Vec2 => create(v.x < 0 ? 0 : v.x > 1 ? 1 : v.x, v.y < 0 ? 0 : v.y > 1 ? 1 : v.y)
+export const clampNeg1to1 = (v: Vec2): Vec2 => create(v.x < -1 ? -1 : v.x > 1 ? 1 : v.x, v.y < -1 ? -1 : v.y > 1 ? 1 : v.y)
+// Returns the absolute value, per component. Basically makes negative numbers positive
+export const Abs = (v: Vec2): Vec2 => create(math.Abs(v.x), math.Abs(v.y));
 // a dot b 
 // use cause 
 export const dot = (v1: Vec2, v2: Vec2): number => {

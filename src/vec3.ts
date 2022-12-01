@@ -1,5 +1,6 @@
 import type { Vec3 } from "./types"
 import * as math from "./utils/clamp"
+import * as mathf from "./utils/abs"
 import { Rad2Deg } from "./utils/constants"
 import { EPSILON, Infinity, kEpsilon, NegativeInfinity } from "./utils/floatingPoints"
 import { Lerp } from "./utils/interpolation"
@@ -58,6 +59,10 @@ export const multiply = (v1: Vec3, v2: Vec3): Vec3 => create(v1.x * v2.x, v1.y *
 
 export const divide = (v1: Vec3, v2: Vec3): Vec3 => create(v1.x / v2.x, v1.y / v2.y, v1.z / v2.z)
 export const clamp = (v: Vec3, min: Vec3, max: Vec3): Vec3 => create(v.x < min.x ? min.x : v.x > max.x ? max.x : v.x, v.y < min.y ? min.y : v.y > max.y ? max.y : v.y, v.z < min.z ? min.z : v.z > max.z ? max.z : v.z)
+export const clamp01 = (v: Vec3): Vec3 => create(v.x < 0 ? 0 : v.x > 1 ? 1 : v.x, v.y < 0 ? 0 : v.y > 1 ? 1 : v.y, v.z < 0 ? 0 : v.z > 1 ? 1 : v.z)
+export const clampNeg1to1 = (v: Vec3): Vec3 => create(v.x < -1 ? -1 : v.x > 1 ? 1 : v.x, v.y < -1 ? -1 : v.y > 1 ? 1 : v.y, v.z < -1 ? -1 : v.z > 1 ? 1 : v.z)
+// Returns the absolute value, per component. Basically makes negative numbers positive
+export const Abs = (v: Vec3): Vec3 => create(mathf.Abs(v.x), mathf.Abs(v.y), mathf.Abs(v.z))
 // Dot Product of two vectors.
 export const dot = (v1: Vec3, v2: Vec3): number => v1.x * v2.x + v1.y * v2.y + v1.z * v2.z
 // export const orthogonal = (v1: Vec3, v2: Vec3): boolean => {

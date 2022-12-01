@@ -1,6 +1,7 @@
 import type { Vec2, Vec3, Vec4 } from "./types"
 import { Infinity, NegativeInfinity } from "./utils/floatingPoints"
 import { Lerp } from "./utils/interpolation"
+import * as math from "./utils/abs"
 
 type vec4 = Float32Array
 type vec4s = [number, number, number, number]
@@ -39,8 +40,11 @@ export const toVec3 = (v: Vec4): Vec3 => ({ x: v.x, y: v.y, z: v.z })
 export const vec3toVec4 = (v: Vec3): Vec4 => create(v.x, v.y, v.z, 0)
 export const vec2toVec4 = (v: Vec2): Vec4 => create(v.x, v.y, 0, 0)
 export const dot = (v1: Vec4, v2: Vec4): number => v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w
-export const clamp4 = (v: Vec4, min: Vec4, max: Vec4): Vec4 => create(v.x < min.x ? min.x : v.x > max.x ? max.x : v.x, v.y < min.y ? min.y : v.y > max.y ? max.y : v.y, v.z < min.z ? min.z : v.z > max.z ? max.z : v.z, v.w < min.w ? min.w : v.w > max.w ? max.w : v.w)
-
+export const clamp = (v: Vec4, min: Vec4, max: Vec4): Vec4 => create(v.x < min.x ? min.x : v.x > max.x ? max.x : v.x, v.y < min.y ? min.y : v.y > max.y ? max.y : v.y, v.z < min.z ? min.z : v.z > max.z ? max.z : v.z, v.w < min.w ? min.w : v.w > max.w ? max.w : v.w)
+export const clamp01 = (v: Vec4): Vec4 => create(v.x < 0 ? 0 : v.x > 1 ? 1 : v.x, v.y < 0 ? 0 : v.y > 1 ? 1 : v.y, v.z < 0 ? 0 : v.z > 1 ? 1 : v.z, v.w < 0 ? 0 : v.w > 1 ? 1 : v.w)
+export const clampNeg1to1 = (v: Vec4): Vec4 => create(v.x < -1 ? -1 : v.x > 1 ? 1 : v.x, v.y < -1 ? -1 : v.y > 1 ? 1 : v.y, v.z < -1 ? -1 : v.z > 1 ? 1 : v.z, v.w < -1 ? -1 : v.w > 1 ? 1 : v.w)
+// Returns the absolute value, per component. Basically makes negative numbers positive
+export const Abs = (v: Vec4): Vec4 => create(math.Abs(v.x), math.Abs(v.y), math.Abs(v.z), math.Abs(v.w));
 export const magnitude = (v: Vec4): number => Math.sqrt(magnitudeSqrt(v))
 export const magnitudeSqrt = (v: Vec4): number => v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w
 
