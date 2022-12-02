@@ -1,6 +1,6 @@
 import *as vec3 from "./vec3"
 import { Vec3 } from "./types"
-import { kEpsilon } from "./utils/floatingPoints"
+import { EPSILON, kEpsilon } from "./utils/floatingPoints"
 
 type Quat = Float32Array
 
@@ -43,7 +43,7 @@ export const differentEquals = (lhs: Quat, rhs: Quat): boolean => lhs !== rhs
 export const identity = (): Quat => identityQuaternion()
 
 export const eualerAngles = (a: number, b: number, c: number): Quat => new Float32Array()
-export const normalized = (a: number, b: number, c: number): Quat => new Float32Array()
+export const normalized = (q: Quat): Quat => Math.sqrt(dot(q, q)) < EPSILON ? identity() : create()
 export const setFromToRotation = (a: number, b: number, c: number): Quat => new Float32Array()
 export const setLookRotation = (view: Vec3): void => {
     const up = vec3.up
@@ -60,7 +60,7 @@ export const inverse = (a: number): Quat => new Float32Array()
 export const lerp = (a: number): Quat => new Float32Array()
 export const lerpUnclamped = (a: number): Quat => new Float32Array()
 export const lookRotation = (a: number): Quat => new Float32Array()
-export const normalize = (a: number): Quat => new Float32Array()
+export const normalize = (q: Quat): Quat => Math.sqrt(dot(q, q)) < EPSILON ? identity() : create()
 export const rotateTowards = (a: number): Quat => new Float32Array()
 export const slerp = (a: number): Quat => new Float32Array()
 export const slerpUnclamped = (a: number): Quat => new Float32Array()
