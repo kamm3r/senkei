@@ -17,8 +17,8 @@ Game dev Math
   - [x] unit vectors
   - [x] lerp
   - [x] lerp clamped
-  - [ ] slerp clamped
   - [ ] slerp
+  - [ ] slerp clamped
   - [x] inverse lerp
   - [ ] transforms
   - [x] scale
@@ -37,7 +37,7 @@ Game dev Math
     - [x] 3x3
     - [x] 3x4
     - [x] 4x4
-  - [ ] Matrix-Scalar operations (+, -, \*, /)
+  - [ ] Matrix-Scalar operations (+, -,\*, /)
   - [ ] Matrix-Vector multiplication
   - [ ] Matrix-Matrix multiplication
   - [ ] local to world
@@ -61,3 +61,5 @@ Game dev Math
 - [x] fix constants
 - [ ] calculus and trigonometry implement
 - [ ] when current implemention is finished, make class version of it, and compare the performances between them
+- add uvecs, umats, ivecs n imats
+- make correct matrices with normal arrays `[[0,0],[0,0]]`

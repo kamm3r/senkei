@@ -5,7 +5,7 @@ import { Rad2Deg } from "./utils/constants"
 import { EPSILON, Infinity, kEpsilon, NegativeInfinity } from "./utils/floatingPoints"
 import { Lerp } from "./utils/interpolation"
 
-type vec3 = Float32Array
+export type vec3 = Float32Array
 
 export const create = (x = 0, y = 0, z = 0): Vec3 => {
     return { x, y, z }
