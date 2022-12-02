@@ -81,7 +81,7 @@ export const magnitude = (v: Vec3): number => Math.sqrt(magnitudeSqrt(v))
 export const magnitudeSqrt = (v: Vec3): number => v.x * v.x + v.y * v.y + v.z * v.z
 //	Returns a copy of vector with its magnitude clamped to maxLength.
 export const clampMagnitude = (v: Vec3, maxLength: number): Vec3 => {
-    let sqrtmag = magnitudeSqrt(v)
+    const sqrtmag = magnitudeSqrt(v)
     if (sqrtmag > maxLength * maxLength) {
         let mag = Math.sqrt(sqrtmag)
         let normx = v.x / mag
