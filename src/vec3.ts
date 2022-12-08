@@ -128,6 +128,32 @@ export const distance: Distance = (v1, v2) => Math.sqrt(distanceSqrt(v1, v2))
 export const distanceSqrt = (v1: Vec3, v2: Vec3): number => (v2.x - v1.x) * (v2.x - v1.x) + (v2.y - v1.y) * (v2.y - v1.y) + (v2.z - v1.z) * (v2.z - v1.z)
 //Linearly interpolates between two points.
 export const lerp = (a: Vec3, b: Vec3, t: Vec3): Vec3 => create(Lerp(a.x, b.x, t.x), Lerp(a.y, b.y, t.y), Lerp(a.z, b.z, t.z))
+// quadratic bezier curve
+// but it might not be the performant 
+export const quadBezier = (a: Vec3, b: Vec3, c: Vec3, t: number): Vec3 => {
+    const a1 = Lerp(a.x, b.x, t)
+    const b1 = Lerp(a.y, b.y, t)
+    const c1 = Lerp(a.z, b.z, t)
+
+    const a2 = Lerp(b.x, c.x, t)
+    const b2 = Lerp(b.y, c.y, t)
+    const c2 = Lerp(b.z, c.z, t)
+
+    const x = Lerp(a1, a2, t)
+    const y = Lerp(b1, b2, t)
+    const z = Lerp(c1, c2, t)
+    return create(x, y, z)
+}
+// cubic bezier curve
+export const cubicBezier = (a: Vec3, b: Vec3, c: Vec3, d: Vec3, e: Vec3, t: number): Vec3 => {
+    const v1 = quadBezier(a, b, c, t)
+    const v2 = quadBezier(b, c, d, t)
+    const v3 = quadBezier(c, d, e, t)
+    const x = Lerp(v1.x, v2.x, t)
+    const y = Lerp(v1.y, v2.y, t)
+    const z = Lerp(v2.z, v3.z, t)
+    return create(x, y, z)
+}
 //Linearly interpolates between two vectors.
 export const lerpUnclamped = (a: Vec3, b: Vec3, t: number): Vec3 => {
     return { x: 1, y: 1, z: 1 }
@@ -181,8 +207,15 @@ export const reflect = (inDirection: Vec3, inNormal: Vec3): Vec3 => {
         factor * inNormal.z + inDirection.z
     )
 }
-// Rotates a vector current towards target.
-export const rotateTowards = () => { }
+/**
+ * Rotates a vector current towards target
+ * @param current The vector being managed
+ * @param target The vector
+ * @param maxRadiansDelta The maximum angle in radians allowed for this rotation
+ * @param maxMagnitudeDelta The maximum allowed change in vector magnitude for this rotation
+ * @returns Vector3 The location that RotateTowards generates
+ */
+export const rotateTowards = (current: Vec3, target: Vec3, maxRadiansDelta: number, maxMagnitudeDelta: number): Vec3 => create()
 // Projects a vector onto another vector.
 export const Project = (v: Vec3, onNormal: Vec3): Vec3 => {
     let sqrtMag = dot(onNormal, onNormal)
@@ -194,18 +227,33 @@ export const Project = (v: Vec3, onNormal: Vec3): Vec3 => {
         return create(v.x - onNormal.x * Dot / sqrtMag, v.y - onNormal.y * Dot / sqrtMag, v.z - onNormal.z * Dot / sqrtMag)
     }
 }
-//Projects a vector onto a plane defined by a normal orthogonal to the plane.
-export const ProjectOnPlane = (v: Vec3, planeNormal: Vec3): Vec3 => {
-    let sqrtMag = dot(planeNormal, planeNormal)
+/**
+ * Projects a vector onto a plane defined by a normal orthogonal to the plane
+ * @param planeNormal The direction from the vector towards the plane
+ * @param v The location of the vector above the plane
+ * @returns Vector3 The location of the vector on the plane
+ */
+export const ProjectOnPlane = (planeNormal: Vec3, v: Vec3): Vec3 => {
+    const sqrtMag = dot(planeNormal, planeNormal)
     if (sqrtMag < kEpsilon) {
         return v
     }
     else {
-        let Dot = dot(v, planeNormal)
+        const Dot = dot(v, planeNormal)
         return create(planeNormal.x * Dot / sqrtMag, planeNormal.y * Dot / sqrtMag, planeNormal.z * Dot / sqrtMag)
     }
 }
-//Gradually changes a vector towards a desired goal over time.
+/**
+ * Gradually changes a vector towards a desired goal over time
+ * The vector is smoothed by some spring-damper like function, which will never overshoot. The most common use is for smoothing a follow camera
+ * @param current The current position
+ * @param target The position we are trying to reach
+ * @param currentVelocity The current velocity, this value is modified by the function every time you call it
+ * @param smoothTime Approximately the time it will take to reach the target. A smaller value will reach the target faster
+ * @param maxSpeed Optionally allows you to clamp the maximum speed
+ * @param deltaTime The time since the last call to this function. By default deltaTime
+ * @returns add return descriptions
+ */
 export const smoothDamps = (current: Vec3, target: Vec3, currentVelocity: Vec3, smoothTime: number, maxSpeed: number, deltaTime: number): Vec3 => {
     let output_x = 0;
     let output_y = 0;

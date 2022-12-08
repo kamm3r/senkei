@@ -136,6 +136,11 @@ export const lerpUnclamped = (a: Vec2, b: Vec2, t: number): Vec2 => {
     return { x: 1, y: 1 }
 }
 export const inverseLerp = (a: Vec2, b: Vec2, v: Vec2): Vec2 => create((v.x - a.x) / (b.x - a.x), (v.y - a.y) / (b.y - a.y))
+export const cubicBezier = (a: Vec2, b: Vec2, c: Vec2, d: Vec2, t: number): Vec2 => {
+    const x = Math.pow(1 - t, 3) * a.x + 3 * Math.pow(1 - t, 2) * b.x + 3 * Math.pow(1 - t, 2) * Math.pow(t, 2) * c.x + Math.pow(t, 3) * d.x
+    const y = Math.pow(1 - t, 3) * a.y + 3 * Math.pow(1 - t, 2) * b.y + 3 * Math.pow(1 - t, 2) * Math.pow(t, 2) * c.y + Math.pow(t, 3) * d.y
+    return create(x, y)
+}
 /**
  * Gets the unsigned angle in degrees between from and to.
  * @param from The vector from which the angular difference is measured.
