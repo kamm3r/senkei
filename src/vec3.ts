@@ -1,163 +1,161 @@
-import type { Vec3 } from "./types"
+import type { vec3 } from "./types"
 import * as math from "./utils/clamp"
 import * as mathf from "./utils/abs"
 import { Rad2Deg } from "./utils/constants"
 import { EPSILON, Infinity, kEpsilon, NegativeInfinity } from "./utils/floatingPoints"
 import { Lerp } from "./utils/interpolation"
 
-export type vec3 = Float32Array
+// export type vec3 = Float32Array
 
-export const create = (x = 0, y = 0, z = 0): Vec3 => {
-    return { x, y, z }
-}
-export const creates = (x = 0, y = 0, z = 0): vec3 => new Float32Array([x, y, z])
+// export const create = (x = 0, y = 0, z = 0): vec3 => {
+//     return { x, y, z }
+// }
+export const create = (x = 0, y = 0, z = 0): vec3 => new Float32Array([x, y, z])
 
-export const back = (): Vec3 => create(0, 0, -1)
-export const down = (): Vec3 => create(0, -1, 0)
-export const forward = (): Vec3 => create(0, 0, 1)
-export const left = (): Vec3 => create(-1, 0, 0)
-export const right = (): Vec3 => create(1, 0, 0)
-export const up = (): Vec3 => create(0, 1, 0)
-export const one = (): Vec3 => create(1, 1, 1)
-export const zero = (): Vec3 => create(0, 0, 0)
-export const negativeInfinity = (): Vec3 => create(NegativeInfinity, NegativeInfinity, NegativeInfinity)
-export const positiveInfinity = (): Vec3 => create(Infinity, Infinity, Infinity)
+export const back = (): vec3 => create(0, 0, -1)
+export const down = (): vec3 => create(0, -1, 0)
+export const forward = (): vec3 => create(0, 0, 1)
+export const left = (): vec3 => create(-1, 0, 0)
+export const right = (): vec3 => create(1, 0, 0)
+export const up = (): vec3 => create(0, 1, 0)
+export const one = (): vec3 => create(1, 1, 1)
+export const zero = (): vec3 => create(0, 0, 0)
+export const negativeInfinity = (): vec3 => create(NegativeInfinity, NegativeInfinity, NegativeInfinity)
+export const positiveInfinity = (): vec3 => create(Infinity, Infinity, Infinity)
 
-export const copy = (a: Vec3, b: Vec3): Vec3 => create(a.x = b.x, a.y = b.y, a.z = b.z)
-export const printVec = (v: Vec3): void => console.log(`"vec3( ${v.x},${v.y},${v.z});`)
+//TODO:get and set function these
+export const x = (x: number): vec3 => create(x)
+export const y = (y: number): vec3 => create(y)
+export const z = (z: number): vec3 => create(z)
+
+export const copy = (a: vec3, b: vec3): vec3 => create(a[0] = b[0], a[1] = b[1], a[2] = b[2])
+export const printVec = (v: vec3): void => console.log(`"vec3( ${v[0]},${v[1]},${v[2]});`)
 
 //Returns true if the given vector is exactly equal to this vector.
-export const exactEquals = (v1: Vec3, v2: Vec3): boolean => v1.x === v2.x && v1.y === v2.y && v1.z === v2.z
+export const exactEquals = (v1: vec3, v2: vec3): boolean => v1[0] === v2[0] && v1[1] === v2[1] && v1[2] === v2[2]
 //operator =! Returns true if vectors are different.
-export const differentEquals = (v1: Vec3, v2: Vec3): boolean => v1.x !== v2.x && v1.y !== v2.y && v1.z !== v2.z
+export const differentEquals = (v1: vec3, v2: vec3): boolean => v1[0] !== v2[0] && v1[1] !== v2[1] && v1[2] !== v2[2]
 //operator == Returns true if two vectors are approximately equal.
-export const approximatelyEquals = (v1: Vec3, v2: Vec3): boolean => {
-    return (Math.abs(v1.x - v2.x) <=
-        EPSILON * Math.max(1.0, Math.abs(v1.x), Math.abs(v2.x)) &&
-        Math.abs(v1.y - v2.y) <=
-        EPSILON * Math.max(1.0, Math.abs(v1.y), Math.abs(v2.y)) &&
-        Math.abs(v1.z - v2.z) <=
-        EPSILON * Math.max(1.0, Math.abs(v1.z), Math.abs(v2.z))
+export const approximatelyEquals = (v1: vec3, v2: vec3): boolean => {
+    return (Math.abs(v1[0] - v2[0]) <=
+        EPSILON * Math.max(1.0, Math.abs(v1[0]), Math.abs(v2[0])) &&
+        Math.abs(v1[1] - v2[1]) <=
+        EPSILON * Math.max(1.0, Math.abs(v1[1]), Math.abs(v2[1])) &&
+        Math.abs(v1[2] - v2[2]) <=
+        EPSILON * Math.max(1.0, Math.abs(v1[2]), Math.abs(v2[2]))
     );
 }
 // maybe??? probably not though
-export const approximatelyEqual = (v1: Vec3, v2: Vec3): boolean => v1.x == v2.x && v1.y == v2.y && v1.z == v2.z
+export const approximatelyEqual = (v1: vec3, v2: vec3): boolean => v1[0] == v2[0] && v1[1] == v2[1] && v1[2] == v2[2]
 
-export const scalarAddition = (v: Vec3, k: number): Vec3 => create(v.x + k, v.y + k, v.z + k)
+export const scalarAddition = (v: vec3, k: number): vec3 => create(v[0] + k, v[1] + k, v[2] + k)
 
-export const scalarSubtraction = (v: Vec3, k: number): Vec3 => create(v.x - k, v.y - k, v.z - k)
+export const scalarSubtraction = (v: vec3, k: number): vec3 => create(v[0] - k, v[1] - k, v[2] - k)
 
-export const scalarMultiplication = (v: Vec3, k: number): Vec3 => create(v.x * k, v.y * k, v.z * k)
+export const scalarMultiplication = (v: vec3, k: number): vec3 => create(v[0] * k, v[1] * k, v[2] * k)
 
-export const scalarDivision = (v: Vec3, k: number): Vec3 => create(v.x / k, v.y / k, v.z / k)
+export const scalarDivision = (v: vec3, k: number): vec3 => create(v[0] / k, v[1] / k, v[2] / k)
 
-export const add = (v1: Vec3, v2: Vec3): Vec3 => create(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z)
+export const add = (v1: vec3, v2: vec3): vec3 => create(v1[0] + v2[0], v1[1] + v2[1], v1[2] + v2[2])
 
-export const subtract = (v1: Vec3, v2: Vec3): Vec3 => create(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z)
+export const subtract = (v1: vec3, v2: vec3): vec3 => create(v1[0] - v2[0], v1[1] - v2[1], v1[2] - v2[2])
 
-export const multiply = (v1: Vec3, v2: Vec3): Vec3 => create(v1.x * v2.x, v1.y * v2.y, v1.z * v2.z)
+export const multiply = (v1: vec3, v2: vec3): vec3 => create(v1[0] * v2[0], v1[1] * v2[1], v1[2] * v2[2])
 
-export const divide = (v1: Vec3, v2: Vec3): Vec3 => create(v1.x / v2.x, v1.y / v2.y, v1.z / v2.z)
-export const clamp = (v: Vec3, min: Vec3, max: Vec3): Vec3 => create(v.x < min.x ? min.x : v.x > max.x ? max.x : v.x, v.y < min.y ? min.y : v.y > max.y ? max.y : v.y, v.z < min.z ? min.z : v.z > max.z ? max.z : v.z)
-export const clamp01 = (v: Vec3): Vec3 => create(v.x < 0 ? 0 : v.x > 1 ? 1 : v.x, v.y < 0 ? 0 : v.y > 1 ? 1 : v.y, v.z < 0 ? 0 : v.z > 1 ? 1 : v.z)
-export const clampNeg1to1 = (v: Vec3): Vec3 => create(v.x < -1 ? -1 : v.x > 1 ? 1 : v.x, v.y < -1 ? -1 : v.y > 1 ? 1 : v.y, v.z < -1 ? -1 : v.z > 1 ? 1 : v.z)
+export const divide = (v1: vec3, v2: vec3): vec3 => create(v1[0] / v2[0], v1[1] / v2[1], v1[2] / v2[2])
+export const clamp = (v: vec3, min: vec3, max: vec3): vec3 => create(v[0] < min[0] ? min[0] : v[0] > max[0] ? max[0] : v[0], v[1] < min[1] ? min[1] : v[1] > max[1] ? max[1] : v[1], v[2] < min[2] ? min[2] : v[2] > max[2] ? max[2] : v[2])
+export const clamp01 = (v: vec3): vec3 => create(v[0] < 0 ? 0 : v[0] > 1 ? 1 : v[0], v[1] < 0 ? 0 : v[1] > 1 ? 1 : v[1], v[2] < 0 ? 0 : v[2] > 1 ? 1 : v[2])
+export const clampNeg1to1 = (v: vec3): vec3 => create(v[0] < -1 ? -1 : v[0] > 1 ? 1 : v[0], v[1] < -1 ? -1 : v[1] > 1 ? 1 : v[1], v[2] < -1 ? -1 : v[2] > 1 ? 1 : v[2])
 // Returns the absolute value, per component. Basically makes negative numbers positive
-export const Abs = (v: Vec3): Vec3 => create(mathf.Abs(v.x), mathf.Abs(v.y), mathf.Abs(v.z))
+export const Abs = (v: vec3): vec3 => create(mathf.Abs(v[0]), mathf.Abs(v[1]), mathf.Abs(v[2]))
 // Dot Product of two vectors.
-export const dot = (v1: Vec3, v2: Vec3): number => v1.x * v2.x + v1.y * v2.y + v1.z * v2.z
-// export const orthogonal = (v1: Vec3, v2: Vec3): boolean => {
+export const dot = (v1: vec3, v2: vec3): number => v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2]
+// export const orthogonal = (v1: vec3, v2: vec3): boolean => {
 //     return false
 // }
 //	Cross Product of two vectors.
-export const cross = (v1: Vec3, v2: Vec3): Vec3 => {
-    return { x: (v1.y * v2.z) - (v1.z * v2.y), y: (v1.x * v2.z) - (v1.z * v2.x), z: (v1.x * v2.y) - (v1.y * v2.x) }
-}
+export const cross = (v1: vec3, v2: vec3): vec3 => create((v1[1] * v2[2]) - (v1[2] * v2[1]), (v1[0] * v2[2]) - (v1[2] * v2[0]), (v1[0] * v2[1]) - (v1[1] * v2[0]))
 // also know as exterior product
 // {x:0,y:0,z:0 w:wedget product}
-export const wedge = (v1: Vec3, v2: Vec3): number => v1.x * v2.y - v1.y * v2.x
+export const wedge = (v1: vec3, v2: vec3): number => v1[0] * v2[1] - v1[1] * v2[0]
 // Returns the length of this vector
-export const magnitude = (v: Vec3): number => Math.sqrt(magnitudeSqrt(v))
+export const magnitude = (v: vec3): number => Math.sqrt(magnitudeSqrt(v))
 //	Returns the squared length of this vector
-export const magnitudeSqrt = (v: Vec3): number => v.x * v.x + v.y * v.y + v.z * v.z
+export const magnitudeSqrt = (v: vec3): number => v[0] * v[0] + v[1] * v[1] + v[2] * v[2]
 //	Returns a copy of vector with its magnitude clamped to maxLength.
-export const clampMagnitude = (v: Vec3, maxLength: number): Vec3 => {
+export const clampMagnitude = (v: vec3, maxLength: number): vec3 => {
     const sqrtmag = magnitudeSqrt(v)
     if (sqrtmag > maxLength * maxLength) {
-        let mag = Math.sqrt(sqrtmag)
-        let normx = v.x / mag
-        let normy = v.y / mag
-        let normz = v.z / mag
-        return { x: normx / maxLength, y: normy / maxLength, z: normz / maxLength }
+        const mag = Math.sqrt(sqrtmag)
+        const normx = v[0] / mag
+        const normy = v[1] / mag
+        const normz = v[2] / mag
+        return create(normx / maxLength, normy / maxLength, normz / maxLength)
     }
     return v
 }
-// export const clampMagnitude = (v: Vec3, min: number, max: number): Vec3 => {
+// export const clampMagnitude = (v: vec3, min: number, max: number): vec3 => {
 //     let mag = magnitudeSqrt(v)
-//     return mag < min ? ({ x: v.x / mag, y: v.y / mag, z: v.z / mag }) * min : mag > max ? (v / mag) * max : v;
+//     return mag < min ? ({ x: v[0] / mag, y: v[1] / mag, z: v[2] / mag }) * min : mag > max ? (v / mag) * max : v;
 // }
 //Returns this vector with a magnitude of 1
-export const normalized = (v: Vec3): Vec3 => magnitude(v) > kEpsilon ? create(v.x / magnitude(v), v.y / magnitude(v), v.z / magnitude(v)) : zero()
+export const normalized = (v: vec3): vec3 => magnitude(v) > kEpsilon ? create(v[0] / magnitude(v), v[1] / magnitude(v), v[2] / magnitude(v)) : zero()
 //Makes this vector have a magnitude of 1.
-export const normalize = (v: Vec3): void => {
+export const normalize = (v: vec3): void => {
     const mag = magnitude(v)
     if (mag > 0.00001) {
-        { v.x / mag, v.y / mag, v.z / mag }
+        { v[0] / mag, v[1] / mag, v[2] / mag }
     } else {
         zero()
     }
 }
 type Negate = (v: vec3) => vec3
-export const negate: Negate = (v) => creates(-v[0], -v[1], -v[2])
-// export const negate = (v: Vec3): Vec3 => {
-//     return { x: -v.x, y: -v.y, z: -v.z }
-// }
+export const negate: Negate = (v) => create(-v[0], -v[1], -v[2])
 // when you want specific distance between a^ and b
-export const scalarProjection = (v1: Vec3, v2: Vec3): number => dot(normalized(v1), v2)
-export const VectorProjection = (v1: Vec3, v2: Vec3): Vec3 => {
+export const scalarProjection = (v1: vec3, v2: vec3): number => dot(normalized(v1), v2)
+export const VectorProjection = (v1: vec3, v2: vec3): vec3 => {
     // would get normalize projection point?
     const v1Norm = normalized(v1)
     const scProj = scalarProjection(v1, v2)
-    return { x: v1Norm.x * scProj, y: v1Norm.y * scProj, z: v1Norm.z * scProj }
+    return create(v1Norm[0] * scProj, v1Norm[1] * scProj, v1Norm[2] * scProj)
 }
 // supposendly or how i understood it, what unit vectors are
-export const unitVector = (v: Vec3): Vec3 => normalized(v)
+export const unitVector = (v: vec3): vec3 => normalized(v)
 //Returns the distance between a and b.
-type Distance = (v1: Vec3, v2: Vec3) => number
+type Distance = (v1: vec3, v2: vec3) => number
 export const distance: Distance = (v1, v2) => Math.sqrt(distanceSqrt(v1, v2))
 // export const distance = (v1: vec3, v2: vec3): number => Math.sqrt(distanceSqrt(v1, v2))
-export const distanceSqrt = (v1: Vec3, v2: Vec3): number => (v2.x - v1.x) * (v2.x - v1.x) + (v2.y - v1.y) * (v2.y - v1.y) + (v2.z - v1.z) * (v2.z - v1.z)
+export const distanceSqrt = (v1: vec3, v2: vec3): number => (v2[0] - v1[0]) * (v2[0] - v1[0]) + (v2[1] - v1[1]) * (v2[1] - v1[1]) + (v2[2] - v1[2]) * (v2[2] - v1[2])
 //Linearly interpolates between two points.
-export const lerp = (a: Vec3, b: Vec3, t: Vec3): Vec3 => create(Lerp(a.x, b.x, t.x), Lerp(a.y, b.y, t.y), Lerp(a.z, b.z, t.z))
+export const lerp = (a: vec3, b: vec3, t: vec3): vec3 => create(Lerp(a[0], b[0], t[0]), Lerp(a[1], b[1], t[1]), Lerp(a[2], b[2], t[2]))
 //Linearly interpolates between two vectors.
-export const lerpUnclamped = (a: Vec3, b: Vec3, t: number): Vec3 => {
-    return { x: 1, y: 1, z: 1 }
-}
-export const inverseLerp = (a: Vec3, b: Vec3, v: Vec3): Vec3 => create((v.x - a.x) / (b.x - a.x), (v.y - a.y) / (b.y - a.y), (v.z - a.z) / (b.z - a.z))
+export const lerpUnclamped = (a: vec3, b: vec3, t: number): vec3 => create(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t)
+export const inverseLerp = (a: vec3, b: vec3, v: vec3): vec3 => create((v[0] - a[0]) / (b[0] - a[0]), (v[1] - a[1]) / (b[1] - a[1]), (v[2] - a[2]) / (b[2] - a[2]))
 // Spherically interpolates between two vectors??points.
-export const slerp = (a: Vec3, b: Vec3, t: number): Vec3 => {
-    return { x: 1, y: 1, z: 1 }
+export const slerp = (a: vec3, b: vec3, t: number): vec3 => {
+    return create()
 }
 //Spherically interpolates between two vectors.
-export const slerpUnclamped = (a: Vec3, b: Vec3, t: number): Vec3 => {
-    return { x: 1, y: 1, z: 1 }
+export const slerpUnclamped = (a: vec3, b: vec3, t: number): vec3 => {
+    return create()
 }
 //	Calculates the angle between vectors from and.
-export const angle = (from: Vec3, to: Vec3): number => {
+export const angle = (from: vec3, to: vec3): number => {
     const denominator = Math.sqrt(magnitudeSqrt(from) * magnitudeSqrt(to))
     let Dot = math.clamp(dot(from, to) / denominator, -1, 1)
     return Math.acos(Dot) * Rad2Deg
 }
 //Calculates the signed angle between vectors from and to in relation to axis.
-export const signedAngle = (from: Vec3, to: Vec3, axis: Vec3): number => {
+export const signedAngle = (from: vec3, to: vec3, axis: vec3): number => {
     let unsignedAngle = angle(from, to);
-    let cx = from.y * to.z - from.z * to.y;
-    let cy = from.z * to.x - from.x * to.z;
-    let cz = from.x * to.y - from.y * to.x;
-    let sign = Math.sign(axis.x * cx + axis.y * cy + axis.z * cz);
+    let cx = from[1] * to[2] - from[2] * to[1];
+    let cy = from[2] * to[0] - from[0] * to[2];
+    let cz = from[0] * to[1] - from[1] * to[0];
+    let sign = Math.sign(axis[0] * cx + axis[1] * cy + axis[2] * cz);
     return unsignedAngle * sign
 }
 //	Multiplies two vectors component-wise.
-export const scale = (a: Vec3, b: Vec3): Vec3 => create(a.x * b.x, a.y * b.y, a.z * b.z)
+export const scale = (a: vec3, b: vec3): vec3 => create(a[0] * b[0], a[1] * b[1], a[2] * b[2])
 //Calculate a position between the points specified by current and target, moving no farther than the distance specified by maxDistanceDelta.
 /**
  * 
@@ -166,19 +164,19 @@ export const scale = (a: Vec3, b: Vec3): Vec3 => create(a.x * b.x, a.y * b.y, a.
  * @param maxDistanceDelta:Distance to move current per call.
  * @returns 
  */
-export const MoveTowards = (current: Vec3, target: Vec3, maxDistanceDelta: number): Vec3 => {
-    const sqrtDist = (target.x - current.x) * (target.x - current.x) + (target.y - current.y) * (target.y - current.y) + (target.z - current.z) * (target.z - current.z);
+export const MoveTowards = (current: vec3, target: vec3, maxDistanceDelta: number): vec3 => {
+    const sqrtDist = (target[0] - current[0]) * (target[0] - current[0]) + (target[1] - current[1]) * (target[1] - current[1]) + (target[2] - current[2]) * (target[2] - current[2]);
     if (sqrtDist === 0 || (maxDistanceDelta >= 0 && sqrtDist <= maxDistanceDelta * maxDistanceDelta)) target
     const dist = Math.sqrt(sqrtDist)
-    return create(current.x + (target.x - current.x) / dist * maxDistanceDelta, current.y + (target.y - current.y) / dist * maxDistanceDelta, current.z + (target.z - current.z) / dist * maxDistanceDelta)
+    return create(current[0] + (target[0] - current[0]) / dist * maxDistanceDelta, current[1] + (target[1] - current[1]) / dist * maxDistanceDelta, current[2] + (target[2] - current[2]) / dist * maxDistanceDelta)
 }
 //Reflects a vector off the plane defined by a normal.
-export const reflect = (inDirection: Vec3, inNormal: Vec3): Vec3 => {
+export const reflect = (inDirection: vec3, inNormal: vec3): vec3 => {
     const factor = -2 * dot(inNormal, inDirection)
     return create(
-        factor * inNormal.x + inDirection.x,
-        factor * inNormal.y + inDirection.y,
-        factor * inNormal.z + inDirection.z
+        factor * inNormal[0] + inDirection[0],
+        factor * inNormal[1] + inDirection[1],
+        factor * inNormal[2] + inDirection[2]
     )
 }
 /**
@@ -189,16 +187,16 @@ export const reflect = (inDirection: Vec3, inNormal: Vec3): Vec3 => {
  * @param maxMagnitudeDelta The maximum allowed change in vector magnitude for this rotation
  * @returns Vector3 The location that RotateTowards generates
  */
-export const rotateTowards = (current: Vec3, target: Vec3, maxRadiansDelta: number, maxMagnitudeDelta: number): Vec3 => create()
+export const rotateTowards = (current: vec3, target: vec3, maxRadiansDelta: number, maxMagnitudeDelta: number): vec3 => create()
 // Projects a vector onto another vector.
-export const Project = (v: Vec3, onNormal: Vec3): Vec3 => {
+export const Project = (v: vec3, onNormal: vec3): vec3 => {
     let sqrtMag = dot(onNormal, onNormal)
     if (sqrtMag < kEpsilon) {
         return zero()
     }
     else {
         let Dot = dot(v, onNormal)
-        return create(v.x - onNormal.x * Dot / sqrtMag, v.y - onNormal.y * Dot / sqrtMag, v.z - onNormal.z * Dot / sqrtMag)
+        return create(v[0] - onNormal[0] * Dot / sqrtMag, v[1] - onNormal[1] * Dot / sqrtMag, v[2] - onNormal[2] * Dot / sqrtMag)
     }
 }
 /**
@@ -207,14 +205,14 @@ export const Project = (v: Vec3, onNormal: Vec3): Vec3 => {
  * @param v The location of the vector above the plane
  * @returns Vector3 The location of the vector on the plane
  */
-export const ProjectOnPlane = (planeNormal: Vec3, v: Vec3): Vec3 => {
+export const ProjectOnPlane = (planeNormal: vec3, v: vec3): vec3 => {
     const sqrtMag = dot(planeNormal, planeNormal)
     if (sqrtMag < kEpsilon) {
         return v
     }
     else {
         const Dot = dot(v, planeNormal)
-        return create(planeNormal.x * Dot / sqrtMag, planeNormal.y * Dot / sqrtMag, planeNormal.z * Dot / sqrtMag)
+        return create(planeNormal[0] * Dot / sqrtMag, planeNormal[1] * Dot / sqrtMag, planeNormal[2] * Dot / sqrtMag)
     }
 }
 /**
@@ -228,7 +226,7 @@ export const ProjectOnPlane = (planeNormal: Vec3, v: Vec3): Vec3 => {
  * @param deltaTime The time since the last call to this function. By default deltaTime
  * @returns add return descriptions
  */
-export const smoothDamps = (current: Vec3, target: Vec3, currentVelocity: Vec3, smoothTime: number, maxSpeed: number, deltaTime: number): Vec3 => {
+export const smoothDamps = (current: vec3, target: vec3, currentVelocity: vec3, smoothTime: number, maxSpeed: number, deltaTime: number): vec3 => {
     let output_x = 0;
     let output_y = 0;
     let output_z = 0;
@@ -240,9 +238,9 @@ export const smoothDamps = (current: Vec3, target: Vec3, currentVelocity: Vec3, 
     const x = omega * deltaTime;
     const exp = 1 / (1 + x + 0.48 * x * x + 0.235 * x * x * x);
 
-    let change_x = current.x - target.x;
-    let change_y = current.y - target.y;
-    let change_z = current.z - target.z;
+    let change_x = current[0] - target[0];
+    let change_y = current[1] - target[1];
+    let change_z = current[2] - target[2];
     const og = create()
     const originalTo = copy(og, target);
 
@@ -258,46 +256,46 @@ export const smoothDamps = (current: Vec3, target: Vec3, currentVelocity: Vec3, 
         change_z = change_z / mag * maxChange;
     }
 
-    target.x = current.x - change_x;
-    target.y = current.y - change_y;
-    target.z = current.z - change_z;
+    target[0] = current[0] - change_x;
+    target[1] = current[1] - change_y;
+    target[2] = current[2] - change_z;
 
-    const temp_x = (currentVelocity.x + omega * change_x) * deltaTime;
-    const temp_y = (currentVelocity.y + omega * change_y) * deltaTime;
-    const temp_z = (currentVelocity.z + omega * change_z) * deltaTime;
+    const temp_x = (currentVelocity[0] + omega * change_x) * deltaTime;
+    const temp_y = (currentVelocity[1] + omega * change_y) * deltaTime;
+    const temp_z = (currentVelocity[2] + omega * change_z) * deltaTime;
 
-    currentVelocity.x = (currentVelocity.x - omega * temp_x) * exp;
-    currentVelocity.y = (currentVelocity.y - omega * temp_y) * exp;
-    currentVelocity.z = (currentVelocity.z - omega * temp_z) * exp;
+    currentVelocity[0] = (currentVelocity[0] - omega * temp_x) * exp;
+    currentVelocity[1] = (currentVelocity[1] - omega * temp_y) * exp;
+    currentVelocity[2] = (currentVelocity[2] - omega * temp_z) * exp;
 
-    output_x = target.x + (change_x + temp_x) * exp;
-    output_y = target.y + (change_y + temp_y) * exp;
-    output_z = target.z + (change_z + temp_z) * exp;
+    output_x = target[0] + (change_x + temp_x) * exp;
+    output_y = target[1] + (change_y + temp_y) * exp;
+    output_z = target[2] + (change_z + temp_z) * exp;
 
     // Prevent overshooting
-    const origMinusCurrent_x = originalTo.x - current.x;
-    const origMinusCurrent_y = originalTo.y - current.y;
-    const origMinusCurrent_z = originalTo.z - current.z;
-    const outMinusOrig_x = output_x - originalTo.x;
-    const outMinusOrig_y = output_y - originalTo.y;
-    const outMinusOrig_z = output_z - originalTo.z;
+    const origMinusCurrent_x = originalTo[0] - current[0];
+    const origMinusCurrent_y = originalTo[1] - current[1];
+    const origMinusCurrent_z = originalTo[2] - current[2];
+    const outMinusOrig_x = output_x - originalTo[0];
+    const outMinusOrig_y = output_y - originalTo[1];
+    const outMinusOrig_z = output_z - originalTo[2];
 
     if (origMinusCurrent_x * outMinusOrig_x + origMinusCurrent_y * outMinusOrig_y + origMinusCurrent_z * outMinusOrig_z > 0) {
-        output_x = originalTo.x;
-        output_y = originalTo.y;
-        output_z = originalTo.z;
+        output_x = originalTo[0];
+        output_y = originalTo[1];
+        output_z = originalTo[2];
 
-        currentVelocity.x = (output_x - originalTo.x) / deltaTime;
-        currentVelocity.y = (output_y - originalTo.y) / deltaTime;
-        currentVelocity.z = (output_z - originalTo.z) / deltaTime;
+        currentVelocity[0] = (output_x - originalTo[0]) / deltaTime;
+        currentVelocity[1] = (output_y - originalTo[1]) / deltaTime;
+        currentVelocity[2] = (output_z - originalTo[2]) / deltaTime;
     }
 
     return create(output_x, output_y, output_z);
 }
 //Returns a vector that is made from the largest components of two vectors.
-export const max = (lhs: vec3, rhs: vec3): vec3 => creates(Math.max(lhs[0], rhs[0]), Math.max(lhs[1], rhs[1]), Math.max(lhs[2], rhs[2]))
+export const max = (lhs: vec3, rhs: vec3): vec3 => create(Math.max(lhs[0], rhs[0]), Math.max(lhs[1], rhs[1]), Math.max(lhs[2], rhs[2]))
 //Returns a vector that is made from the smallest components of two vectors.
-export const min = (lhs: vec3, rhs: vec3): vec3 => creates(Math.min(lhs[0], rhs[0]), Math.min(lhs[1], rhs[1]), Math.min(lhs[2], rhs[2]))
+export const min = (lhs: vec3, rhs: vec3): vec3 => create(Math.min(lhs[0], rhs[0]), Math.min(lhs[1], rhs[1]), Math.min(lhs[2], rhs[2]))
 // bezier curvers
 //Bernstein polynomial form
 export const bernstein = (t: number) => {
@@ -309,14 +307,14 @@ export const bernstein = (t: number) => {
 }
 // quadratic bezier curve
 // but it might not be the performant 
-export const quadBezier = (a: Vec3, b: Vec3, c: Vec3, t: number): Vec3 => {
-    const a1 = Lerp(a.x, b.x, t)
-    const b1 = Lerp(a.y, b.y, t)
-    const c1 = Lerp(a.z, b.z, t)
+export const quadBezier = (a: vec3, b: vec3, c: vec3, t: number): vec3 => {
+    const a1 = Lerp(a[0], b[0], t)
+    const b1 = Lerp(a[1], b[1], t)
+    const c1 = Lerp(a[2], b[2], t)
 
-    const a2 = Lerp(b.x, c.x, t)
-    const b2 = Lerp(b.y, c.y, t)
-    const c2 = Lerp(b.z, c.z, t)
+    const a2 = Lerp(b[0], c[0], t)
+    const b2 = Lerp(b[1], c[1], t)
+    const c2 = Lerp(b[2], c[2], t)
 
     const x = Lerp(a1, a2, t)
     const y = Lerp(b1, b2, t)
@@ -324,12 +322,12 @@ export const quadBezier = (a: Vec3, b: Vec3, c: Vec3, t: number): Vec3 => {
     return create(x, y, z)
 }
 // cubic bezier curve
-export const cubicBezier = (a: Vec3, b: Vec3, c: Vec3, d: Vec3, e: Vec3, t: number): Vec3 => {
+export const cubicBezier = (a: vec3, b: vec3, c: vec3, d: vec3, e: vec3, t: number): vec3 => {
     const v1 = quadBezier(a, b, c, t)
     const v2 = quadBezier(b, c, d, t)
     const v3 = quadBezier(c, d, e, t)
-    const x = Lerp(v1.x, v2.x, t)
-    const y = Lerp(v1.y, v2.y, t)
-    const z = Lerp(v2.z, v3.z, t)
+    const x = Lerp(v1[0], v2[0], t)
+    const y = Lerp(v1[1], v2[1], t)
+    const z = Lerp(v2[2], v3[2], t)
     return create(x, y, z)
 }

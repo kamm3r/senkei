@@ -1,9 +1,12 @@
-import { Vec2, Vec3, Vec4 } from "../types";
+import type { vec2, vec3, vec4 } from "../types";
+import * as Vec2 from '../vec2'
+import * as Vec3 from '../vec3'
+import * as Vec4 from '../vec4'
 
 export const Sqrt = (value: number): number => Math.sqrt(value);
-export const Sqrt2 = (v: Vec2): Vec2 => ({ x: Sqrt(v.x), y: Sqrt(v.y) })
-export const Sqrt3 = (v: Vec3): Vec3 => ({ x: Sqrt(v.x), y: Sqrt(v.y), z: Sqrt(v.z) })
-export const Sqrt4 = (v: Vec4): Vec4 => ({ x: Sqrt(v.x), y: Sqrt(v.y), z: Sqrt(v.z), w: Sqrt(v.w) })
+export const Sqrt2 = (v: vec2): vec2 => Vec2.create(Sqrt(v[0]), Sqrt(v[1]))
+export const Sqrt3 = (v: vec3): vec3 => Vec3.create(Sqrt(v[0]), Sqrt(v[1]), Sqrt(v[2]))
+export const Sqrt4 = (v: vec4): vec4 => Vec4.create(Sqrt(v[0]), Sqrt(v[1]), Sqrt(v[2]), Sqrt(v[3]))
 //Returns the cube root of the given value, properly handling negative values unlike Pow(v,1/3)
 export const Cbrt = (value: number): number => value < 0 ? -Pow(-value, 1 / 3) : Pow(value, 1 / 3);
 // Returns value raised to the power of exponent
