@@ -113,3 +113,37 @@ export interface Mat4 {
     m42: number
     m43: number
 }
+
+export type TypedArray = Float32Array | []
+
+export type vec2 = [number, number] | IndexedCollection
+export type vec3 = [number, number, number] | IndexedCollection
+export type vec4 = [number, number, number, number] | IndexedCollection
+
+export type quat = [number, number, number, number] | IndexedCollection
+
+export type mat2 =
+    [number, number,
+        number, number] | IndexedCollection
+export type mat2x3 = [number, number,
+    number, number,
+    number, number] | IndexedCollection
+export type mat3x2 = [number, number, number,
+    number, number, number] | IndexedCollection
+export type mat3 = [number, number, number,
+    number, number, number,
+    number, number, number] | IndexedCollection
+export type mat3x4 = [number, number, number, number,
+    number, number, number, number,
+    number, number, number, number] | IndexedCollection
+export type mat4 = [number, number, number, number,
+    number, number, number, number,
+    number, number, number, number,
+    number, number, number, number] | IndexedCollection
+
+export type Triangle = [vec2, vec2, vec2]
+
+export interface IndexedCollection extends Iterable<number> {
+    readonly length: number;
+    [index: number]: number;
+}

@@ -104,12 +104,6 @@ describe('Vec2', () => {
         expect(parseFloat(vecProj.x.toFixed(3))).toBe(7.426)
         expect(parseFloat(vecProj.y.toFixed(3))).toBe(11.138)
     })
-    test('Unit vector, v(2,3) values given', () => {
-        const v = vec2.create(3, 1)
-        const uv = vec2.unitVector(v)
-        expect(parseFloat(uv.x.toFixed(3))).toBe(0.949)
-        expect(parseFloat(uv.y.toFixed(3))).toBe(0.316)
-    })
     test('Distance, v1(2,3) and v2(5,7) values given', () => {
         const v1 = vec2.create(2, 3)
         const v2 = vec2.create(5, 7)

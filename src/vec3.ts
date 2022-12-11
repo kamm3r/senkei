@@ -128,32 +128,6 @@ export const distance: Distance = (v1, v2) => Math.sqrt(distanceSqrt(v1, v2))
 export const distanceSqrt = (v1: Vec3, v2: Vec3): number => (v2.x - v1.x) * (v2.x - v1.x) + (v2.y - v1.y) * (v2.y - v1.y) + (v2.z - v1.z) * (v2.z - v1.z)
 //Linearly interpolates between two points.
 export const lerp = (a: Vec3, b: Vec3, t: Vec3): Vec3 => create(Lerp(a.x, b.x, t.x), Lerp(a.y, b.y, t.y), Lerp(a.z, b.z, t.z))
-// quadratic bezier curve
-// but it might not be the performant 
-export const quadBezier = (a: Vec3, b: Vec3, c: Vec3, t: number): Vec3 => {
-    const a1 = Lerp(a.x, b.x, t)
-    const b1 = Lerp(a.y, b.y, t)
-    const c1 = Lerp(a.z, b.z, t)
-
-    const a2 = Lerp(b.x, c.x, t)
-    const b2 = Lerp(b.y, c.y, t)
-    const c2 = Lerp(b.z, c.z, t)
-
-    const x = Lerp(a1, a2, t)
-    const y = Lerp(b1, b2, t)
-    const z = Lerp(c1, c2, t)
-    return create(x, y, z)
-}
-// cubic bezier curve
-export const cubicBezier = (a: Vec3, b: Vec3, c: Vec3, d: Vec3, e: Vec3, t: number): Vec3 => {
-    const v1 = quadBezier(a, b, c, t)
-    const v2 = quadBezier(b, c, d, t)
-    const v3 = quadBezier(c, d, e, t)
-    const x = Lerp(v1.x, v2.x, t)
-    const y = Lerp(v1.y, v2.y, t)
-    const z = Lerp(v2.z, v3.z, t)
-    return create(x, y, z)
-}
 //Linearly interpolates between two vectors.
 export const lerpUnclamped = (a: Vec3, b: Vec3, t: number): Vec3 => {
     return { x: 1, y: 1, z: 1 }
@@ -324,3 +298,38 @@ export const smoothDamps = (current: Vec3, target: Vec3, currentVelocity: Vec3, 
 export const max = (lhs: vec3, rhs: vec3): vec3 => creates(Math.max(lhs[0], rhs[0]), Math.max(lhs[1], rhs[1]), Math.max(lhs[2], rhs[2]))
 //Returns a vector that is made from the smallest components of two vectors.
 export const min = (lhs: vec3, rhs: vec3): vec3 => creates(Math.min(lhs[0], rhs[0]), Math.min(lhs[1], rhs[1]), Math.min(lhs[2], rhs[2]))
+// bezier curvers
+//Bernstein polynomial form
+export const bernstein = (t: number) => {
+    const p0 = -(t * t * t) + 3 * (t * t) - 3 * t + 1
+    const p1 = 3 * (t * t * t) - 6 * (t * t) - 3 * t
+    const p2 = -3 * (t * t * t) + 3 * (t * t)
+    const p3 = (t * t * t)
+    return p0 + p1 + p2 + p3
+}
+// quadratic bezier curve
+// but it might not be the performant 
+export const quadBezier = (a: Vec3, b: Vec3, c: Vec3, t: number): Vec3 => {
+    const a1 = Lerp(a.x, b.x, t)
+    const b1 = Lerp(a.y, b.y, t)
+    const c1 = Lerp(a.z, b.z, t)
+
+    const a2 = Lerp(b.x, c.x, t)
+    const b2 = Lerp(b.y, c.y, t)
+    const c2 = Lerp(b.z, c.z, t)
+
+    const x = Lerp(a1, a2, t)
+    const y = Lerp(b1, b2, t)
+    const z = Lerp(c1, c2, t)
+    return create(x, y, z)
+}
+// cubic bezier curve
+export const cubicBezier = (a: Vec3, b: Vec3, c: Vec3, d: Vec3, e: Vec3, t: number): Vec3 => {
+    const v1 = quadBezier(a, b, c, t)
+    const v2 = quadBezier(b, c, d, t)
+    const v3 = quadBezier(c, d, e, t)
+    const x = Lerp(v1.x, v2.x, t)
+    const y = Lerp(v1.y, v2.y, t)
+    const z = Lerp(v2.z, v3.z, t)
+    return create(x, y, z)
+}

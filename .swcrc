@@ -57,7 +57,9 @@
     }
   },
   "module": {
-    "type": "es6"
+    "type": "es6",
+    "strict": true,
+    "strictMode": true
   },
   "minify": true,
   "isModule": true
