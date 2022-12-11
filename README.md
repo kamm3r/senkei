@@ -9,27 +9,27 @@ Game dev Math
     - [x] vec2
     - [x] vec3
     - [x] vec4
-  - [x] Vector-Vector operations (+, -, .\*, ./, dot, cross and wedge)
-  - [x] Vector-Scalar operations (+, -, \*, /, ^)
+  - [x] Vector-Vector operations (+, -,\* , /, dot, cross and wedge)
+  - [x] Vector-Scalar operations (+, -,\*, /, ^)
   - [x] magnitude/squared magnitude
   - [x] normalized
   - [x] distance
-  - [x] unit vectors
   - [x] lerp
   - [x] lerp clamped
-  - [ ] slerp
-  - [ ] slerp clamped
+  - [ ] slerp ${\color{grey}not \space major \space rn}$
+  - [ ] slerp clamped ${\color{grey}not \space major \space rn}$
   - [x] inverse lerp
-  - [ ] transforms
+  - [ ] transforms ${\color{grey}not \space major \space rn}$
   - [x] scale
   - [x] angle between vecs
   - [x] signed angle
   - [x] move towards
   - [x] reflect
-  - [ ] rotate towards
+  - [ ] rotate towards ${\color{grey}not \space major \space rn}$
   - [x] project
   - [x] project on plane
   - [x] smooth damp
+  - [ ] bezier curves ${\color{grey}not \space major \space rn}$
 - [ ] Matrix
   - [x] new matrix
     - [x] 2x2
@@ -47,7 +47,7 @@ Game dev Math
   - [ ] projection matrix
   - [ ] identity matrix
 - [ ] Quaternion
-  - [ ] new quaternion
+  - [x] new quaternion
 
 #### Test
 
@@ -58,8 +58,5 @@ Game dev Math
 #### general
 
 - [x] add bundler(babel, swc?)
-- [x] fix constants
-- [ ] calculus and trigonometry implement
+- [x] fix constants and add more
 - [ ] when current implemention is finished, make class version of it, and compare the performances between them
-- add uvecs, umats, ivecs n imats
-- make correct matrices with normal arrays `[[0,0],[0,0]]`

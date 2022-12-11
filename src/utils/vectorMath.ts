@@ -1,20 +1,31 @@
-import { Vec2 } from "../types";
-import { magnitude } from "../vec2";
+import type { vec2 } from "../types";
+import * as Vec2 from "../vec2";
+import * as Mathf from "../utils/Math";
 //The determinant is equivalent to the dot product, but with one vector rotated 90 degrees.
 // Note that det(a,b) != det(b,a). It's equivalent to a.x * b.y - a.y * b.x.
 // It is also known as the 2D Cross Product, Wedge Product, Outer Product and Perpendicular Dot Product
 // 2D "cross product"
-export const determinant = (a: Vec2, b: Vec2): number => a.x * b.y - a.y * b.x
+// export const determinant = (a: vec2, b: vec2): number => a.x * b.y - a.y * b[]
 
-export const getDirAndMag = (v: Vec2): { dir: Vec2, magnitude: number } => {
-    const mag = magnitude(v)
-    return {
-        dir: { x: v.x / mag, y: v.y / mag },
-        magnitude: mag
-    }
+//Returns the direction and magnitude of the vector. Cheaper than calculating length and normalizing it separately
+export const getDirAndMag = (v: vec2): { dir: vec2, magnitude: number } => {
+    const mag = Vec2.magnitude(v)
+    return { dir: Vec2.create(v[0] / mag, v[1] / mag), magnitude: mag }
 }
-
-export const ClampMagnitude = (v: Vec2, min: number, max: number): Vec2 => {
-    const mag = magnitude(v);
-    return { x: mag < min ? (v.x / mag) * min : mag > max ? (v.x / mag) * max : v.x, y: mag < min ? (v.y / mag) * min : mag > max ? (v.y / mag) * max : v.y };
+/**
+ * Clamps the length of the vector between <c>min</c> and <c>max</c>
+ * @param v The vector to clamp
+ * @param min Minimum length
+ * @param max Maximum length
+ * 
+ */
+export const ClampMagnitude = (v: vec2, min: number, max: number): vec2 => {
+    const mag = Vec2.magnitude(v);
+    return Vec2.create(mag < min ? (v[0] / mag) * min : mag > max ? (v[0] / mag) * max : v[0], mag < min ? (v[1] / mag) * min : mag > max ? (v[1] / mag) * max : v[1]);
 }
+// Returns the average/center of the two input vectors
+export const Average = (a: vec2, b: vec2): vec2 => Vec2.create((a[0] + b[0]) / 2, (a[1] + b[1]) / 2)
+// Returns the average/halfway direction between the two input direction vectors. Note that this presumes both <c>aDir</c> and <c>bDir</c> have the same length
+export const AverageDir = (aDir: vec2, bDir: vec2): vec2 => Vec2.normalized(Vec2.create(aDir[0] + bDir[0], aDir[1] + bDir[1]))
+//Returns the squared distance between two points. This is faster than the actual distance, and is useful when comparing distances where the absolute distance doesn't matter
+export const DistanceSquared = (a: vec2, b: vec2): number => Mathf.Square(a[0] - b[0]) + Mathf.Square(a[1] - b[1]);

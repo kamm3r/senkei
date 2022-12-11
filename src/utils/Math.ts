@@ -12,4 +12,6 @@ export const clamp = (value: number, min: number, max: number): number => value 
 export const clamp01 = (value: number): number => value < 0 ? 0 : value > 1 ? 1 : value;
 // Clamps the value between -1 and 1
 export const clampNeg1to1 = (value: number): number => value < -1 ? -1 : value > 1 ? 1 : value;
- // export const clamps = (value: number, min: number, max: number): number => Math.min(Math.max(value, min), max)
+// export const clamps = (value: number, min: number, max: number): number => Math.min(Math.max(value, min), max)
+
+export const Square = (v: number) => v * v;

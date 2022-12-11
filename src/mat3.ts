@@ -3,16 +3,6 @@
 // y |m10 m11 m12|
 // z |m20 m21 m22|
 // Matrix 3x3
-// interface Position {
-//     row: number
-//     column: number
-//     coordinates: number[][]
-// }
-// interface Size {
-//     row: number
-//     column: number
-//     dimensions: number[][]
-// }
 
 // export class matrix {
 //     private element: number

@@ -24,8 +24,7 @@
   "scripts": {
     "test": "jest",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false --strict",
-    "build": "rm -rf dist && pnpm swc ./src -d dist",
-    "build:ts": "rm -rf dist && tsc && tsc --build"
+    "build": "rm -rf dist && pnpm swc ./src -d dist"
   },
   "devDependencies": {
     "@swc/cli": "^0.1.57",

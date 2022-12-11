@@ -1,17 +1,18 @@
-import { Quat, Vec2 } from "../types";
-import { normalized } from "../vec2";
+import * as Vec2 from "../vec2";
+import * as Quat from "../quat";
+import type { quat, vec2 } from "../types";
 import { clamp01 } from "./clamp";
 import { PI, TAU } from "./constants";
 import { inverseLerpClamped } from "./interpolation";
 import { Repeat } from "./rangeRepeat";
 
-export const angToDir = (aRad: number): Vec2 => ({ x: Math.cos(aRad), y: Math.sin(aRad) })
-export const dirToAng = (v: Vec2): number => Math.atan2(v.y, v.x)
-export const DirToOrientation = (v: Vec2): Quat => {
-    v = normalized(v)
-    v.x += 1
-    v = normalized(v)
-    return { x: 0, y: 0, z: v.y, w: v.x }
+export const angToDir = (aRad: number): vec2 => Vec2.create(Math.cos(aRad), Math.sin(aRad))
+export const dirToAng = (v: vec2): number => Math.atan2(v[1], v[0])
+export const DirToOrientation = (v: vec2): quat => {
+    v = Vec2.normalized(v)
+    v[0] += 1
+    v = Vec2.normalized(v)
+    return Quat.create(0, 0, v[1], v[0])
 }
 
 export const lerpAngle = (a: number, b: number, t: number): number => {
