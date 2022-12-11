@@ -55,8 +55,6 @@ Game dev Math
 - [ ] Matrices
 - [ ] Quaternions
 
-#### general
+##### Perf tests
 
-- [x] add bundler(babel, swc?)
-- [x] fix constants and add more
 - [ ] when current implemention is finished, make class version of it, and compare the performances between them
