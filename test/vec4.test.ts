@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest'
 import * as Vec4 from "../src/vec4"
 
 describe('Vec4', () => {

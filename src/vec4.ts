@@ -3,20 +3,14 @@ import { Infinity, NegativeInfinity } from "./utils/floatingPoints"
 import { Lerp } from "./utils/interpolation"
 import * as math from "./utils/abs"
 
-
 // export const create = (x = 0, y = 0, z = 0, w = 0): vec4 => {
 //     return { x, y, z, w }
 // }
-// export const creates = (x = 0, y = 0, z = 0, w = 0): vec4 => {
 export const create = (x = 0, y = 0, z = 0, w = 0): vec4 => new Float32Array([x, y, z, w])
 export const one = (): vec4 => create(1, 1, 1, 1)
 export const zero = (): vec4 => create(0, 0, 0, 0)
 export const negativeInfinity = (): vec4 => create(NegativeInfinity, NegativeInfinity, NegativeInfinity, NegativeInfinity)
 export const positiveInfinity = (): vec4 => create(Infinity, Infinity, Infinity, Infinity)
-// export const one = (): vec4 => ({ x: 1, y: 1, z: 1, w: 1 })
-// export const zero = (): vec4 => ({ x: 0, y: 0, z: 0, w: 0 })
-// export const negativeInfinity = (): vec4 => ({ x: NegativeInfinity, y: NegativeInfinity, z: NegativeInfinity, w: NegativeInfinity })
-// export const positiveInfinity = (): vec4 => ({ x: Infinity, y: Infinity, z: Infinity, w: Infinity })
 
 export const scalarAddition = (v: vec4, k: number): vec4 => create(v[0] + k, v[1] + k, v[2] + k, v[3] + k)
 export const scalarSubtraction = (v: vec4, k: number): vec4 => create(v[0] - k, v[1] - k, v[2] - k, v[3] - k)

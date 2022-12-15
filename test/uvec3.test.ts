@@ -1,4 +1,6 @@
+import { describe, expect, test } from 'vitest'
 import * as vec3 from '../src/uvec3'
+
 describe('uvec3', () => {
     test('Uint32Array, no values given', () => {
         const v = vec3._new()

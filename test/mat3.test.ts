@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest'
 import * as mat3 from '../src/mat3'
 
 describe('Mat3', () => {

@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest'
 import * as vec2 from '../src/vec2'
 import * as vec3 from '../src/vec3'
 import * as vec4 from '../src/vec4'

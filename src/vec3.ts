@@ -140,18 +140,18 @@ export const slerpUnclamped = (a: vec3, b: vec3, t: number): vec3 => {
     return create()
 }
 //	Calculates the angle between vectors from and.
-export const angle = (from: vec3, to: vec3): number => {
+export const Angle = (from: vec3, to: vec3): number => {
     const denominator = Math.sqrt(magnitudeSqrt(from) * magnitudeSqrt(to))
     let Dot = math.clamp(dot(from, to) / denominator, -1, 1)
     return Math.acos(Dot) * Rad2Deg
 }
 //Calculates the signed angle between vectors from and to in relation to axis.
 export const signedAngle = (from: vec3, to: vec3, axis: vec3): number => {
-    let unsignedAngle = angle(from, to);
-    let cx = from[1] * to[2] - from[2] * to[1];
-    let cy = from[2] * to[0] - from[0] * to[2];
-    let cz = from[0] * to[1] - from[1] * to[0];
-    let sign = Math.sign(axis[0] * cx + axis[1] * cy + axis[2] * cz);
+    const unsignedAngle = Angle(from, to);
+    const cx = from[1] * to[2] - from[2] * to[1];
+    const cy = from[2] * to[0] - from[0] * to[2];
+    const cz = from[0] * to[1] - from[1] * to[0];
+    const sign = Math.sign(axis[0] * cx + axis[1] * cy + axis[2] * cz);
     return unsignedAngle * sign
 }
 //	Multiplies two vectors component-wise.
@@ -187,7 +187,12 @@ export const reflect = (inDirection: vec3, inNormal: vec3): vec3 => {
  * @param maxMagnitudeDelta The maximum allowed change in vector magnitude for this rotation
  * @returns Vector3 The location that RotateTowards generates
  */
-export const rotateTowards = (current: vec3, target: vec3, maxRadiansDelta: number, maxMagnitudeDelta: number): vec3 => create()
+export const RotateTowards = (current: vec3, target: vec3, maxRadiansDelta: number, maxMagnitudeDelta: number): vec3 => {
+    const angle = Angle(current, target)
+    if (angle === 0) target
+    // not finished
+    return lerpUnclamped(current, target, Math.min(1, maxRadiansDelta / angle))
+}
 // Projects a vector onto another vector.
 export const Project = (v: vec3, onNormal: vec3): vec3 => {
     let sqrtMag = dot(onNormal, onNormal)

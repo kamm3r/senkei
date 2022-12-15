@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest'
 import * as vec2 from "../src/vec2"
 
 describe('Vec2', () => {
@@ -115,6 +116,25 @@ describe('Vec2', () => {
         const v2 = vec2.create(5, 7)
         const dist = vec2.distanceSqrt(v1, v2)
         expect(dist).toBe(25)
+    })
+    test('bitwise shift and or operator', () => {
+        let a = 0b101
+        let b = 0b10110
+        b <<= 4 // 0001 0110 0000 = 357
+        let c = a | b
+        expect(c.toString(2)).toBe('101100101')
+    })
+    test('bitwise xor operator', () => {
+        let a = ~0b00010000
+        let b = 0b101100101
+        let c = a & b
+        expect(c.toString(2)).toBe('101100101')
+    })
+    test('bitwise not operator', () => {
+        let a = 0b1101
+        let b = a ^ a
+
+        expect(b).toBe(0)
     })
 
 })
