@@ -3,7 +3,7 @@ import * as Quat from "../quat";
 import type { quat, vec2 } from "../types";
 import { clamp01 } from "./clamp";
 import { PI, TAU } from "./constants";
-import { inverseLerpClamped } from "./interpolation";
+import { InverseLerpClamped } from "./interpolation";
 import { Repeat } from "./rangeRepeat";
 
 export const angToDir = (aRad: number): vec2 => Vec2.create(Math.cos(aRad), Math.sin(aRad))
@@ -25,7 +25,7 @@ export const inverseLerpAngle = (a: number, b: number, v: number): number => {
     b = a + angBetween
     const h = a + angBetween * 0.5
     v = h + deltaAngle(h, v)
-    return inverseLerpClamped(a, b, v)
+    return InverseLerpClamped(a, b, v)
 }
 // Calculates the shortest difference between two given angles.
 export const deltaAngle = (a: number, b: number): number => Repeat((b - a + PI), TAU) - PI
