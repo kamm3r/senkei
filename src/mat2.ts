@@ -16,7 +16,7 @@ export const multiplyByVec2 = (mat: mat2, vec: vec2): vec2 => Vec2.create(mat[0]
 
 export const Determinant = (mat: mat2): number => mat[0] * mat[3] - mat[2] * mat[1]
 export const DecomposeProjection = (mat: mat2): number => mat[0] * mat[3] - mat[2] * mat[1]
-export const Inverse = (mat: mat2): number => mat[0] * mat[3] - mat[2] * mat[1]
+export const Inverse = (mat: mat2): number => Determinant(mat)
 export const Rotation = (mat: mat2): number => mat[0] * mat[3] - mat[2] * mat[1]
 export const LocalToWorld = (mat: mat2): number => mat[0] * mat[3] - mat[2] * mat[1]
 export const WorldToLocal = (mat: mat2): number => mat[0] * mat[3] - mat[2] * mat[1]
@@ -25,10 +25,6 @@ export const ProjectionMatrix = (mat: mat2): number => mat[0] * mat[3] - mat[2] 
 // export const Rotate = (q: quat): mat2 => create()
 export const Scale = (a: mat2, v: vec2): mat2 => create(a[0] * v[0], a[1] * v[0], a[2] * v[1], a[3] * v[1])
 
-export const from_diagonal = (diagonal: mat2): mat2 => {
-    return new Float32Array([diagonal[0], 0, 0, diagonal[3]])
-
-}
 export const TransformVector = () => { }
 
 export const getRows = (a: mat2, row: number) => {
