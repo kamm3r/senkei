@@ -1,7 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import * as vec2 from '../src/vec2'
-import * as vec3 from '../src/vec3'
-import * as vec4 from '../src/vec4'
+import { vec2, vec3, vec4 } from '../src'
 import { Sqrt, Sqrt2, Sqrt3, Sqrt4 } from '../src/utils/mathOperation'
 
 describe('Squared', () => {

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import * as mat3 from '../src/mat3'
+import { mat3 } from '../src'
 
 describe('Mat3', () => {
     test('create, no values given default to [0, 0, 0, 0, 0, 0, 0, 0, 0]', () => {

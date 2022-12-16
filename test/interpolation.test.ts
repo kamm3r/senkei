@@ -1,4 +1,4 @@
-import { describe, expect ,test} from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { Eerp } from '../src/utils/interpolation'
 
 describe('Interpolation', () => {

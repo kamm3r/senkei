@@ -120,6 +120,14 @@ export type vec2 = [number, number] | IndexedCollection
 export type vec3 = [number, number, number] | IndexedCollection
 export type vec4 = [number, number, number, number] | IndexedCollection
 
+export type uvec2 = [number, number] | IndexedCollection
+export type uvec3 = [number, number, number] | IndexedCollection
+export type uvec4 = [number, number, number, number] | IndexedCollection
+
+export type ivec2 = [number, number] | Int32Array
+export type ivec3 = [number, number, number] | Int32Array
+export type ivec4 = [number, number, number, number] | Int32Array
+
 export type quat = [number, number, number, number] | IndexedCollection
 
 export type mat2 =

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import * as vec2 from "../src/vec2"
+import { vec2 } from "../src"
 
 describe('Vec2', () => {
     test('create, no values given', () => {

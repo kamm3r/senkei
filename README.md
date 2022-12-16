@@ -48,6 +48,18 @@ Game dev Math
   - [ ] identity matrix
 - [ ] Quaternion
   - [x] new quaternion
+  - [ ] Quaternion multiplication
+  - [ ] angle
+  - [ ] dot
+  - [ ] euler, eulerAngles
+  - [ ] fromToRotation, lookRotation
+  - [ ] inverse
+  - [ ] lerp and lerpUnclamped
+  - [ ] normalize
+  - [ ] rotateTowards
+  - [ ] slerp and slerpUnclamped
+  - [ ] identity
+  - [ ] set, setfFromToRotation, SetLookRotation, toAngleAxis
 
 #### Test
 

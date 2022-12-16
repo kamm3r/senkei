@@ -118,7 +118,7 @@ export const distanceSqrt = (v1: vec2, v2: vec2): number => {
 export const lerp = (a: vec2, b: vec2, t: vec2): vec2 => create(Lerp(a[0], b[0], t[0]), Lerp(a[1], b[1], t[1]))
 //Linearly interpolates between two vectors.
 export const lerpUnclamped = (a: vec2, b: vec2, t: number): vec2 => create(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t)
-export const inverseLerp = (a: vec2, b: vec2, v: vec2): vec2 => create((v[0] - a[0]) / (b[0] - a[0]), (v[1] - a[1]) / (b[1] - a[1]))
+export const InverseLerp = (a: vec2, b: vec2, v: vec2): vec2 => create((v[0] - a[0]) / (b[0] - a[0]), (v[1] - a[1]) / (b[1] - a[1]))
 export const cubicBezier = (a: vec2, b: vec2, c: vec2, d: vec2, t: number): vec2 => {
     const x = Math.pow(1 - t, 3) * a[0] + 3 * Math.pow(1 - t, 2) * b[0] + 3 * Math.pow(1 - t, 2) * Math.pow(t, 2) * c[0] + Math.pow(t, 3) * d[0]
     const y = Math.pow(1 - t, 3) * a[1] + 3 * Math.pow(1 - t, 2) * b[1] + 3 * Math.pow(1 - t, 2) * Math.pow(t, 2) * c[1] + Math.pow(t, 3) * d[1]
