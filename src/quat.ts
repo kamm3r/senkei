@@ -2,6 +2,7 @@ import *as Vec3 from "./vec3"
 import { vec3, quat } from "./types"
 import { Rad2Deg } from './utils/constants'
 import { EPSILON, kEpsilon } from "./utils/floatingPoints"
+import * as mathf from "./utils"
 
 
 export const create = (x = 0, y = 0, z = 0, w = 0): quat => new Float32Array([x, y, z, w])
@@ -45,7 +46,7 @@ export const setLookRotation = (view: vec3): void => {
     const up = Vec3.up
 
 }
-export const toAngleAxis = (a: number, v: vec3): quat => create()
+export const toAngleAxis = (angle: number, axis: vec3): quat => create(axis[0] / Math.sqrt(1 - angle * angle), axis[1] / Math.sqrt(1 - angle * angle), axis[2] / Math.sqrt(1 - angle * angle), 2 * Math.acos(angle))
 export const toString = (a: number, v: vec3): quat => create()
 export const Angle = (a: quat, b: quat): number => {
     const dot = Math.min(Math.abs(Dot(a, b)), 1)
@@ -73,6 +74,16 @@ const Internal_MakePositive = (euler: vec3): vec3 => {
     }
     return euler
 }
+
+/**
+ * 
+ * @param angle rotate angle in degrees
+ * @param axis normalized vector
+ * @returns 
+ */
+
+// axis = normalized vector
+// angle= 2xatan2(mag, w) 
 export const AngleAxis = (angle: number, axis: vec3): quat => create(axis[0] * Math.sin(angle * 0.5), axis[1] * Math.sin(angle * 0.5), axis[2] * Math.sin(angle * 0.5), Math.cos(angle * 0.5))
 export const Dot = (a: quat, b: quat): number => a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3];
 export const Euler = (x: number, y: number, z: number): quat => {
@@ -93,8 +104,9 @@ export const Inverse = (rotation: quat): quat => {
     }
     return create(-rotation[0] * invSqrtMag, -rotation[1] * invSqrtMag, -rotation[2] * invSqrtMag, -rotation[3] * invSqrtMag)
 }
-export const Lerp = (a: number): quat => create()
-export const LerpUnclamped = (a: number): quat => create()
+export const Lerp = (a: quat, b: quat, t: number): quat => create(mathf.Lerp(a[0], b[0], t), mathf.Lerp(a[1], b[1], t), mathf.Lerp(a[2], b[2], t), mathf.Lerp(a[3], b[3], t))
+export const Lerps = (a: quat, b: quat, t: quat): quat => create(mathf.Lerp(a[0], b[0], t[0]), mathf.Lerp(a[1], b[1], t[1]), mathf.Lerp(a[2], b[2], t[2]), mathf.Lerp(a[3], b[3], t[3]))
+export const LerpUnclamped = (a: quat, b: quat, t: number): quat => create(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, a[3] + (b[3] - a[3]) * t)
 /**
  * 
  * @param forward The direction to look in

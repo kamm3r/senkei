@@ -4,8 +4,8 @@ import * as Vec2 from "./vec2"
 
 export const create = (m00: number, m01: number, m10: number, m11: number): mat2 => new Float32Array([m00, m01, m10, m11])
 
-export const identity = (mat: mat2): mat2 => create(1, 0, 0, 1)
-export const zero = (mat: mat2): mat2 => create(0, 0, 0, 0)
+export const identity = (): mat2 => create(1, 0, 0, 1)
+export const zero = (): mat2 => create(0, 0, 0, 0)
 
 export const scalarAddition = (v: mat2, k: number): mat2 => create(v[0] + k, v[1] + k, v[2] + k, v[3] + k)
 export const scalarSubtraction = (v: mat2, k: number): mat2 => create(v[0] - k, v[1] - k, v[2] - k, v[3] - k)

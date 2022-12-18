@@ -17,11 +17,8 @@
   ],
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/math.d.mts",
-        "default": "./dist/math.mjs"
-      },
       "types": "./dist/math.d.ts",
+      "import": "./dist/math.mjs",
       "module": "./dist/math.js",
       "default": "./dist/math.js"
     },
@@ -39,9 +36,9 @@
     "benchmark": "./benchmark"
   },
   "devDependencies": {
-    "@types/node": "^18.11.15",
+    "@types/node": "^18.11.17",
     "typescript": "^4.9.4",
-    "vite": "^4.0.1",
+    "vite": "^4.0.2",
     "vitest": "^0.25.8"
   }
 }

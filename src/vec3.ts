@@ -1,9 +1,5 @@
 import type { vec3 } from "./types"
-import * as math from "./utils/clamp"
-import * as mathf from "./utils/abs"
-import { Rad2Deg } from "./utils/constants"
-import { EPSILON, Infinity, kEpsilon, NegativeInfinity } from "./utils/floatingPoints"
-import { Lerp } from "./utils/interpolation"
+import * as mathf from "./utils/"
 
 // export type vec3 = Float32Array
 
@@ -20,8 +16,8 @@ export const right = (): vec3 => create(1, 0, 0)
 export const up = (): vec3 => create(0, 1, 0)
 export const one = (): vec3 => create(1, 1, 1)
 export const zero = (): vec3 => create(0, 0, 0)
-export const negativeInfinity = (): vec3 => create(NegativeInfinity, NegativeInfinity, NegativeInfinity)
-export const positiveInfinity = (): vec3 => create(Infinity, Infinity, Infinity)
+export const negativeInfinity = (): vec3 => create(mathf.NegativeInfinity, mathf.NegativeInfinity, mathf.NegativeInfinity)
+export const positiveInfinity = (): vec3 => create(mathf.Infinity, mathf.Infinity, mathf.Infinity)
 
 //TODO:get and set function these
 export const x = (x: number): vec3 => create(x)
@@ -38,11 +34,11 @@ export const differentEquals = (v1: vec3, v2: vec3): boolean => v1[0] !== v2[0] 
 //operator == Returns true if two vectors are approximately equal.
 export const approximatelyEquals = (v1: vec3, v2: vec3): boolean => {
     return (Math.abs(v1[0] - v2[0]) <=
-        EPSILON * Math.max(1.0, Math.abs(v1[0]), Math.abs(v2[0])) &&
+        mathf.EPSILON * Math.max(1.0, Math.abs(v1[0]), Math.abs(v2[0])) &&
         Math.abs(v1[1] - v2[1]) <=
-        EPSILON * Math.max(1.0, Math.abs(v1[1]), Math.abs(v2[1])) &&
+        mathf.EPSILON * Math.max(1.0, Math.abs(v1[1]), Math.abs(v2[1])) &&
         Math.abs(v1[2] - v2[2]) <=
-        EPSILON * Math.max(1.0, Math.abs(v1[2]), Math.abs(v2[2]))
+        mathf.EPSILON * Math.max(1.0, Math.abs(v1[2]), Math.abs(v2[2]))
     );
 }
 // maybe??? probably not though
@@ -99,7 +95,7 @@ export const clampMagnitude = (v: vec3, maxLength: number): vec3 => {
 //     return mag < min ? ({ x: v[0] / mag, y: v[1] / mag, z: v[2] / mag }) * min : mag > max ? (v / mag) * max : v;
 // }
 //Returns this vector with a magnitude of 1
-export const normalized = (v: vec3): vec3 => magnitude(v) > kEpsilon ? create(v[0] / magnitude(v), v[1] / magnitude(v), v[2] / magnitude(v)) : zero()
+export const normalized = (v: vec3): vec3 => magnitude(v) > mathf.kEpsilon ? create(v[0] / magnitude(v), v[1] / magnitude(v), v[2] / magnitude(v)) : zero()
 //Makes this vector have a magnitude of 1.
 export const normalize = (v: vec3): void => {
     const mag = magnitude(v)
@@ -127,7 +123,8 @@ export const distance: Distance = (v1, v2) => Math.sqrt(distanceSqrt(v1, v2))
 // export const distance = (v1: vec3, v2: vec3): number => Math.sqrt(distanceSqrt(v1, v2))
 export const distanceSqrt = (v1: vec3, v2: vec3): number => (v2[0] - v1[0]) * (v2[0] - v1[0]) + (v2[1] - v1[1]) * (v2[1] - v1[1]) + (v2[2] - v1[2]) * (v2[2] - v1[2])
 //Linearly interpolates between two points.
-export const lerp = (a: vec3, b: vec3, t: vec3): vec3 => create(Lerp(a[0], b[0], t[0]), Lerp(a[1], b[1], t[1]), Lerp(a[2], b[2], t[2]))
+export const Lerp = (a: vec3, b: vec3, t: number): vec3 => create(mathf.Lerp(a[0], b[0], t), mathf.Lerp(a[1], b[1], t), mathf.Lerp(a[2], b[2], t))
+export const Lerps = (a: vec3, b: vec3, t: vec3): vec3 => create(mathf.Lerp(a[0], b[0], t[0]), mathf.Lerp(a[1], b[1], t[1]), mathf.Lerp(a[2], b[2], t[2]))
 //Linearly interpolates between two vectors.
 export const lerpUnclamped = (a: vec3, b: vec3, t: number): vec3 => create(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t)
 export const inverseLerp = (a: vec3, b: vec3, v: vec3): vec3 => create((v[0] - a[0]) / (b[0] - a[0]), (v[1] - a[1]) / (b[1] - a[1]), (v[2] - a[2]) / (b[2] - a[2]))
@@ -142,8 +139,8 @@ export const slerpUnclamped = (a: vec3, b: vec3, t: number): vec3 => {
 //	Calculates the angle between vectors from and.
 export const Angle = (from: vec3, to: vec3): number => {
     const denominator = Math.sqrt(magnitudeSqrt(from) * magnitudeSqrt(to))
-    let Dot = math.clamp(dot(from, to) / denominator, -1, 1)
-    return Math.acos(Dot) * Rad2Deg
+    let Dot = mathf.clamp(dot(from, to) / denominator, -1, 1)
+    return Math.acos(Dot) * mathf.Rad2Deg
 }
 //Calculates the signed angle between vectors from and to in relation to axis.
 export const signedAngle = (from: vec3, to: vec3, axis: vec3): number => {
@@ -196,7 +193,7 @@ export const RotateTowards = (current: vec3, target: vec3, maxRadiansDelta: numb
 // Projects a vector onto another vector.
 export const Project = (v: vec3, onNormal: vec3): vec3 => {
     let sqrtMag = dot(onNormal, onNormal)
-    if (sqrtMag < kEpsilon) {
+    if (sqrtMag < mathf.kEpsilon) {
         return zero()
     }
     else {
@@ -212,7 +209,7 @@ export const Project = (v: vec3, onNormal: vec3): vec3 => {
  */
 export const ProjectOnPlane = (planeNormal: vec3, v: vec3): vec3 => {
     const sqrtMag = dot(planeNormal, planeNormal)
-    if (sqrtMag < kEpsilon) {
+    if (sqrtMag < mathf.kEpsilon) {
         return v
     }
     else {
@@ -310,29 +307,24 @@ export const bernstein = (t: number) => {
     const p3 = (t * t * t)
     return p0 + p1 + p2 + p3
 }
-// quadratic bezier curve
-// but it might not be the performant 
-export const quadBezier = (a: vec3, b: vec3, c: vec3, t: number): vec3 => {
-    const a1 = Lerp(a[0], b[0], t)
-    const b1 = Lerp(a[1], b[1], t)
-    const c1 = Lerp(a[2], b[2], t)
-
-    const a2 = Lerp(b[0], c[0], t)
-    const b2 = Lerp(b[1], c[1], t)
-    const c2 = Lerp(b[2], c[2], t)
-
-    const x = Lerp(a1, a2, t)
-    const y = Lerp(b1, b2, t)
-    const z = Lerp(c1, c2, t)
-    return create(x, y, z)
-}
 // cubic bezier curve
-export const cubicBezier = (a: vec3, b: vec3, c: vec3, d: vec3, e: vec3, t: number): vec3 => {
-    const v1 = quadBezier(a, b, c, t)
-    const v2 = quadBezier(b, c, d, t)
-    const v3 = quadBezier(c, d, e, t)
-    const x = Lerp(v1[0], v2[0], t)
-    const y = Lerp(v1[1], v2[1], t)
-    const z = Lerp(v2[2], v3[2], t)
-    return create(x, y, z)
+export const cubicBezier = (p0: vec3, p1: vec3, p2: vec3, p3: vec3, t: number): vec3 => {
+    const a = Lerp(p0, p1, t)
+    const b = Lerp(p1, p2, t)
+    const c = Lerp(p2, p3, t)
+    const d = Lerp(a, b, t)
+    const e = Lerp(b, c, t)
+    return Lerp(d, e, t)
+}
+// quadratic bezier curve
+export const quadBezier = (p0: vec3, p1: vec3, p2: vec3, p3: vec3, p4: vec3, t: number): vec3 => {
+    const a = Lerp(p0, p1, t)
+    const b = Lerp(p1, p2, t)
+    const c = Lerp(p2, p3, t)
+    const d = Lerp(p3, p4, t)
+
+    const e = Lerp(a, b, t)
+    const f = Lerp(c, d, t)
+
+    return Lerp(e, f, t)
 }
