@@ -45,7 +45,7 @@ Game dev Math
   - [ ] inverse matrix
   - [ ] transform
   - [ ] projection matrix
-  - [ ] identity matrix
+  - [x] identity matrix
 - [ ] Quaternion
   - [x] new quaternion
   - [x] Quaternion multiplication
