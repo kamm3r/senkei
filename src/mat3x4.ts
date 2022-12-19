@@ -1,4 +1,5 @@
-type mat3x4 = Float32Array
+import { mat3x4 } from "./types"
+
 
 export const create = (m00: number, m01: number, m02: number, m03: number, m10: number, m11: number, m12: number, m13: number, m20: number, m21: number, m22: number, m23: number): mat3x4 => {
     // export const create = (m00: number,m01: number,m02: number,m10: number,m11: number,m12: number,m30: number,m31: number,m32: number): mat3 => {
@@ -8,3 +9,5 @@ export const create = (m00: number, m01: number, m02: number, m03: number, m10: 
         m20, m21, m22, m23,
     ])
 }
+
+export const Identity = (): mat3x4 => create(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0)

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { Eerp } from '../src/utils/interpolation'
+import { Eerp, Lerp, FastLerp } from '../src/utils/interpolation'
 
 describe('Interpolation', () => {
     test('Eerp 28, 46, 1', () => {
@@ -16,6 +16,16 @@ describe('Interpolation', () => {
         const e = Eerp(28, 46, -1)
 
         expect(parseFloat(e.toFixed(3))).toBe(17.043)
+    })
+    test('Lerp 28, 46, -1', () => {
+        const e = Lerp(28, 46, -1)
+
+        expect(e).toBe(10)
+    })
+    test('fastLerp 28, 46, -1', () => {
+        const e = FastLerp(28, 46, -1)
+
+        expect(e).toBe(10)
     })
     // test('Eerps 28, 46, 1', () => {
     //     const e = Eerps(28, 46, 1)

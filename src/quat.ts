@@ -1,7 +1,5 @@
-import *as Vec3 from "./vec3"
+import * as Vec3 from "./vec3"
 import { vec3, quat } from "./types"
-import { Rad2Deg } from './utils/constants'
-import { EPSILON, kEpsilon } from "./utils/floatingPoints"
 import * as mathf from "./utils"
 
 
@@ -31,7 +29,7 @@ export const multiplyfromVec3 = (rotation: quat, point: vec3): vec3 => {
     return Vec3.create((1 - (yy + zz)) * point[0] + (xy - wz) * point[1] + (xz + wy) * point[2], (xy + wz) * point[0] + (1 - (xx + zz)) * point[1] + (yz - wx) * point[2], (xz - wy) * point[0] + (yz + wx) * point[1] + (1 - (xx + yy)) * point[2])
 }
 // Is the dot product of two quaternions within tolerance for them to be considered equal?
-export const IsEqualUsingDot = (dot: number): boolean => dot > 1 - kEpsilon
+export const IsEqualUsingDot = (dot: number): boolean => dot > 1 - mathf.kEpsilon
 // Are two quaternions equal to each other?
 export const equals = (lhs: quat, rhs: quat): boolean => IsEqualUsingDot(Dot(lhs, rhs))
 // Are two quaternions different from each other?
@@ -46,15 +44,17 @@ export const setLookRotation = (view: vec3): void => {
     const up = Vec3.up
 
 }
+export const magnitude = (q: quat): number => Math.sqrt(magnitudeSqrt(q))
+export const magnitudeSqrt = (q: quat): number => q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3]
 export const toAngleAxis = (angle: number, axis: vec3): quat => create(axis[0] / Math.sqrt(1 - angle * angle), axis[1] / Math.sqrt(1 - angle * angle), axis[2] / Math.sqrt(1 - angle * angle), 2 * Math.acos(angle))
 export const toString = (a: number, v: vec3): quat => create()
 export const Angle = (a: quat, b: quat): number => {
     const dot = Math.min(Math.abs(Dot(a, b)), 1)
-    return IsEqualUsingDot(dot) ? 0 : Math.acos(dot) * 2 * Rad2Deg
+    return IsEqualUsingDot(dot) ? 0 : Math.acos(dot) * 2 * mathf.Rad2Deg
 }
 
 const Internal_MakePositive = (euler: vec3): vec3 => {
-    const negativeFlip = -0.0001 * Rad2Deg
+    const negativeFlip = -0.0001 * mathf.Rad2Deg
     const positiveFlip = 360 + negativeFlip
     if (euler[0] < negativeFlip) {
         euler[0] += 360
@@ -84,7 +84,16 @@ const Internal_MakePositive = (euler: vec3): vec3 => {
 
 // axis = normalized vector
 // angle= 2xatan2(mag, w) 
-export const AngleAxis = (angle: number, axis: vec3): quat => create(axis[0] * Math.sin(angle * 0.5), axis[1] * Math.sin(angle * 0.5), axis[2] * Math.sin(angle * 0.5), Math.cos(angle * 0.5))
+export const AngleAxis = (angle: number, axis: vec3): quat => {
+    const vn = Vec3.normalized(axis)
+
+    angle *= mathf.Deg2Rad
+    angle *= 0.5
+    const sinAngle = Math.sin(angle)
+
+    return create(vn[0] * sinAngle, vn[1] * sinAngle, vn[2] * sinAngle, Math.cos(angle))
+}
+// export const AngleAxis = (angle: number, axis: vec3): quat => create(axis[0] * Math.sin(angle * 0.5), axis[1] * Math.sin(angle * 0.5), axis[2] * Math.sin(angle * 0.5), Math.cos(angle * 0.5))
 export const Dot = (a: quat, b: quat): number => a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3];
 export const Euler = (x: number, y: number, z: number): quat => {
     const cr = Math.cos(x * 0.5)
@@ -107,6 +116,7 @@ export const Inverse = (rotation: quat): quat => {
 export const Lerp = (a: quat, b: quat, t: number): quat => create(mathf.Lerp(a[0], b[0], t), mathf.Lerp(a[1], b[1], t), mathf.Lerp(a[2], b[2], t), mathf.Lerp(a[3], b[3], t))
 export const Lerps = (a: quat, b: quat, t: quat): quat => create(mathf.Lerp(a[0], b[0], t[0]), mathf.Lerp(a[1], b[1], t[1]), mathf.Lerp(a[2], b[2], t[2]), mathf.Lerp(a[3], b[3], t[3]))
 export const LerpUnclamped = (a: quat, b: quat, t: number): quat => create(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, a[3] + (b[3] - a[3]) * t)
+
 /**
  * 
  * @param forward The direction to look in
@@ -114,8 +124,12 @@ export const LerpUnclamped = (a: quat, b: quat, t: number): quat => create(a[0] 
  * @returns 
  */
 // export const LookRotation = (forward: vec3, upwards = Vec3.up): quat => create()
-export const LookRotation = (forward: vec3, upwards = Vec3.up): quat => LookRotation(forward, Vec3.up)
-export const Normalize = (q: quat): quat => Math.sqrt(Dot(q, q)) < EPSILON ? identity() : create(q[0] / Math.sqrt(Dot(q, q)), q[1] / Math.sqrt(Dot(q, q)), q[2] / Math.sqrt(Dot(q, q)), q[3] / Math.sqrt(Dot(q, q)))
+export const LookRotation = (forward: vec3, upwards: vec3): quat => {
+    const up = upwards
+    const lookAt = forward
+    return create()
+}
+export const Normalize = (q: quat): quat => Math.sqrt(Dot(q, q)) < mathf.EPSILON ? identity() : create(q[0] / Math.sqrt(Dot(q, q)), q[1] / Math.sqrt(Dot(q, q)), q[2] / Math.sqrt(Dot(q, q)), q[3] / Math.sqrt(Dot(q, q)))
 /**
  * 
  * @param from 
@@ -151,7 +165,7 @@ export const Slerp = (a: quat, b: quat, t: number): quat => {
         cosTheta0 = -cosTheta0;
     }
 
-    if (1 - cosTheta0 > kEpsilon) {
+    if (1 - cosTheta0 > mathf.kEpsilon) {
         const omega = Math.acos(cosTheta0);
         const sinom = Math.sin(omega);
         scale0 = Math.sin((1.0 - t) * omega) / sinom;
@@ -161,5 +175,18 @@ export const Slerp = (a: quat, b: quat, t: number): quat => {
         scale1 = t
     }
     return create(scale0 * x1 + scale1 * x2, scale0 * y1 + scale1 * y2, scale0 * z1 + scale1 * z2, scale0 * w1 + scale1 * w2)
+}
+export const SlerpN = (a: quat, b: quat, t: number): quat => {
+    let cosTheta = Dot(a, a)
+    let temp = b
+    if (cosTheta < 0) {
+        cosTheta *= -1;
+        // negate function
+        temp = create(temp[0] * -1, temp[1] * -1, temp[2] * -1, temp[3] * -1)
+    }
+    const theta = Math.acos(cosTheta)
+    const sinTheta = 1 / Math.sin(theta)
+
+    return create(sinTheta * ((a[0] * Math.sin(theta * (1 * t)) + (temp[0] * Math.sin(t * theta)))), sinTheta * ((a[1] * Math.sin(theta * (1 * t)) + (temp[1] * Math.sin(t * theta)))), sinTheta * ((a[2] * Math.sin(theta * (1 * t)) + (temp[2] * Math.sin(t * theta)))), sinTheta * ((a[3] * Math.sin(theta * (1 * t)) + (temp[3] * Math.sin(t * theta)))))
 }
 export const SlerpUnclamped = (a: quat, b: quat, t: number): quat => create()

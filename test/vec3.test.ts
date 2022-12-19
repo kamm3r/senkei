@@ -15,49 +15,49 @@ describe('Vec3', () => {
         expect(v[2]).toBe(3)
     })
     test('back static vector', () => {
-        const v = vec3.back()
+        const v = vec3.back
         expect(v[0]).toBe(0)
         expect(v[1]).toBe(0)
         expect(v[2]).toBe(-1)
     })
     test('forward static vector', () => {
-        const v = vec3.forward()
+        const v = vec3.forward
         expect(v[0]).toBe(0)
         expect(v[1]).toBe(0)
         expect(v[2]).toBe(1)
     })
     test('down static vector', () => {
-        const v = vec3.down()
+        const v = vec3.down
         expect(v[0]).toBe(0)
         expect(v[1]).toBe(-1)
         expect(v[2]).toBe(0)
     })
     test('up static vector', () => {
-        const v = vec3.up()
+        const v = vec3.up
         expect(v[0]).toBe(0)
         expect(v[1]).toBe(1)
         expect(v[2]).toBe(0)
     })
     test('left static vector', () => {
-        const v = vec3.left()
+        const v = vec3.left
         expect(v[0]).toBe(-1)
         expect(v[1]).toBe(0)
         expect(v[2]).toBe(0)
     })
     test('right static vector', () => {
-        const v = vec3.right()
+        const v = vec3.right
         expect(v[0]).toBe(1)
         expect(v[1]).toBe(0)
         expect(v[2]).toBe(0)
     })
     test('one static vector', () => {
-        const v = vec3.one()
+        const v = vec3.one
         expect(v[0]).toBe(1)
         expect(v[1]).toBe(1)
         expect(v[2]).toBe(1)
     })
     test('zero static vector', () => {
-        const v = vec3.zero()
+        const v = vec3.zero
         expect(v[0]).toBe(0)
         expect(v[1]).toBe(0)
         expect(v[2]).toBe(0)

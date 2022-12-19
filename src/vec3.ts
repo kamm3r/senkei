@@ -1,4 +1,4 @@
-import type { vec3 } from "./types"
+import type { mat4, vec3 } from "./types"
 import * as mathf from "./utils/"
 
 // export type vec3 = Float32Array
@@ -8,16 +8,16 @@ import * as mathf from "./utils/"
 // }
 export const create = (x = 0, y = 0, z = 0): vec3 => new Float32Array([x, y, z])
 
-export const back = (): vec3 => create(0, 0, -1)
-export const down = (): vec3 => create(0, -1, 0)
-export const forward = (): vec3 => create(0, 0, 1)
-export const left = (): vec3 => create(-1, 0, 0)
-export const right = (): vec3 => create(1, 0, 0)
-export const up = (): vec3 => create(0, 1, 0)
-export const one = (): vec3 => create(1, 1, 1)
-export const zero = (): vec3 => create(0, 0, 0)
-export const negativeInfinity = (): vec3 => create(mathf.NegativeInfinity, mathf.NegativeInfinity, mathf.NegativeInfinity)
-export const positiveInfinity = (): vec3 => create(mathf.Infinity, mathf.Infinity, mathf.Infinity)
+export const back = create(0, 0, -1)
+export const down = create(0, -1, 0)
+export const forward = create(0, 0, 1)
+export const left = create(-1, 0, 0)
+export const right = create(1, 0, 0)
+export const up = create(0, 1, 0)
+export const one = create(1, 1, 1)
+export const zero = create(0, 0, 0)
+export const negativeInfinity = create(mathf.NegativeInfinity, mathf.NegativeInfinity, mathf.NegativeInfinity)
+export const positiveInfinity = create(mathf.Infinity, mathf.Infinity, mathf.Infinity)
 
 //TODO:get and set function these
 export const x = (x: number): vec3 => create(x)
@@ -70,7 +70,7 @@ export const dot = (v1: vec3, v2: vec3): number => v1[0] * v2[0] + v1[1] * v2[1]
 //     return false
 // }
 //	Cross Product of two vectors.
-export const cross = (v1: vec3, v2: vec3): vec3 => create((v1[1] * v2[2]) - (v1[2] * v2[1]), (v1[0] * v2[2]) - (v1[2] * v2[0]), (v1[0] * v2[1]) - (v1[1] * v2[0]))
+export const Cross = (v1: vec3, v2: vec3): vec3 => create((v1[1] * v2[2]) - (v1[2] * v2[1]), (v1[0] * v2[2]) - (v1[2] * v2[0]), (v1[0] * v2[1]) - (v1[1] * v2[0]))
 // also know as exterior product
 // {x:0,y:0,z:0 w:wedget product}
 export const wedge = (v1: vec3, v2: vec3): number => v1[0] * v2[1] - v1[1] * v2[0]
@@ -95,14 +95,14 @@ export const clampMagnitude = (v: vec3, maxLength: number): vec3 => {
 //     return mag < min ? ({ x: v[0] / mag, y: v[1] / mag, z: v[2] / mag }) * min : mag > max ? (v / mag) * max : v;
 // }
 //Returns this vector with a magnitude of 1
-export const normalized = (v: vec3): vec3 => magnitude(v) > mathf.kEpsilon ? create(v[0] / magnitude(v), v[1] / magnitude(v), v[2] / magnitude(v)) : zero()
+export const normalized = (v: vec3): vec3 => magnitude(v) > mathf.kEpsilon ? create(v[0] / magnitude(v), v[1] / magnitude(v), v[2] / magnitude(v)) : zero
 //Makes this vector have a magnitude of 1.
 export const normalize = (v: vec3): void => {
     const mag = magnitude(v)
     if (mag > 0.00001) {
         { v[0] / mag, v[1] / mag, v[2] / mag }
     } else {
-        zero()
+        zero
     }
 }
 type Negate = (v: vec3) => vec3
@@ -126,14 +126,14 @@ export const distanceSqrt = (v1: vec3, v2: vec3): number => (v2[0] - v1[0]) * (v
 export const Lerp = (a: vec3, b: vec3, t: number): vec3 => create(mathf.Lerp(a[0], b[0], t), mathf.Lerp(a[1], b[1], t), mathf.Lerp(a[2], b[2], t))
 export const Lerps = (a: vec3, b: vec3, t: vec3): vec3 => create(mathf.Lerp(a[0], b[0], t[0]), mathf.Lerp(a[1], b[1], t[1]), mathf.Lerp(a[2], b[2], t[2]))
 //Linearly interpolates between two vectors.
-export const lerpUnclamped = (a: vec3, b: vec3, t: number): vec3 => create(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t)
+export const LerpUnclamped = (a: vec3, b: vec3, t: number): vec3 => create(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t)
 export const inverseLerp = (a: vec3, b: vec3, v: vec3): vec3 => create((v[0] - a[0]) / (b[0] - a[0]), (v[1] - a[1]) / (b[1] - a[1]), (v[2] - a[2]) / (b[2] - a[2]))
 // Spherically interpolates between two vectors??points.
-export const slerp = (a: vec3, b: vec3, t: number): vec3 => {
+export const Slerp = (a: vec3, b: vec3, t: number): vec3 => {
     return create()
 }
 //Spherically interpolates between two vectors.
-export const slerpUnclamped = (a: vec3, b: vec3, t: number): vec3 => {
+export const SlerpUnclamped = (a: vec3, b: vec3, t: number): vec3 => {
     return create()
 }
 //	Calculates the angle between vectors from and.
@@ -143,7 +143,7 @@ export const Angle = (from: vec3, to: vec3): number => {
     return Math.acos(Dot) * mathf.Rad2Deg
 }
 //Calculates the signed angle between vectors from and to in relation to axis.
-export const signedAngle = (from: vec3, to: vec3, axis: vec3): number => {
+export const SignedAngle = (from: vec3, to: vec3, axis: vec3): number => {
     const unsignedAngle = Angle(from, to);
     const cx = from[1] * to[2] - from[2] * to[1];
     const cy = from[2] * to[0] - from[0] * to[2];
@@ -152,7 +152,45 @@ export const signedAngle = (from: vec3, to: vec3, axis: vec3): number => {
     return unsignedAngle * sign
 }
 //	Multiplies two vectors component-wise.
-export const scale = (a: vec3, b: vec3): vec3 => create(a[0] * b[0], a[1] * b[1], a[2] * b[2])
+export const Scale = (a: vec3, b: vec3): vec3 => create(a[0] * b[0], a[1] * b[1], a[2] * b[2])
+export const Scales = (v: vec3, scale: number): vec3 => create(v[0] * scale, v[1] * scale, v[2] * scale)
+// Orthonormalize provided vectors
+// Makes vectors normalized and orthogonal to each other
+// Gram-Schmidt function implementation
+export const OthoNormalize = (normal: vec3, tangent: vec3): void => {
+    let length = 0
+    let ilength = 0
+
+    let v = normal
+
+    length = Math.sqrt(magnitudeSqrt(v))
+    if (length === 0) length = 1
+    ilength = 1 / length
+    normal[0] *= ilength
+    normal[1] *= ilength
+    normal[2] *= ilength
+
+    let vn1 = Cross(normal, tangent)
+    v = vn1
+    length = Math.sqrt(magnitudeSqrt(v))
+    if (length === 0) length = 1
+    ilength = 1 / length
+    vn1[0] *= ilength
+    vn1[1] *= ilength
+    vn1[2] *= ilength
+
+    let vn2 = Cross(vn1, normal)
+
+    tangent = vn2
+
+}
+export const TransformVec3 = (v: vec3, mat: mat4): vec3 => {
+    const x = v[0]
+    const y = v[1]
+    const z = v[2]
+
+    return create(mat[0] * x + mat[1] * y + mat[2] * z + mat[3], mat[4] * x + mat[5] * y + mat[6] * z + mat[7], mat[8] * x + mat[9] * y + mat[10] * z + mat[11])
+}
 //Calculate a position between the points specified by current and target, moving no farther than the distance specified by maxDistanceDelta.
 /**
  * 
@@ -168,7 +206,7 @@ export const MoveTowards = (current: vec3, target: vec3, maxDistanceDelta: numbe
     return create(current[0] + (target[0] - current[0]) / dist * maxDistanceDelta, current[1] + (target[1] - current[1]) / dist * maxDistanceDelta, current[2] + (target[2] - current[2]) / dist * maxDistanceDelta)
 }
 //Reflects a vector off the plane defined by a normal.
-export const reflect = (inDirection: vec3, inNormal: vec3): vec3 => {
+export const Reflect = (inDirection: vec3, inNormal: vec3): vec3 => {
     const factor = -2 * dot(inNormal, inDirection)
     return create(
         factor * inNormal[0] + inDirection[0],
@@ -188,13 +226,13 @@ export const RotateTowards = (current: vec3, target: vec3, maxRadiansDelta: numb
     const angle = Angle(current, target)
     if (angle === 0) target
     // not finished
-    return lerpUnclamped(current, target, Math.min(1, maxRadiansDelta / angle))
+    return LerpUnclamped(current, target, Math.min(1, maxRadiansDelta / angle))
 }
 // Projects a vector onto another vector.
 export const Project = (v: vec3, onNormal: vec3): vec3 => {
     let sqrtMag = dot(onNormal, onNormal)
     if (sqrtMag < mathf.kEpsilon) {
-        return zero()
+        return zero
     }
     else {
         let Dot = dot(v, onNormal)

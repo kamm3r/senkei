@@ -12,6 +12,12 @@ describe('Vec2', () => {
         expect(v[0]).toBe(1)
         expect(v[1]).toBe(2)
     })
+    test('create, 1,2 values given', () => {
+        const v = vec2.down
+
+        expect(v[0]).toBe(0)
+        expect(v[1]).toBe(-1)
+    })
     test('ScalarAddition, 1,2 values given', () => {
         const v = vec2.create(1, 2)
         const add = vec2.scalarAddition(v, 9)
@@ -67,7 +73,7 @@ describe('Vec2', () => {
     test('dot product', () => {
         const v1 = vec2.create(9, 2)
         const v2 = vec2.create(3, 7)
-        const dot = vec2.dot(v1, v2)
+        const dot = vec2.Dot(v1, v2)
         expect(dot).toBe(21)
     })
     test('magnitude of vec(9,2)', () => {
@@ -77,7 +83,7 @@ describe('Vec2', () => {
     })
     test('magnitudeSqrt of vec(9,2)', () => {
         const v = vec2.create(9, 2)
-        const mag = vec2.magnitudeSqrt(v)
+        const mag = vec2.MagnitudeSqrt(v)
         expect(mag).toBe(85)
     })
     test('Normalized, v(3,1) values given', () => {
@@ -88,14 +94,14 @@ describe('Vec2', () => {
     })
     test('Negate, vec(2,-1)', () => {
         const v = vec2.create(2, -1)
-        const neg = vec2.negate(v)
+        const neg = vec2.Negate(v)
         expect(neg[0]).toBe(-2)
         expect(neg[1]).toBe(1)
     })
     test('Scalar Projection, v(2,3) values given', () => {
         const v1 = vec2.create(2, 3)
         const v2 = vec2.create(5, 7)
-        const scalProj = vec2.scalarProjection(v1, v2)
+        const scalProj = vec2.ScalarProjection(v1, v2)
         expect(parseFloat(scalProj.toFixed(3))).toBe(13.387)
     })
     test('Vector Projection, v(2,3) values given', () => {
@@ -108,13 +114,13 @@ describe('Vec2', () => {
     test('Distance, v1(2,3) and v2(5,7) values given', () => {
         const v1 = vec2.create(2, 3)
         const v2 = vec2.create(5, 7)
-        const dist = vec2.distance(v1, v2)
+        const dist = vec2.Distance(v1, v2)
         expect(dist).toBe(5)
     })
     test('Distance Squared, v1(2,3) and v2(5,7) values given', () => {
         const v1 = vec2.create(2, 3)
         const v2 = vec2.create(5, 7)
-        const dist = vec2.distanceSqrt(v1, v2)
+        const dist = vec2.DistanceSqrt(v1, v2)
         expect(dist).toBe(25)
     })
     test('bitwise shift and or operator', () => {

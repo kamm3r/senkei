@@ -9,6 +9,7 @@ import { smooth01 } from "./smoothingEasing";
  * 
  */
 export const Lerp = (a: number, b: number, t: number): number => (1 - t) * a + t * b;
+export const FastLerp = (a: number, b: number, t: number): number => a + (b - a) * t;
 /**
  * Blends between a and b, based on the t-value. When t = 0 it returns a, when t = 1 it returns b, and any values between are blended linearly
  * @param a The start value, when t is 0
