@@ -1,5 +1,6 @@
-import { mat4, vec3 } from "./types"
+import { mat4, quat, vec3 } from "./types"
 import * as Vec3 from "./vec3"
+import * as Quat from "./quat"
 
 
 export const create = (m00: number, m01: number, m02: number, m03: number, m10: number, m11: number, m12: number, m13: number, m20: number, m21: number, m22: number, m23: number, m30: number, m31: number, m32: number, m33: number): mat4 => {
@@ -52,6 +53,64 @@ export const Determinant = (mat: mat4): number => {
         a30 * a11 * a02 * a23 - a10 * a31 * a02 * a23 - a30 * a01 * a12 * a23 + a00 * a31 * a12 * a23 +
         a10 * a01 * a32 * a23 - a00 * a11 * a32 * a23 - a20 * a11 * a02 * a33 + a10 * a21 * a02 * a33 +
         a20 * a01 * a12 * a33 - a00 * a21 * a12 * a33 - a10 * a01 * a22 * a33 + a00 * a11 * a22 * a33;
+}
+
+// Get a quaternion for a given rotation matrix
+export const rotation = (mat: mat4): quat => {
+    const res = Quat.create(0, 0, 0, 0)
+    let fourWSquaredMinus1 = mat[0] + mat[5] + mat[10];
+    let fourXSquaredMinus1 = mat[0] - mat[5] - mat[10];
+    let fourYSquaredMinus1 = mat[5] - mat[0] - mat[10];
+    let fourZSquaredMinus1 = mat[10] - mat[0] - mat[5];
+
+    let biggestIndex = 0
+    let fourBiggestSquaredMinus1 = fourWSquaredMinus1;
+    if (fourXSquaredMinus1 > fourBiggestSquaredMinus1) {
+        fourBiggestSquaredMinus1 = fourXSquaredMinus1;
+        biggestIndex = 1;
+    }
+
+    if (fourYSquaredMinus1 > fourBiggestSquaredMinus1) {
+        fourBiggestSquaredMinus1 = fourYSquaredMinus1;
+        biggestIndex = 2;
+    }
+
+    if (fourZSquaredMinus1 > fourBiggestSquaredMinus1) {
+        fourBiggestSquaredMinus1 = fourZSquaredMinus1;
+        biggestIndex = 3;
+    }
+
+    let biggestVal = Math.sqrt(fourBiggestSquaredMinus1 + 1) * 0.5;
+    let mult = 0.25 / biggestVal;
+
+    switch (biggestIndex) {
+        case 0:
+            res[3] = biggestVal;
+            res[0] = (mat[9] - mat[6]) * mult;
+            res[1] = (mat[2] - mat[8]) * mult;
+            res[2] = (mat[4] - mat[1]) * mult;
+            break;
+        case 1:
+            res[3] = biggestVal;
+            res[0] = (mat[9] - mat[6]) * mult;
+            res[1] = (mat[4] + mat[1]) * mult;
+            res[2] = (mat[2] + mat[8]) * mult;
+            break;
+        case 2:
+            res[3] = biggestVal;
+            res[0] = (mat[2] - mat[8]) * mult;
+            res[1] = (mat[4] + mat[1]) * mult;
+            res[2] = (mat[9] + mat[6]) * mult;
+            break;
+        case 3:
+            res[3] = biggestVal;
+            res[0] = (mat[4] - mat[1]) * mult;
+            res[1] = (mat[2] + mat[8]) * mult;
+            res[2] = (mat[9] + mat[6]) * mult;
+            break;
+    }
+
+    return res;
 }
 
 // Get the trace of the matrix (sum of the values along the diagonal)
@@ -138,14 +197,6 @@ export const Frustum = (left: number, right: number, bottom: number, top: number
  * @param zFar Far depth clipping plane value 
  * @returns Matrix4x4 The projection matrix
  */
-// m0,     m4,     m8,     m12;      // Matrix first row (4 components)
-// m1,     m5,     m9,     m13;      // Matrix second row (4 components)
-// m2,     m6,     m10,    m14;     // Matrix third row (4 components)
-// m3,     m7,     m11,    m15;     // Matrix fourth row (4 components
-// mat[0], mat[1], mat[2], mat[3]
-// mat[4], mat[5], mat[6], mat[7]
-// mat[8], mat[9], mat[10], mat[11]
-// mat[12], mat[13], mat[14], mat[15]
 export const Perspective = (fov: number, aspect: number, zNear: number, zFar: number): mat4 => {
     let res = create(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
     const top = zNear * Math.tan(fov * 0.5)

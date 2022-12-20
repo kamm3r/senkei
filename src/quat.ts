@@ -5,6 +5,13 @@ import * as mathf from "./utils"
 
 export const create = (x = 0, y = 0, z = 0, w = 0): quat => new Float32Array([x, y, z, w])
 export const identityquaternion = (): quat => create(0, 0, 0, 1)
+export const approximatelyEqual = (v1: vec3, v2: vec3): boolean => v1[0] == v2[0] && v1[1] == v2[1] && v1[2] == v2[2]
+
+export const scalarAddition = (q: quat, k: number): quat => create(q[0] + k, q[1] + k, q[2] + k, q[3] + k)
+export const scalarSubtraction = (q: quat, k: number): quat => create(q[0] - k, q[1] - k, q[2] - k, q[3] - k)
+export const add = (q1: quat, q2: quat): quat => create(q1[0] + q2[0], q1[1] + q2[1], q1[2] + q2[2], q1[3] + q2[3])
+export const subtract = (q1: quat, q2: quat): quat => create(q1[0] - q2[0], q1[1] - q2[1], q1[2] - q2[2], q1[3] - q2[3])
+export const divide = (q1: quat, q2: quat): quat => create(q1[0] / q2[0], q1[1] / q2[1], q1[2] / q2[2], q1[3] / q2[3])
 // Combines rotations /lhs/ and /rhs/
 export const multiply = (lhs: quat, rhs: quat): quat => create(
     lhs[3] * rhs[0] + lhs[0] * rhs[3] + lhs[1] * rhs[2] - lhs[2] * rhs[1],
@@ -28,6 +35,7 @@ export const multiplyfromVec3 = (rotation: quat, point: vec3): vec3 => {
 
     return Vec3.create((1 - (yy + zz)) * point[0] + (xy - wz) * point[1] + (xz + wy) * point[2], (xy + wz) * point[0] + (1 - (xx + zz)) * point[1] + (yz - wx) * point[2], (xz - wy) * point[0] + (yz + wx) * point[1] + (1 - (xx + yy)) * point[2])
 }
+export const Scale = (q: quat, scale: number): quat => create(q[0] * scale, q[1] * scale, q[2] * scale, q[3] * scale)
 // Is the dot product of two quaternions within tolerance for them to be considered equal?
 export const IsEqualUsingDot = (dot: number): boolean => dot > 1 - mathf.kEpsilon
 // Are two quaternions equal to each other?
@@ -142,6 +150,25 @@ export const rotateTowards = (from: quat, to: quat, maxDegreesDelta: number): qu
     if (angle === 0) to
     return SlerpUnclamped(from, to, Math.min(1, maxDegreesDelta / angle))
 }
+export const Nlerp = (a: quat, b: quat, t: number): quat => {
+    const res = create()
+    res[0] = mathf.Lerp(a[0], b[0], t)
+    res[1] = mathf.Lerp(a[1], b[1], t)
+    res[2] = mathf.Lerp(a[2], b[2], t)
+    res[3] = mathf.Lerp(a[3], b[3], t)
+
+    let q = Normalize(res)
+    let mag = Math.sqrt(magnitudeSqrt(q))
+    if (mag === 0) mag = 1
+    const imag = 1 / mag
+
+    res[0] = q[0] * imag
+    res[1] = q[1] * imag
+    res[2] = q[2] * imag
+    res[3] = q[3] * imag
+
+    return res
+}
 export const Slerp = (a: quat, b: quat, t: number): quat => {
     let x1 = a[1];
     let y1 = a[2];
@@ -176,7 +203,7 @@ export const Slerp = (a: quat, b: quat, t: number): quat => {
     }
     return create(scale0 * x1 + scale1 * x2, scale0 * y1 + scale1 * y2, scale0 * z1 + scale1 * z2, scale0 * w1 + scale1 * w2)
 }
-export const SlerpN = (a: quat, b: quat, t: number): quat => {
+export const Slerps = (a: quat, b: quat, t: number): quat => {
     let cosTheta = Dot(a, a)
     let temp = b
     if (cosTheta < 0) {
