@@ -1,10 +1,9 @@
 import * as Vec3 from "./vec3"
-import { vec3, quat } from "./types"
+import { vec3, quat, RotationOrder, rotationOrder } from "./types"
 import * as mathf from "./utils"
 
 
 export const create = (x = 0, y = 0, z = 0, w = 0): quat => new Float32Array([x, y, z, w])
-export const identityquaternion = (): quat => create(0, 0, 0, 1)
 export const approximatelyEqual = (v1: vec3, v2: vec3): boolean => v1[0] == v2[0] && v1[1] == v2[1] && v1[2] == v2[2]
 
 export const scalarAddition = (q: quat, k: number): quat => create(q[0] + k, q[1] + k, q[2] + k, q[3] + k)
@@ -43,18 +42,111 @@ export const equals = (lhs: quat, rhs: quat): boolean => IsEqualUsingDot(Dot(lhs
 // Are two quaternions different from each other?
 export const differentEquals = (lhs: quat, rhs: quat): boolean => lhs !== rhs
 
-export const identity = (): quat => identityquaternion()
-
-export const eualerAngles = (a: number, b: number, c: number): quat => create()
+export const identity = create(0, 0, 0, 1)
+/**
+ * @returns Returns or sets the euler angle representation of the rotation
+ */
+export const eualerAngles = () => {
+    return {
+        get: () => Internal_MakePositive(Vec3.create(3 * mathf.Rad2Deg, 3 * mathf.Rad2Deg, 3 * mathf.Rad2Deg)),
+        set: () => Internal_MakePositive(Vec3.create(3 * mathf.Deg2Rad, 3 * mathf.Deg2Rad, 3 * mathf.Deg2Rad))
+    }
+}
 export const normalized = (q: quat): quat => Normalize(q)
 export const setFromToRotation = (fromDirection: vec3, toDirection: vec3): quat => create()
-export const setLookRotation = (view: vec3): void => {
-    const up = Vec3.up
-
+export const setLookRotation = (view: vec3, up = Vec3.up): void => {
+    LookRotation(view, up)
 }
 export const magnitude = (q: quat): number => Math.sqrt(magnitudeSqrt(q))
 export const magnitudeSqrt = (q: quat): number => q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3]
-export const toAngleAxis = (angle: number, axis: vec3): quat => create(axis[0] / Math.sqrt(1 - angle * angle), axis[1] / Math.sqrt(1 - angle * angle), axis[2] / Math.sqrt(1 - angle * angle), 2 * Math.acos(angle))
+export const AxisAngle = (axis: vec3, angle: number): quat => {
+    const sina = Math.sin(0.5 * angle)
+    return create(axis[0] * sina, axis[1] * sina, axis[2] * sina, Math.cos(0.5 * angle))
+}
+export const EulerXYZ = (x: number, y: number, z: number): quat => {
+    const s = Vec3.create(Math.sin(0.5 * x), Math.sin(0.5 * y), Math.sin(0.5 * z))
+    const c = Vec3.create(Math.cos(0.5 * x), Math.cos(0.5 * y), Math.cos(0.5 * z))
+    return create(
+        s[0] * c[1] * c[2] - s[1] * s[2] * c[0],
+        s[1] * c[0] * c[2] + s[0] * s[2] * c[1],
+        s[2] * c[0] * c[1] - s[0] * s[1] * c[2],
+        c[0] * c[1] * c[2] + s[1] * s[2] * s[0])
+}
+export const EulerXZY = (x: number, y: number, z: number): quat => {
+    const s = Vec3.create(Math.sin(0.5 * x), Math.sin(0.5 * y), Math.sin(0.5 * z))
+    const c = Vec3.create(Math.cos(0.5 * x), Math.cos(0.5 * y), Math.cos(0.5 * z))
+    return create(
+        s[0] * c[1] * c[2] + s[1] * s[2] * c[0],
+        s[1] * c[0] * c[2] + s[0] * s[2] * c[1],
+        s[2] * c[0] * c[1] - s[0] * s[1] * c[2],
+        c[0] * c[1] * c[2] - s[1] * s[2] * s[0])
+}
+export const EulerYXZ = (x: number, y: number, z: number): quat => {
+    const s = Vec3.create(Math.sin(0.5 * x), Math.sin(0.5 * y), Math.sin(0.5 * z))
+    const c = Vec3.create(Math.cos(0.5 * x), Math.cos(0.5 * y), Math.cos(0.5 * z))
+    return create(
+        s[0] * c[1] * c[2] - s[1] * s[2] * c[0],
+        s[1] * c[0] * c[2] + s[0] * s[2] * c[1],
+        s[2] * c[0] * c[1] + s[0] * s[1] * c[2],
+        c[0] * c[1] * c[2] - s[1] * s[2] * s[0])
+}
+export const EulerYZX = (x: number, y: number, z: number): quat => {
+    const s = Vec3.create(Math.sin(0.5 * x), Math.sin(0.5 * y), Math.sin(0.5 * z))
+    const c = Vec3.create(Math.cos(0.5 * x), Math.cos(0.5 * y), Math.cos(0.5 * z))
+    return create(
+        s[0] * c[1] * c[2] - s[1] * s[2] * c[0],
+        s[1] * c[0] * c[2] - s[0] * s[2] * c[1],
+        s[2] * c[0] * c[1] + s[0] * s[1] * c[2],
+        c[0] * c[1] * c[2] + s[1] * s[2] * s[0])
+}
+export const EulerZXY = (x: number, y: number, z: number): quat => {
+    const s = Vec3.create(Math.sin(0.5 * x), Math.sin(0.5 * y), Math.sin(0.5 * z))
+    const c = Vec3.create(Math.cos(0.5 * x), Math.cos(0.5 * y), Math.cos(0.5 * z))
+    return create(
+        s[0] * c[1] * c[2] + s[1] * s[2] * c[0],
+        s[1] * c[0] * c[2] - s[0] * s[2] * c[1],
+        s[2] * c[0] * c[1] - s[0] * s[1] * c[2],
+        c[0] * c[1] * c[2] + s[1] * s[2] * s[0])
+}
+export const EulerZYX = (x: number, y: number, z: number): quat => {
+    const s = Vec3.create(Math.sin(0.5 * x), Math.sin(0.5 * y), Math.sin(0.5 * z))
+    const c = Vec3.create(Math.cos(0.5 * x), Math.cos(0.5 * y), Math.cos(0.5 * z))
+    return create(
+        s[0] * c[1] * c[2] + s[1] * s[2] * c[0],
+        s[1] * c[0] * c[2] - s[0] * s[2] * c[1],
+        s[2] * c[0] * c[1] + s[0] * s[1] * c[2],
+        c[0] * c[1] * c[2] - s[1] * s[2] * s[0])
+}
+type EulerType = (x: number, y: number, z: number, order: RotationOrder) => quat
+export const Eulers: EulerType = (x, y, z, order = 'XYZ') => {
+    switch (order) {
+        case rotationOrder.XYZ:
+            return EulerXYZ(x, y, z);
+            break;
+        case rotationOrder.XZY:
+            return EulerXZY(x, y, z);
+            break;
+        case rotationOrder.YXZ:
+            return EulerYXZ(x, y, z);
+            break;
+        case rotationOrder.YZX:
+            return EulerYZX(x, y, z);
+            break;
+        case rotationOrder.ZXY:
+            return EulerZXY(x, y, z);
+            break;
+        case rotationOrder.ZYX:
+            return EulerZYX(x, y, z);
+            break;
+        default:
+            return identity;
+            break;
+    }
+}
+export const toAngleAxis = (angle: number, axis: vec3): void => {
+    // ToAxisAngleRad(s, axis, angle)
+    angle *= mathf.Rad2Deg
+}
 export const toString = (a: number, v: vec3): quat => create()
 export const Angle = (a: quat, b: quat): number => {
     const dot = Math.min(Math.abs(Dot(a, b)), 1)
@@ -92,14 +184,21 @@ const Internal_MakePositive = (euler: vec3): vec3 => {
 
 // axis = normalized vector
 // angle= 2xatan2(mag, w) 
+//fromAngleAxis
 export const AngleAxis = (angle: number, axis: vec3): quat => {
-    const vn = Vec3.normalized(axis)
+    if (Vec3.magnitudeSqrt(axis) === 0) identity
 
-    angle *= mathf.Deg2Rad
-    angle *= 0.5
-    const sinAngle = Math.sin(angle)
+    const res = identity
+    let rad = angle * mathf.Deg2Rad
+    rad *= 0.5
+    let vn = Vec3.normalized(axis)
+    vn = create(axis[0] * Math.sin(rad), axis[1] * Math.sin(rad), axis[2] * Math.sin(rad))
+    res[0] = axis[0];
+    res[1] = axis[1];
+    res[2] = axis[2];
+    res[3] = Math.cos(rad);
 
-    return create(vn[0] * sinAngle, vn[1] * sinAngle, vn[2] * sinAngle, Math.cos(angle))
+    return Normalize(res)
 }
 // export const AngleAxis = (angle: number, axis: vec3): quat => create(axis[0] * Math.sin(angle * 0.5), axis[1] * Math.sin(angle * 0.5), axis[2] * Math.sin(angle * 0.5), Math.cos(angle * 0.5))
 export const Dot = (a: quat, b: quat): number => a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3];
@@ -113,6 +212,11 @@ export const Euler = (x: number, y: number, z: number): quat => {
     return create(sr * cp * cy - cr * sp * sy, cr * sp * cy + sr * cp * sy, cr * cp * sy - sr * sp * cy, cr * cp * cy + sr * sp * sy)
 }
 export const FromToRotation = (fromDirection: vec3, toDirection: vec3): quat => create()
+/**
+ * 
+ * @param rotation 
+ * @returns Returns the inverse of rotation
+ */
 export const Inverse = (rotation: quat): quat => {
     const sqrtmag = rotation[0] * rotation[0] + rotation[1] * rotation[1] + rotation[2] * rotation[2] + rotation[3] * rotation[3];
     const invSqrtMag = sqrtmag ? 1 / sqrtmag : 0
@@ -121,6 +225,13 @@ export const Inverse = (rotation: quat): quat => {
     }
     return create(-rotation[0] * invSqrtMag, -rotation[1] * invSqrtMag, -rotation[2] * invSqrtMag, -rotation[3] * invSqrtMag)
 }
+/**
+ * 
+ * @param a Start value, returned when t = 0
+ * @param b End value, returned when t = 0
+ * @param t Interpolation ratio
+ * @returns A quaternion interpolatied between quaternions a and b
+ */
 export const Lerp = (a: quat, b: quat, t: number): quat => create(mathf.Lerp(a[0], b[0], t), mathf.Lerp(a[1], b[1], t), mathf.Lerp(a[2], b[2], t), mathf.Lerp(a[3], b[3], t))
 export const Lerps = (a: quat, b: quat, t: quat): quat => create(mathf.Lerp(a[0], b[0], t[0]), mathf.Lerp(a[1], b[1], t[1]), mathf.Lerp(a[2], b[2], t[2]), mathf.Lerp(a[3], b[3], t[3]))
 export const LerpUnclamped = (a: quat, b: quat, t: number): quat => create(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, a[3] + (b[3] - a[3]) * t)
@@ -133,11 +244,57 @@ export const LerpUnclamped = (a: quat, b: quat, t: number): quat => create(a[0] 
  */
 // export const LookRotation = (forward: vec3, upwards = Vec3.up): quat => create()
 export const LookRotation = (forward: vec3, upwards: vec3): quat => {
-    const up = upwards
-    const lookAt = forward
-    return create()
+    forward = Vec3.normalized(forward)
+    const right = Vec3.normalized(Vec3.Cross(upwards, forward))
+    const up = Vec3.Cross(forward, right)
+    const m00 = right[0];
+    const m01 = right[1];
+    const m02 = right[2];
+    const m10 = up[0];
+    const m11 = up[1];
+    const m12 = up[2];
+    const m20 = forward[0];
+    const m21 = forward[1];
+    const m22 = forward[2];
+
+    const num8 = (m00 + m11) + m22
+    const quat = create()
+    if (num8 > 0) {
+        let num = Math.sqrt(num8 + 1)
+        quat[3] = num * 0.5
+        num = 0.5 / num
+        quat[0] = (m12 - m21) * num
+        quat[1] = (m20 - m02) * num
+        quat[2] = (m01 - m10) * num
+        return quat
+    }
+    if ((m00 >= m11) && (m00 >= m22)) {
+        let num7 = Math.sqrt(((1 + m00) - m11) - m22)
+        let num4 = 0.5 / num7
+        quat[0] = 0.5 * num7
+        quat[1] = (m01 + m10) * num4
+        quat[2] = (m02 + m20) * num4
+        quat[3] = (m12 - m21) * num4
+        return quat
+    }
+    if (m11 > m22) {
+        let num6 = Math.sqrt(((1 + m11) - m00) - m22)
+        let num3 = 0.5 / num6
+        quat[0] = (m10 + m01) * num3
+        quat[1] = 0.5 * num6
+        quat[2] = (m21 + m12) * num3
+        quat[3] = (m20 - m02) * num3
+        return quat
+    }
+    let num5 = Math.sqrt(((1 + m22) - m00) - m11)
+    let num2 = 0.5 / num5
+    quat[0] = (m20 + m02) * num2
+    quat[1] = (m21 + m12) * num2
+    quat[2] = 0.5 * num5
+    quat[3] = (m01 - m10) * num2
+    return quat
 }
-export const Normalize = (q: quat): quat => Math.sqrt(Dot(q, q)) < mathf.EPSILON ? identity() : create(q[0] / Math.sqrt(Dot(q, q)), q[1] / Math.sqrt(Dot(q, q)), q[2] / Math.sqrt(Dot(q, q)), q[3] / Math.sqrt(Dot(q, q)))
+export const Normalize = (q: quat): quat => Math.sqrt(Dot(q, q)) < mathf.EPSILON ? identity : create(q[0] / Math.sqrt(Dot(q, q)), q[1] / Math.sqrt(Dot(q, q)), q[2] / Math.sqrt(Dot(q, q)), q[3] / Math.sqrt(Dot(q, q)))
 /**
  * 
  * @param from 
@@ -150,7 +307,7 @@ export const rotateTowards = (from: quat, to: quat, maxDegreesDelta: number): qu
     if (angle === 0) to
     return SlerpUnclamped(from, to, Math.min(1, maxDegreesDelta / angle))
 }
-export const Nlerp = (a: quat, b: quat, t: number): quat => {
+export const nLerp = (a: quat, b: quat, t: number): quat => {
     const res = create()
     res[0] = mathf.Lerp(a[0], b[0], t)
     res[1] = mathf.Lerp(a[1], b[1], t)
@@ -169,51 +326,57 @@ export const Nlerp = (a: quat, b: quat, t: number): quat => {
 
     return res
 }
+// export const nlerps = (a: quat, b: quat, t: number): quat => {
+//     return Normalize(q1.value + t * (chgsign(q2.value, dot(q1, q2)) - q1.value));
+// }
 export const Slerp = (a: quat, b: quat, t: number): quat => {
-    let x1 = a[1];
-    let y1 = a[2];
-    let z1 = a[3];
-    let w1 = a[0];
 
-    const x2 = a[1];
-    const y2 = a[2];
-    const z2 = a[3];
-    const w2 = a[0];
-    let scale0: number
-    let scale1: number;
+    let dt = Dot(a, b);
 
-    let cosTheta0 = x1 * x2 + y1 * y2 + z1 * z2 + w1 * w2;
-
-    if (cosTheta0 < 0) {
-        x1 = -x1;
-        y1 = -y1;
-        z1 = -z1;
-        w1 = -w1;
-        cosTheta0 = -cosTheta0;
+    if (dt < 0) {
+        a[0] *= -1;
+        a[1] *= -1;
+        a[2] *= -1;
+        a[3] *= -1;
+        dt *= -1;
     }
 
-    if (1 - cosTheta0 > mathf.kEpsilon) {
-        const omega = Math.acos(cosTheta0);
-        const sinom = Math.sin(omega);
-        scale0 = Math.sin((1.0 - t) * omega) / sinom;
-        scale1 = Math.sin(t * omega) / sinom;
+    if (dt < 0.9995) {
+        const angle = Math.acos(dt)
+        const s = 1 / Math.sin(angle)
+        const w1 = Math.sin(angle * (1 - t)) * s
+        const w2 = Math.sin(angle * t) * s
+        return create((a[0] * w1) + (b[0] * w2), (a[1] * w1) + (b[1] * w2), (a[2] * w1) + (b[2] * w2), (a[3] * w1) + (b[3] * w2))
     } else {
-        scale0 = 1 - t
-        scale1 = t
+        return nLerp(a, b, t)
     }
-    return create(scale0 * x1 + scale1 * x2, scale0 * y1 + scale1 * y2, scale0 * z1 + scale1 * z2, scale0 * w1 + scale1 * w2)
 }
 export const Slerps = (a: quat, b: quat, t: number): quat => {
     let cosTheta = Dot(a, a)
     let temp = b
     if (cosTheta < 0) {
-        cosTheta *= -1;
         // negate function
-        temp = create(temp[0] * -1, temp[1] * -1, temp[2] * -1, temp[3] * -1)
+        temp[0] *= -1
+        temp[1] *= -1
+        temp[2] *= -1
+        temp[3] *= -1
+        cosTheta *= -1;
     }
     const theta = Math.acos(cosTheta)
     const sinTheta = 1 / Math.sin(theta)
 
     return create(sinTheta * ((a[0] * Math.sin(theta * (1 * t)) + (temp[0] * Math.sin(t * theta)))), sinTheta * ((a[1] * Math.sin(theta * (1 * t)) + (temp[1] * Math.sin(t * theta)))), sinTheta * ((a[2] * Math.sin(theta * (1 * t)) + (temp[2] * Math.sin(t * theta)))), sinTheta * ((a[3] * Math.sin(theta * (1 * t)) + (temp[3] * Math.sin(t * theta)))))
 }
-export const SlerpUnclamped = (a: quat, b: quat, t: number): quat => create()
+export const SlerpUnclamped = (a: quat, b: quat, t: number): quat => {
+    if (magnitudeSqrt(a) == 0.0) {
+        if (magnitudeSqrt(b) == 0.0) {
+            return identity
+        }
+        return b
+    }
+    else if (magnitudeSqrt(b) == 0.0) {
+        return a;
+    }
+
+    return create()
+}

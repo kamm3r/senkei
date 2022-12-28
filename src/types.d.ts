@@ -155,3 +155,14 @@ export interface IndexedCollection extends Iterable<number> {
     readonly length: number;
     [index: number]: number;
 }
+
+export const rotationOrder = {
+    XYZ: 'XYZ',
+    XZY: 'XZY',
+    YXZ: 'YXZ',
+    YZX: 'YZX',
+    ZXY: 'ZXY',
+    ZYX: 'ZYX'
+} as const
+
+export type RotationOrder = keyof typeof rotationOrder

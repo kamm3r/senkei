@@ -115,8 +115,6 @@ export const VectorProjection = (v1: vec3, v2: vec3): vec3 => {
     const scProj = scalarProjection(v1, v2)
     return create(v1Norm[0] * scProj, v1Norm[1] * scProj, v1Norm[2] * scProj)
 }
-// supposendly or how i understood it, what unit vectors are
-export const unitVector = (v: vec3): vec3 => normalized(v)
 //Returns the distance between a and b.
 type Distance = (v1: vec3, v2: vec3) => number
 export const distance: Distance = (v1, v2) => Math.sqrt(distanceSqrt(v1, v2))
