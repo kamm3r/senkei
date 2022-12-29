@@ -1,6 +1,7 @@
 # Math
 
 Game dev Math
+Unity math inspired
 
 ## ToDo
 
@@ -32,24 +33,20 @@ Game dev Math
   - [ ] bezier curves ${\color{grey}not \space major \space rn}$
 - [ ] Matrix
   - [x] new matrix
-    - [x] 2x2
-    - [x] 2x3
-    - [x] 3x3
-    - [x] 3x4
-    - [x] 4x4
-  - [ ] Matrix-Scalar operations (+, -,\*, /)
-  - [ ] Matrix-Vector multiplication
-  - [ ] Matrix-Matrix multiplication
+  - [x] Matrix-Scalar operations (+, -,\*, /)
+  - [x] Matrix-Vector multiplication
+  - [x] Matrix-Matrix multiplication
   - [ ] local to world
   - [ ] world to local
-  - [ ] inverse matrix
+  - [x] inverse matrix
   - [ ] transform
-  - [ ] projection matrix
+  - [x] projection matrix
   - [x] identity matrix
 - [ ] Quaternion
   - [x] new quaternion
   - [x] Quaternion multiplication
-  - [ ] angle, angleAxis
+  - [x] angle
+  - [ ] angleAxis
   - [x] dot
   - [ ] euler, eulerAngles
   - [ ] fromToRotation, lookRotation
@@ -57,9 +54,10 @@ Game dev Math
   - [x] lerp and lerpUnclamped
   - [x] normalize
   - [x] rotateTowards
-  - [ ] slerp and slerpUnclamped
+  - [x] slerp
+  - [ ] slerpUnclamped
   - [x] identity
-  - [ ] set, setfFromToRotation, SetLookRotation, toAngleAxis
+  - [x] set, setfFromToRotation, SetLookRotation, toAngleAxis
 - [ ] Math Utils or what ever to call it
   - [x] lerp
   - [ ] slerp
