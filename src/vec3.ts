@@ -32,15 +32,7 @@ export const exactEquals = (v1: vec3, v2: vec3): boolean => v1[0] === v2[0] && v
 //operator =! Returns true if vectors are different.
 export const differentEquals = (v1: vec3, v2: vec3): boolean => v1[0] !== v2[0] && v1[1] !== v2[1] && v1[2] !== v2[2]
 //operator == Returns true if two vectors are approximately equal.
-export const approximatelyEquals = (v1: vec3, v2: vec3): boolean => {
-    return (Math.abs(v1[0] - v2[0]) <=
-        mathf.EPSILON * Math.max(1.0, Math.abs(v1[0]), Math.abs(v2[0])) &&
-        Math.abs(v1[1] - v2[1]) <=
-        mathf.EPSILON * Math.max(1.0, Math.abs(v1[1]), Math.abs(v2[1])) &&
-        Math.abs(v1[2] - v2[2]) <=
-        mathf.EPSILON * Math.max(1.0, Math.abs(v1[2]), Math.abs(v2[2]))
-    );
-}
+export const Approximately3 = (a: vec3, b: vec3): boolean => mathf.Approximately(a[0], b[0]) && mathf.Approximately(a[1], b[1]) && mathf.Approximately(a[2], b[2])
 // maybe??? probably not though
 export const approximatelyEqual = (v1: vec3, v2: vec3): boolean => v1[0] == v2[0] && v1[1] == v2[1] && v1[2] == v2[2]
 

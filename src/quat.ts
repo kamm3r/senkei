@@ -52,6 +52,8 @@ export const eualerAngles = () => {
         set: () => Internal_MakePositive(Vec3.create(3 * mathf.Deg2Rad, 3 * mathf.Deg2Rad, 3 * mathf.Deg2Rad))
     }
 }
+
+export const Conjugate = (q: quat): quat => create(q[0] *= -1, q[1] *= -1, q[2] *= -1, q[0] *= 1)
 export const normalized = (q: quat): quat => Normalize(q)
 export const setFromToRotation = (fromDirection: vec3, toDirection: vec3): quat => create()
 export const setLookRotation = (view: vec3, up = Vec3.up): void => {
@@ -294,7 +296,7 @@ export const LookRotation = (forward: vec3, upwards: vec3): quat => {
     quat[3] = (m01 - m10) * num2
     return quat
 }
-export const Normalize = (q: quat): quat => Math.sqrt(Dot(q, q)) < mathf.EPSILON ? identity : create(q[0] / Math.sqrt(Dot(q, q)), q[1] / Math.sqrt(Dot(q, q)), q[2] / Math.sqrt(Dot(q, q)), q[3] / Math.sqrt(Dot(q, q)))
+export const Normalize = (q: quat): quat => Math.sqrt(Dot(q, q)) < mathf.Epsilon ? identity : create(q[0] / Math.sqrt(Dot(q, q)), q[1] / Math.sqrt(Dot(q, q)), q[2] / Math.sqrt(Dot(q, q)), q[3] / Math.sqrt(Dot(q, q)))
 /**
  * 
  * @param from 
