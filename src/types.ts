@@ -23,97 +23,6 @@ type f64 = Float64Array
 
 type vec<T> = T
 
-export interface Color {
-    r: number
-    g: number
-    b: number
-    a: number
-}
-export interface Quat {
-    x: number
-    y: number
-    z: number
-    w: number
-}
-
-export interface Vec2 {
-    x: number
-    y: number
-}
-
-export interface Vec3 {
-    x: number
-    y: number
-    z: number
-}
-
-export interface Vec4 {
-    x: number
-    y: number
-    z: number
-    w: number
-}
-
-export interface Mat2 {
-    m00: number
-    m01: number
-    m10: number
-    m11: number
-}
-export interface Mat2x3 {
-    m00: number
-    m01: number
-    m02: number
-    m10: number
-    m11: number
-    m12: number
-}
-
-export interface Mat3 {
-    m00: number
-    m01: number
-    m02: number
-    m10: number
-    m11: number
-    m12: number
-    m30: number
-    m31: number
-    m32: number
-}
-export interface Mat3x4 {
-    m00: number
-    m01: number
-    m02: number
-    m03: number
-    m10: number
-    m11: number
-    m12: number
-    m13: number
-    m30: number
-    m31: number
-    m32: number
-    m33: number
-}
-
-export interface Mat4 {
-    m00: number
-    m01: number
-    m02: number
-    m03: number
-    m10: number
-    m11: number
-    m12: number
-    m13: number
-    m30: number
-    m31: number
-    m32: number
-    m33: number
-    m40: number
-    m41: number
-    m42: number
-    m43: number
-}
-
 export type TypedArray = Float32Array | []
 
 export type vec2 = [number, number] | IndexedCollection
@@ -129,6 +38,8 @@ export type ivec3 = [number, number, number] | Int32Array
 export type ivec4 = [number, number, number, number] | Int32Array
 
 export type quat = [number, number, number, number] | IndexedCollection
+
+export type color = [number, number, number, number] | IndexedCollection
 
 export type mat2 =
     [number, number,

@@ -33,7 +33,7 @@ export const Abs = (v: vec4): vec4 => create(math.Abs(v[0]), math.Abs(v[1]), mat
 export const magnitude = (v: vec4): number => Math.sqrt(magnitudeSqrt(v))
 export const magnitudeSqrt = (v: vec4): number => v[0] * v[0] + v[1] * v[1] + v[2] * v[2] + v[3] * v[3]
 
-export const normalized = (v: vec4): vec4 => {
+export const Normalized = (v: vec4): vec4 => {
     const mag = magnitude(v)
     return create(v[0] / mag, v[1] / mag, v[2] / mag, v[3] / mag)
 }

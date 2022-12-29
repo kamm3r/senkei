@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { vec4 } from "../src"
+import * as vec4 from "../src/vec4"
 
 describe('vec4', () => {
     test('create, no values given', () => {
@@ -38,7 +38,7 @@ describe('vec4', () => {
     })
     test('Normalized, v(3,1,2,4) values given', () => {
         const v = vec4.create(3, 1, 2, 4)
-        const norm = vec4.normalized(v)
+        const norm = vec4.Normalized(v)
         expect(parseFloat(norm[0].toFixed(3))).toBe(0.548)
         expect(parseFloat(norm[1].toFixed(3))).toBe(0.183)
         expect(parseFloat(norm[2].toFixed(3))).toBe(0.365)
