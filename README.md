@@ -1,7 +1,6 @@
 # Math
 
 Game dev Math
-Unity math inspired
 
 ## ToDo
 
@@ -44,30 +43,36 @@ Unity math inspired
   - [x] identity matrix
 - [ ] Quaternion
   - [x] new quaternion
+  - [x] Quaternion-Scalar operations (+, -,\*, /)
   - [x] Quaternion multiplication
   - [x] angle
-  - [ ] angleAxis
+  - [x] axisAngle
+  - [x] angleAxis
   - [x] dot
-  - [ ] euler, eulerAngles
-  - [ ] fromToRotation, lookRotation
+  - [x] euler
+  - [ ] eulerAngles
+  - [ ] fromToRotation
+  - [x] lookRotation
   - [x] inverse
-  - [x] lerp and lerpUnclamped
+  - [x] lerp
+  - [x] lerpUnclamped
   - [x] normalize
   - [x] rotateTowards
   - [x] slerp
-  - [ ] slerpUnclamped
+  - [ ] slerpUnclamped ${\color{grey}not \space major \space rn}$
   - [x] identity
-  - [x] set, setfFromToRotation, SetLookRotation, toAngleAxis
+  - [ ] setfFromToRotation,
+  - [x] SetLookRotation
+  - [ ] toAngleAxis
 - [ ] Math Utils or what ever to call it
   - [x] lerp
-  - [ ] slerp
   - [ ] ...
 
 #### Test
 
 - [ ] Vectors
-- [ ] Matrices
-- [ ] Quaternions
+- [ ] Matrix
+- [ ] Quaternion
 
 ##### Perf tests
 

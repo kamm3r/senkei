@@ -1,5 +1,6 @@
 import * as Vec3 from "./vec3"
-import { vec3, quat, RotationOrder, rotationOrder } from "./types"
+import * as Vec4 from "./vec4"
+import { vec3, quat, RotationOrder, rotationOrder, mat4, vec4 } from "./types"
 import * as mathf from "./utils"
 
 
@@ -52,6 +53,8 @@ export const eualerAngles = () => {
         set: () => Internal_MakePositive(Vec3.create(3 * mathf.Deg2Rad, 3 * mathf.Deg2Rad, 3 * mathf.Deg2Rad))
     }
 }
+
+export const Conjugate = (q: quat): quat => create(q[0] *= -1, q[1] *= -1, q[2] *= -1, q[0] *= 1)
 export const normalized = (q: quat): quat => Normalize(q)
 export const setFromToRotation = (fromDirection: vec3, toDirection: vec3): quat => create()
 export const setLookRotation = (view: vec3, up = Vec3.up): void => {
@@ -240,9 +243,8 @@ export const LerpUnclamped = (a: quat, b: quat, t: number): quat => create(a[0] 
  * 
  * @param forward The direction to look in
  * @param upwards The vector that defines in which direcrtions up is
- * @returns 
+ * 
  */
-// export const LookRotation = (forward: vec3, upwards = Vec3.up): quat => create()
 export const LookRotation = (forward: vec3, upwards: vec3): quat => {
     forward = Vec3.normalized(forward)
     const right = Vec3.normalized(Vec3.Cross(upwards, forward))
@@ -294,7 +296,12 @@ export const LookRotation = (forward: vec3, upwards: vec3): quat => {
     quat[3] = (m01 - m10) * num2
     return quat
 }
-export const Normalize = (q: quat): quat => Math.sqrt(Dot(q, q)) < mathf.EPSILON ? identity : create(q[0] / Math.sqrt(Dot(q, q)), q[1] / Math.sqrt(Dot(q, q)), q[2] / Math.sqrt(Dot(q, q)), q[3] / Math.sqrt(Dot(q, q)))
+// export const LookRotation = (forward: vec3, upwards = Vec3.up): quat => create()
+// export const LookRotations = (forward: vec3, upwards: vec3): quat => {
+//     let t = Vec3.normalized(Vec3.Cross(upwards, forward))
+//     return create(mat3(t, Vec3.Cross(forward, t), forward))
+// }
+export const Normalize = (q: quat): quat => Math.sqrt(Dot(q, q)) < mathf.Epsilon ? identity : create(q[0] / Math.sqrt(Dot(q, q)), q[1] / Math.sqrt(Dot(q, q)), q[2] / Math.sqrt(Dot(q, q)), q[3] / Math.sqrt(Dot(q, q)))
 /**
  * 
  * @param from 
@@ -379,4 +386,124 @@ export const SlerpUnclamped = (a: quat, b: quat, t: number): quat => {
     }
 
     return create()
+}
+
+
+export const vec4ToQuat = (v: vec4): quat => create(v[0], v[1], v[2], v[3])
+// export const mat3ToQuat = ():quat=>
+// export const mat4ToQuat = (m: mat4): quat => {
+//     const u = Vec4.create(m[0], m[1], m[2], m[3])
+//     const v = Vec4.create(m[4], m[5], m[6], m[7])
+//     const w = Vec4.create(m[8], m[9], m[10], m[11])
+
+//     const u_sign = 2
+// }
+
+export const fromAxisAngle = (axis: vec3, angle: number): quat => {
+    const res = create(0, 0, 0, 1)
+    const axisMag = Vec3.magnitude(axis)
+
+    if (axisMag != 0) {
+        angle *= 0.5
+
+        let mag = 0
+        let imag = 0
+
+        const v = Vec3.normalized(axis)
+        mag = mathf.Sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+        if (mag == 0.0) mag = 1.0;
+        imag = 1.0 / mag;
+        axis[0] *= imag;
+        axis[1] *= imag;
+        axis[2] *= imag;
+
+
+        const sinres = mathf.Sin(angle)
+        const cosres = mathf.Cos(angle)
+
+        res[0] = axis[0] * sinres
+        res[1] = axis[1] * sinres
+        res[2] = axis[2] * sinres
+        res[3] = cosres
+
+        const q = Normalize(res)
+        mag = mathf.Sqrt(q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3]);
+        if (mag == 0.0) mag = 1.0;
+        imag = 1.0 / mag;
+        res[0] = q[0] * imag
+        res[1] = q[1] * imag
+        res[2] = q[2] * imag
+        res[3] = q[3] * imag
+    }
+    return res
+}
+// Get the rotation angle and axis for a given quaternion
+export const toAxisAngle = (q: quat, axis: vec3, angle: number): void => {
+    if (mathf.Abs(q[3]) > 1) {
+        Normalize(q)
+    }
+    const resAxis = Vec3.create()
+    const resAngle = 2 * mathf.Acos(q[3])
+    const den = mathf.Sqrt(1 - q[3] * q[3])
+    if (den > 0.0001) {
+        resAxis[0] = q[0] / den
+        resAxis[1] = q[1] / den
+        resAxis[2] = q[2] / den
+    } else {
+        // This occurs when the angle is zero.
+        // Not a problem: just set an arbitrary normalized axis.
+        resAxis[0] = 1
+    }
+    axis = resAxis
+    angle = resAngle
+}
+// Get the quaternion equivalent to Euler angles
+// NOTE: Rotation order is ZYX
+export const fromEuler = (pitch: number, yaw: number, roll: number): quat => {
+    const res = create();
+
+    const x0 = mathf.Cos(pitch * 0.5);
+    const x1 = mathf.Sin(pitch * 0.5);
+    const y0 = mathf.Cos(yaw * 0.5);
+    const y1 = mathf.Sin(yaw * 0.5);
+    const z0 = mathf.Cos(roll * 0.5);
+    const z1 = mathf.Sin(roll * 0.5);
+
+    res[0] = x1 * y0 * z0 - x0 * y1 * z1;
+    res[1] = x0 * y1 * z0 + x1 * y0 * z1;
+    res[2] = x0 * y0 * z1 - x1 * y1 * z0;
+    res[3] = x0 * y0 * z0 + x1 * y1 * z1;
+
+    return res
+}
+// Get the Euler angles equivalent to quaternion (roll, pitch, yaw)
+// NOTE: Angles are returned in a Vector3 struct in radians
+export const toEuler = (q: quat): vec3 => {
+    const res = Vec3.create()
+    // Roll (x-axis rotation)
+    const x0 = 2 * (q[3] * q[0] + q[1] * q[2])
+    const x1 = 1 - 2 * (q[0] * q[0] + q[1] * q[1])
+    res[0] = mathf.Atan2(x0, x1)
+    // Pitch (y-axis rotation)
+    let y0 = 2 * (q[3] * q[1] - q[2] * q[0])
+    y0 = y0 > 1 ? 1 : y0
+    y0 = y0 < -1 ? -1 : y0
+    res[1] = mathf.Asin(y0)
+    // Yaw (z-axis rotation)
+    const z0 = 2 * (q[3] * q[2] + q[0] * q[2])
+    const z1 = 1 - 2 * (q[1] * q[1] + q[2] * q[2])
+    res[2] = mathf.Atan2(z0, z1)
+
+    return res
+}
+// Transform a quaternion given a transformation matrix
+export const Transform = (q: quat, m: mat4): quat => {
+    const res = create(0, 0, 0, 0)
+
+    res[0] = m[0] * q[0] + m[1] * q[1] + m[2] * q[2] + m[3] * q[3];
+    res[1] = m[4] * q[0] + m[5] * q[1] + m[6] * q[2] + m[7] * q[3];
+    res[2] = m[8] * q[0] + m[9] * q[1] + m[10] * q[2] + m[11] * q[3];
+    res[3] = m[12] * q[0] + m[13] * q[1] + m[14] * q[2] + m[15] * q[3];
+
+    return res;
 }

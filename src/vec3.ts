@@ -32,15 +32,7 @@ export const exactEquals = (v1: vec3, v2: vec3): boolean => v1[0] === v2[0] && v
 //operator =! Returns true if vectors are different.
 export const differentEquals = (v1: vec3, v2: vec3): boolean => v1[0] !== v2[0] && v1[1] !== v2[1] && v1[2] !== v2[2]
 //operator == Returns true if two vectors are approximately equal.
-export const approximatelyEquals = (v1: vec3, v2: vec3): boolean => {
-    return (Math.abs(v1[0] - v2[0]) <=
-        mathf.EPSILON * Math.max(1.0, Math.abs(v1[0]), Math.abs(v2[0])) &&
-        Math.abs(v1[1] - v2[1]) <=
-        mathf.EPSILON * Math.max(1.0, Math.abs(v1[1]), Math.abs(v2[1])) &&
-        Math.abs(v1[2] - v2[2]) <=
-        mathf.EPSILON * Math.max(1.0, Math.abs(v1[2]), Math.abs(v2[2]))
-    );
-}
+export const Approximately3 = (a: vec3, b: vec3): boolean => mathf.Approximately(a[0], b[0]) && mathf.Approximately(a[1], b[1]) && mathf.Approximately(a[2], b[2])
 // maybe??? probably not though
 export const approximatelyEqual = (v1: vec3, v2: vec3): boolean => v1[0] == v2[0] && v1[1] == v2[1] && v1[2] == v2[2]
 
@@ -97,12 +89,12 @@ export const clampMagnitude = (v: vec3, maxLength: number): vec3 => {
 //Returns this vector with a magnitude of 1
 export const normalized = (v: vec3): vec3 => magnitude(v) > mathf.kEpsilon ? create(v[0] / magnitude(v), v[1] / magnitude(v), v[2] / magnitude(v)) : zero
 //Makes this vector have a magnitude of 1.
-export const normalize = (v: vec3): void => {
+export const Normalize = (v: vec3): vec3 => {
     const mag = magnitude(v)
-    if (mag > 0.00001) {
-        { v[0] / mag, v[1] / mag, v[2] / mag }
+    if (mag > mathf.kEpsilon) {
+        return create(v[0] / mag, v[1] / mag, v[2] / mag)
     } else {
-        zero
+        return zero
     }
 }
 type Negate = (v: vec3) => vec3
@@ -111,8 +103,9 @@ export const negate: Negate = (v) => create(-v[0], -v[1], -v[2])
 export const scalarProjection = (v1: vec3, v2: vec3): number => dot(normalized(v1), v2)
 export const VectorProjection = (v1: vec3, v2: vec3): vec3 => {
     // would get normalize projection point?
-    const v1Norm = normalized(v1)
+    const v1Norm = Normalize(v1)
     const scProj = scalarProjection(v1, v2)
+    scalarMultiplication(v1Norm, scProj)
     return create(v1Norm[0] * scProj, v1Norm[1] * scProj, v1Norm[2] * scProj)
 }
 //Returns the distance between a and b.
@@ -121,7 +114,7 @@ export const distance: Distance = (v1, v2) => Math.sqrt(distanceSqrt(v1, v2))
 // export const distance = (v1: vec3, v2: vec3): number => Math.sqrt(distanceSqrt(v1, v2))
 export const distanceSqrt = (v1: vec3, v2: vec3): number => (v2[0] - v1[0]) * (v2[0] - v1[0]) + (v2[1] - v1[1]) * (v2[1] - v1[1]) + (v2[2] - v1[2]) * (v2[2] - v1[2])
 //Linearly interpolates between two points.
-export const Lerp = (a: vec3, b: vec3, t: number): vec3 => create(mathf.Lerp(a[0], b[0], t), mathf.Lerp(a[1], b[1], t), mathf.Lerp(a[2], b[2], t))
+export const Lerp = (a: vec3, b: vec3, t: number): vec3 => create(mathf.LerpClamped(a[0], b[0], t), mathf.LerpClamped(a[1], b[1], t), mathf.LerpClamped(a[2], b[2], t))
 export const Lerps = (a: vec3, b: vec3, t: vec3): vec3 => create(mathf.Lerp(a[0], b[0], t[0]), mathf.Lerp(a[1], b[1], t[1]), mathf.Lerp(a[2], b[2], t[2]))
 //Linearly interpolates between two vectors.
 export const LerpUnclamped = (a: vec3, b: vec3, t: number): vec3 => create(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t)
