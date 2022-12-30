@@ -1,4 +1,4 @@
-import type { mat4, vec3 } from "./types"
+import type { mat4, quat, vec3 } from "./types"
 import * as mathf from "./utils/"
 
 // export type vec3 = Float32Array
@@ -175,12 +175,23 @@ export const OthoNormalize = (normal: vec3, tangent: vec3): void => {
     tangent = vn2
 
 }
+// Transforms a Vector3 by a given Matrix
 export const TransformVec3 = (v: vec3, mat: mat4): vec3 => {
-    const x = v[0]
-    const y = v[1]
-    const z = v[2]
+    const res = create()
+    res[0] = mat[0] * v[0] + mat[1] * v[1] + mat[2] * v[2] + mat[3]
+    res[1] = mat[4] * v[0] + mat[5] * v[1] + mat[6] * v[2] + mat[7]
+    res[2] = mat[8] * v[0] + mat[9] * v[1] + mat[10] * v[2] + mat[11]
 
-    return create(mat[0] * x + mat[1] * y + mat[2] * z + mat[3], mat[4] * x + mat[5] * y + mat[6] * z + mat[7], mat[8] * x + mat[9] * y + mat[10] * z + mat[11])
+    return res
+}
+export const RotateByQuaternion = (v: vec3, q: quat): vec3 => {
+    const res = create()
+
+    res[0] = v[0] * (q[0] * q[0] + q[3] * q[3] - q[1] * q[1] - q[2] * q[2]) + v[1] * (2 * q[0] * q[1] - 2 * q[3] * q[2]) + v[2] * (2 * q[0] * q[2] + 2 * q[3] * q[1])
+    res[1] = v[0] * (2 * q[3] * q[2] + 2 * q[0] * q[1]) + v[1] * (q[3] * q[3] - q[0] * q[0] + q[1] * q[1] - q[2] * q[2]) + v[2] * (-2 * q[3] * q[0] + 2 * q[1] * q[2])
+    res[2] = v[0] * (-2 * q[3] * q[1] + 2 * q[0] * q[2]) + v[1] * (2 * q[3] * q[0] + 2 * q[1] * q[2]) + v[2] * (q[3] * q[3] - q[0] * q[0] - q[1] * q[1] + q[2] * q[2])
+
+    return res
 }
 //Calculate a position between the points specified by current and target, moving no farther than the distance specified by maxDistanceDelta.
 /**

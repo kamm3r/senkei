@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest'
+import { benchmark } from '../benchmark/benchmark'
 import { vec2 } from "../src"
 
 describe('Vec2', () => {
@@ -78,12 +79,12 @@ describe('Vec2', () => {
     })
     test('magnitude of vec(9,2)', () => {
         const v = vec2.create(9, 2)
-        const mag = vec2.magnitude(v)
+        const mag = vec2.Magnitude(v)
         expect(parseFloat(mag.toFixed(3))).toBe(9.220)
     })
     test('magnitudeSqrt of vec(9,2)', () => {
         const v = vec2.create(9, 2)
-        const mag = vec2.MagnitudeSqrt(v)
+        const mag = vec2.SqrMagnitude(v)
         expect(mag).toBe(85)
     })
     test('Normalized, v(3,1) values given', () => {
@@ -120,7 +121,15 @@ describe('Vec2', () => {
     test('Distance Squared, v1(2,3) and v2(5,7) values given', () => {
         const v1 = vec2.create(2, 3)
         const v2 = vec2.create(5, 7)
-        const dist = vec2.DistanceSqrt(v1, v2)
+        const dist = vec2.SqrDistance(v1, v2)
         expect(dist).toBe(25)
+    })
+    test('ClampMagnitude', () => {
+        const v = vec2.create(53, 79)
+        const dist = vec2.ClampMagnitude(v, 2, 10)
+        const sa = benchmark(() => dist, null, 100)
+        console.log('ClampMagnitude', sa);
+        expect(dist[0]).toBe(5.5712361335754395)
+        expect(dist[1]).toBe(8.304295539855957)
     })
 })

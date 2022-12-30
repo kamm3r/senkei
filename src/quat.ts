@@ -1,5 +1,6 @@
 import * as Vec3 from "./vec3"
 import * as Vec4 from "./vec4"
+import * as Mat4 from "./mat4"
 import { vec3, quat, RotationOrder, rotationOrder, mat4, vec4 } from "./types"
 import * as mathf from "./utils"
 
@@ -235,7 +236,7 @@ export const Inverse = (rotation: quat): quat => {
  * @param t Interpolation ratio
  * @returns A quaternion interpolatied between quaternions a and b
  */
-export const Lerp = (a: quat, b: quat, t: number): quat => create(mathf.Lerp(a[0], b[0], t), mathf.Lerp(a[1], b[1], t), mathf.Lerp(a[2], b[2], t), mathf.Lerp(a[3], b[3], t))
+export const Lerp = (a: quat, b: quat, t: number): quat => create(mathf.LerpClamped(a[0], b[0], t), mathf.LerpClamped(a[1], b[1], t), mathf.LerpClamped(a[2], b[2], t), mathf.LerpClamped(a[3], b[3], t))
 export const Lerps = (a: quat, b: quat, t: quat): quat => create(mathf.Lerp(a[0], b[0], t[0]), mathf.Lerp(a[1], b[1], t[1]), mathf.Lerp(a[2], b[2], t[2]), mathf.Lerp(a[3], b[3], t[3]))
 export const LerpUnclamped = (a: quat, b: quat, t: number): quat => create(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, a[3] + (b[3] - a[3]) * t)
 
@@ -296,18 +297,14 @@ export const LookRotation = (forward: vec3, upwards: vec3): quat => {
     quat[3] = (m01 - m10) * num2
     return quat
 }
-// export const LookRotation = (forward: vec3, upwards = Vec3.up): quat => create()
-// export const LookRotations = (forward: vec3, upwards: vec3): quat => {
-//     let t = Vec3.normalized(Vec3.Cross(upwards, forward))
-//     return create(mat3(t, Vec3.Cross(forward, t), forward))
-// }
+
 export const Normalize = (q: quat): quat => Math.sqrt(Dot(q, q)) < mathf.Epsilon ? identity : create(q[0] / Math.sqrt(Dot(q, q)), q[1] / Math.sqrt(Dot(q, q)), q[2] / Math.sqrt(Dot(q, q)), q[3] / Math.sqrt(Dot(q, q)))
 /**
  * 
  * @param from 
  * @param to 
  * @param maxDegreesDelta 
- * @returns 
+ * @returns TODO
  */
 export const rotateTowards = (from: quat, to: quat, maxDegreesDelta: number): quat => {
     const angle = Angle(from, to)
@@ -374,6 +371,7 @@ export const Slerps = (a: quat, b: quat, t: number): quat => {
 
     return create(sinTheta * ((a[0] * Math.sin(theta * (1 * t)) + (temp[0] * Math.sin(t * theta)))), sinTheta * ((a[1] * Math.sin(theta * (1 * t)) + (temp[1] * Math.sin(t * theta)))), sinTheta * ((a[2] * Math.sin(theta * (1 * t)) + (temp[2] * Math.sin(t * theta)))), sinTheta * ((a[3] * Math.sin(theta * (1 * t)) + (temp[3] * Math.sin(t * theta)))))
 }
+// TODO
 export const SlerpUnclamped = (a: quat, b: quat, t: number): quat => {
     if (magnitudeSqrt(a) == 0.0) {
         if (magnitudeSqrt(b) == 0.0) {
@@ -497,7 +495,7 @@ export const toEuler = (q: quat): vec3 => {
     return res
 }
 // Transform a quaternion given a transformation matrix
-export const Transform = (q: quat, m: mat4): quat => {
+export const TransformQuat = (q: quat, m: mat4): quat => {
     const res = create(0, 0, 0, 0)
 
     res[0] = m[0] * q[0] + m[1] * q[1] + m[2] * q[2] + m[3] * q[3];
@@ -506,4 +504,89 @@ export const Transform = (q: quat, m: mat4): quat => {
     res[3] = m[12] * q[0] + m[13] * q[1] + m[14] * q[2] + m[15] * q[3];
 
     return res;
+}
+// Get a quaternion for a given rotation matrix
+export const fromMatrix = (mat: mat4): quat => {
+    const res = create()
+    const fourWSquaredMinus1 = mat[0] + mat[5] + mat[10];
+    const fourXSquaredMinus1 = mat[0] - mat[5] - mat[10];
+    const fourYSquaredMinus1 = mat[5] - mat[0] - mat[10];
+    const fourZSquaredMinus1 = mat[10] - mat[0] - mat[5];
+
+    let biggestIndex = 0
+    let fourBiggestSquaredMinus1 = fourWSquaredMinus1
+    if (fourXSquaredMinus1 > fourBiggestSquaredMinus1) {
+        fourBiggestSquaredMinus1 = fourXSquaredMinus1;
+        biggestIndex = 1;
+    }
+
+    if (fourYSquaredMinus1 > fourBiggestSquaredMinus1) {
+        fourBiggestSquaredMinus1 = fourYSquaredMinus1;
+        biggestIndex = 2;
+    }
+
+    if (fourZSquaredMinus1 > fourBiggestSquaredMinus1) {
+        fourBiggestSquaredMinus1 = fourZSquaredMinus1;
+        biggestIndex = 3;
+    }
+
+    const biggestVal = Math.sqrt(fourBiggestSquaredMinus1 + 1.0) * 0.5
+    const mult = 0.25 / biggestVal
+
+    switch (biggestIndex) {
+        case 0:
+            res[3] = biggestVal;
+            res[0] = (mat[9] - mat[6]) * mult;
+            res[1] = (mat[2] - mat[8]) * mult;
+            res[2] = (mat[4] - mat[1]) * mult;
+            break;
+        case 1:
+            res[0] = biggestVal;
+            res[3] = (mat[9] - mat[6]) * mult;
+            res[1] = (mat[4] + mat[1]) * mult;
+            res[2] = (mat[2] + mat[8]) * mult;
+            break;
+        case 2:
+            res[1] = biggestVal;
+            res[3] = (mat[2] - mat[8]) * mult;
+            res[0] = (mat[4] + mat[1]) * mult;
+            res[2] = (mat[9] + mat[6]) * mult;
+            break;
+        case 3:
+            res[2] = biggestVal;
+            res[3] = (mat[4] - mat[1]) * mult;
+            res[0] = (mat[2] + mat[8]) * mult;
+            res[1] = (mat[9] + mat[6]) * mult;
+            break;
+    }
+
+    return res
+}
+// Get a matrix for a given quaternion
+export const toMatrix = (q: quat): mat4 => {
+    const res = Mat4.create()
+
+    const a2 = q[0] * q[0];
+    const b2 = q[1] * q[1];
+    const c2 = q[2] * q[2];
+    const ac = q[0] * q[2];
+    const ab = q[0] * q[1];
+    const bc = q[1] * q[2];
+    const ad = q[3] * q[0];
+    const bd = q[3] * q[1];
+    const cd = q[3] * q[2];
+
+    res[0] = 1 - 2 * (b2 + c2)
+    res[4] = 2 * (ab + cd)
+    res[8] = 2 * (ac - bd)
+
+    res[1] = 2 * (ab - cd)
+    res[5] = 1 - 2 * (a2 + c2)
+    res[9] = 2 * (bc + ad)
+
+    res[2] = 2 * (ac + bd)
+    res[6] = 2 * (bc - ad)
+    res[10] = 1 - 2 * (a2 + b2)
+
+    return res
 }
