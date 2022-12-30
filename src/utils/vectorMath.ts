@@ -11,7 +11,7 @@ export const Determinant = (a: vec2, b: vec2): number => a[0] * b[1] - a[1] * b[
 
 //Returns the direction and magnitude of the vector. Cheaper than calculating length and normalizing it separately
 export const GetDirAndMag = (v: vec2): { dir: vec2, magnitude: number } => {
-    const mag = Vec2.magnitude(v)
+    const mag = Vec2.Magnitude(v)
     return { dir: Vec2.create(v[0] / mag, v[1] / mag), magnitude: mag }
 }
 /**
@@ -22,7 +22,7 @@ export const GetDirAndMag = (v: vec2): { dir: vec2, magnitude: number } => {
  * 
  */
 export const ClampMagnitude = (v: vec2, min: number, max: number): vec2 => {
-    const mag = Vec2.magnitude(v);
+    const mag = Vec2.Magnitude(v);
     return Vec2.create(mag < min ? (v[0] / mag) * min : mag > max ? (v[0] / mag) * max : v[0], mag < min ? (v[1] / mag) * min : mag > max ? (v[1] / mag) * max : v[1]);
 }
 // Returns the chebyshev distance between the two vectors

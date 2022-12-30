@@ -3,7 +3,7 @@ import * as Vec3 from "./vec3"
 import * as Quat from "./quat"
 
 
-export const create = (m00: number, m01: number, m02: number, m03: number, m10: number, m11: number, m12: number, m13: number, m20: number, m21: number, m22: number, m23: number, m30: number, m31: number, m32: number, m33: number): mat4 => {
+export const create = (m00 = 1, m01 = 0, m02 = 0, m03 = 0, m10 = 0, m11 = 1, m12 = 0, m13 = 0, m20 = 0, m21 = 0, m22 = 1, m23 = 0, m30 = 0, m31 = 0, m32 = 0, m33 = 1): mat4 => {
     return new Float32Array([
         m00, m01, m02, m03,
         m10, m11, m12, m13,
@@ -11,7 +11,7 @@ export const create = (m00: number, m01: number, m02: number, m03: number, m10: 
         m30, m31, m32, m33
     ])
 }
-export const Identity = (): mat4 => create(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0)
+export const identity = create(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0)
 export const zero = create(1.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0)
 // Add two matrices
 export const add = (m1: mat4, m2: mat4): mat4 => create(m1[0] + m2[0], m1[1] + m2[1], m1[2] + m2[2], m1[3] + m2[3], m1[4] + m2[4], m1[5] + m2[5], m1[6] + m2[6], m1[7] + m2[7], m1[8] + m2[8], m1[9] + m2[9], m1[10] + m2[10], m1[11] + m2[11], m1[12] + m2[12], m1[13] + m2[13], m1[14] + m2[14], m1[15] + m2[15])
@@ -37,8 +37,11 @@ export const multiply = (m1: mat4, m2: mat4): mat4 => create(
     m1[3] * m2[8] + m1[7] * m2[9] + m1[11] * m2[10] + m1[15] * m2[11],
     m1[3] * m2[12] + m1[7] * m2[13] + m1[11] * m2[14] + m1[15] * m2[15])
 
-
-
+// TODO
+export const multiply3x4 = (point: vec3): vec3 => Vec3.create()
+// TODO
+export const multiplyFromVec3 = (v: vec3): vec3 => Vec3.create()
+// export const TransformPlane = ():any=>
 
 // Compute matrix determinant
 export const Determinant = (mat: mat4): number => {

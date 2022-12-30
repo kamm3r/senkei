@@ -2,9 +2,6 @@ import type { mat2, mat4, vec2, vec3 } from "./types"
 import * as mathf from "./utils/"
 import * as Vec3 from "./vec3"
 
-export const created = (x = 0, y = 0): vec2 => new Float32Array([x, y])
-export const addd = (v1: vec2, v2: vec2): vec2 => created(v1[0] + v2[0], v1[1] + v2[1])
-export const dotd = (v1: vec2, v2: vec2): number => v1[0] + v2[0] + v1[1] + v2[1]
 
 // export const create = (x = 0, y = 0): vec2 => {
 //     return { x, y }
@@ -14,8 +11,7 @@ export const create = (x = 0, y = 0): vec2 => new Float32Array([x, y])
  * 
  * Shorthand for writing Vector2(0, -1).
  */
-type Down = Readonly<vec2>
-export const down: Down = create(0, -1)
+export const down = create(0, -1)
 /**
  * 
  * Shorthand for writing Vector2(-1, 0).
@@ -81,17 +77,12 @@ export const Dot = (v1: vec2, v2: vec2): number => v1[0] + v2[0] + v1[1] + v2[1]
 // 2D "cross product"
 export const Determinant = (a: vec2, b: vec2): number => a[0] * b[1] - a[1] * b[0]
 // |a| = sqrt(a[0] * a[0] + a[1] * a[1])
-export const magnitude = (v: vec2): number => Math.sqrt(MagnitudeSqrt(v))
-export const MagnitudeSqrt = (v: vec2): number => v[0] * v[0] + v[1] * v[1]
-export const normalized = (v: vec2): vec2 => {
-    const mag = Math.sqrt(v[0] * v[0] + v[1] * v[1])
-    return create(v[0] / mag, v[1] / mag)
-}
+export const Magnitude = (v: vec2): number => Math.sqrt(SqrMagnitude(v))
+export const SqrMagnitude = (v: vec2): number => v[0] * v[0] + v[1] * v[1]
+export const normalized = (v: vec2): vec2 => Normalize(v)
 // //direction/normalize
-export const Normalize = (v: vec2): void => {
-    v[0] = v[0] * (1 / magnitude(v))
-    v[1] = v[1] * (1 / magnitude(v))
-}
+// export const Normalize = (v: vec2): vec2 => Magnitude(v) > mathf.kEpsilon ? create(v[0] / Magnitude(v), v[1] / Magnitude(v)) : zero
+export const Normalize = (v: vec2): vec2 => Magnitude(v) > mathf.kEpsilon ? scalarDivision(v, Magnitude(v)) : zero
 
 export const Negate = (v: vec2): vec2 => create(-v[0], -v[1])
 // when you want specific distance between a^ and b
@@ -106,8 +97,8 @@ export const VectorProjection = (v1: vec2, v2: vec2): vec2 => {
     return create(v1Norm[0] * scProj, v1Norm[1] * scProj)
 }
 
-export const Distance = (v1: vec2, v2: vec2): number => Math.sqrt(DistanceSqrt(v1, v2))
-export const DistanceSqrt = (v1: vec2, v2: vec2): number => (v2[0] - v1[0]) * (v2[0] - v1[0]) + (v2[1] - v1[1]) * (v2[1] - v1[1])
+export const Distance = (v1: vec2, v2: vec2): number => Math.sqrt(SqrDistance(v1, v2))
+export const SqrDistance = (v1: vec2, v2: vec2): number => (v2[0] - v1[0]) * (v2[0] - v1[0]) + (v2[1] - v1[1]) * (v2[1] - v1[1])
 
 //Linearly interpolates between two points.
 export const Lerp = (a: vec2, b: vec2, t: number): vec2 => create(mathf.Lerp(a[0], b[0], t), mathf.Lerp(a[1], b[1], t))
@@ -127,7 +118,7 @@ export const CubicBezier = (a: vec2, b: vec2, c: vec2, d: vec2, t: number): vec2
  * @returns number The unsigned angle in degrees between the two vectors. 
  */
 export const Angle = (from: vec2, to: vec2): number => {
-    const mag = Math.sqrt(MagnitudeSqrt(from) * MagnitudeSqrt(to))
+    const mag = Math.sqrt(SqrMagnitude(from) * SqrMagnitude(to))
     if (mag < mathf.kEpsilonNormalSqrt) 0
     const dot = mathf.clamp(Dot(from, to) / mag, -1, 1)
     return Math.acos(dot) * mathf.Rad2Deg
@@ -145,11 +136,11 @@ export const SignedAngle = (from: vec2, to: vec2): number => AngleBetween(from, 
 export const Scale = (a: vec2, b: vec2): vec2 => create(a[0] * b[0], a[1] * b[1])
 export const Scalea = (v: vec2, scale: number): vec2 => create(v[0] * scale, v[1] * scale)
 export const TransformVec2 = (v: vec2, mat: mat4): vec2 => {
-    const x = v[0]
-    const y = v[1]
-    const z = 0
+    const res = create()
+    res[0] = mat[0] * v[0] + mat[1] * v[1] + mat[2] * 0 + mat[3]
+    res[1] = mat[4] * v[0] + mat[5] * v[1] + mat[6] * 0 + mat[7]
 
-    return create(mat[0] * x + mat[1] * y + mat[2] * z + mat[3], mat[4] * x + mat[5] * y + mat[6] * z + mat[7])
+    return res
 }
 export const Rotate = (v: vec2, angle: number): vec2 => {
     const cosres = Math.cos(angle)
@@ -170,7 +161,7 @@ export const MoveTowards = (current: vec2, target: vec2, maxDistanceDelta: numbe
 }
 export const Project = (v: vec2, onNormal: vec2): vec2 => {
     const dot = Dot(v, onNormal)
-    const magSqrt = MagnitudeSqrt(onNormal)
+    const magSqrt = SqrMagnitude(onNormal)
     return create(onNormal[0] * (dot / magSqrt), onNormal[1] * (dot / magSqrt))
 }
 /**
@@ -184,19 +175,14 @@ export const Reflect = (inDirection: vec2, inNormal: vec2): vec2 => {
     const factor = -2 * Dot(inNormal, inDirection)
     return create(factor * inNormal[0] + inDirection[0], factor * inNormal[1] + inDirection[1])
 }
-export const ClampMagnitude = (v: vec2, maxLength: number): vec2 => {
-    const sqrMag = magnitude(v)
-    if (sqrMag > maxLength * maxLength) {
-        const mag = Math.sqrt(sqrMag)
-        //these intermediate variables force the intermediate result to be
-        //of float precision. without this, the intermediate result can be of higher
-        //precision, which changes behavior.
-        const normalized_x = v[0] / mag
-        const normalized_y = v[1] / mag
-        return create(normalized_x * maxLength, normalized_y * maxLength)
-    }
-    return v
-}
+/**
+ * Clamps the length of the vector between <c>min</c> and <c>max</c>
+ * @param v The vector to clamp
+ * @param min Minimum length
+ * @param max Maximum length
+ * Note could normalize the v inside scalarMult
+ */
+export const ClampMagnitude = (v: vec2, min: number, max: number): vec2 => Magnitude(v) < min ? scalarMultiplication((scalarDivision(v, Magnitude(v))), min) : Magnitude(v) > max ? scalarMultiplication((scalarDivision(v, Magnitude(v))), max) : v
 
 /**
  * Gradually changes a vector towards a desired goal over time.

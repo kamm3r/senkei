@@ -2,7 +2,7 @@ import { clamp01 } from "./clamp";
 import { smooth01 } from "./smoothingEasing";
 
 /**
- * Blends between a and b, based on the t-value. When t = 0 it returns a, when t = 1 it returns b, and any values between are blended linearly 
+ * Blends between a and b, based on the t-value. When t = 0 it returns a, when t = 1 it returns b, and any values between are blended linearly
  * @param a The start value, when t is 0
  * @param b The start value, when t is 1
  * @param t The t-value from 0 to 1 representing position along the lerp

@@ -38,7 +38,7 @@ export const DirToOrientation = (v: vec2): quat => {
  * @returns Returns the signed curvature at a point in a curve, in radians per distance unit (equivalent to the reciprocal radius of the osculating circle)
  */
 export const GetCurvature = (velocity: vec2, acceleration: vec2): number => {
-    const dMag = Vec2.magnitude(velocity)
+    const dMag = Vec2.Magnitude(velocity)
     return Vec2.Determinant(velocity, acceleration) / (dMag * dMag * dMag)
 }
 //Returns the signed angle between a and b, in the range -tau/2 to tau/2 (-pi to pi)

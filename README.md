@@ -11,59 +11,92 @@ Game dev Math
     - [x] vec4
   - [x] Vector-Vector operations (+, -,\* , /, dot, cross and wedge)
   - [x] Vector-Scalar operations (+, -,\*, /, ^)
-  - [x] magnitude/squared magnitude
+  - [x] magnitude
   - [x] normalized
+  - [x] sqrMagnitude
+  - [x] angle
+  - [ ] ClampMagnitude
+  - [x] Cross
   - [x] distance
+  - [x] Dot
   - [x] lerp
-  - [x] lerp clamped
-  - [ ] slerp ${\color{grey}not \space major \space rn}$
-  - [ ] slerp clamped ${\color{grey}not \space major \space rn}$
-  - [x] inverse lerp
-  - [ ] transforms ${\color{grey}not \space major \space rn}$
-  - [x] scale
-  - [x] angle between vecs
-  - [x] signed angle
+  - [x] lerpUnclamped
+  - [x] min
+  - [x] max
   - [x] move towards
-  - [x] reflect
-  - [ ] rotate towards ${\color{grey}not \space major \space rn}$
+  - [ ] OrthoNormalize
+  - [x] Normalize
   - [x] project
   - [x] project on plane
+  - [x] Perpendicular
+  - [x] reflect
+  - [ ] rotate towards ${\color{grey}not \space major \space rn}$
+  - [x] scale
+  - [x] signed angle
+  - [ ] slerp ${\color{grey}not \space major \space rn}$
+  - [ ] slerp clamped ${\color{grey}not \space major \space rn}$
   - [x] smooth damp
   - [ ] bezier curves ${\color{grey}not \space major \space rn}$
+  - [x] inverse lerp
+  - [x] transforms
+  - [ ] Equals (different, approximately)
 - [ ] Matrix
+  - [x] new matrix
+    - [x] 2x2
+    - [x] 2x3
+    - [x] 3x3
+    - [x] 3x4
+    - [x] 4x4
+  - [ ] Matrix-Scalar operations (+, -,\*, /)
+  - [ ] Matrix-Vector multiplication
+  - [ ] Matrix-Matrix multiplication
+  - [ ] local to world
+  - [ ] world to local
+  - [ ] inverse matrix
+  - [ ] transform
+  - [ ] projection matrix
+  - [x] identity matrix
+- [ ] Matrix4
   - [x] new matrix
   - [x] Matrix-Scalar operations (+, -,\*, /)
   - [x] Matrix-Vector multiplication
   - [x] Matrix-Matrix multiplication
-  - [ ] local to world
-  - [ ] world to local
+  - [x] identity
   - [x] inverse matrix
-  - [ ] transform
-  - [x] projection matrix
-  - [x] identity matrix
+  - [ ] transformPlane
+  - [x] Frustum
+  - [ ] Inverse3DAffine
+  - [x] LookAt]
+  - [x] Ortho
+  - [x] perspective
+  - [x] Rotate
+  - [x] Scale
+  - [x] Translate
+  - [ ] TRS
 - [ ] Quaternion
   - [x] new quaternion
   - [x] Quaternion-Scalar operations (+, -,\*, /)
   - [x] Quaternion multiplication
+  - [x] identity
+  - [ ] eulerAngles
+  - [ ] setfFromToRotation,
+  - [ ] SetLookRotation
+  - [ ] toAngleAxis
   - [x] angle
   - [x] axisAngle
   - [x] angleAxis
   - [x] dot
   - [x] euler
-  - [ ] eulerAngles
   - [ ] fromToRotation
-  - [x] lookRotation
   - [x] inverse
   - [x] lerp
   - [x] lerpUnclamped
+  - [x] lookRotation
   - [x] normalize
-  - [x] rotateTowards
+  - [ ] rotateTowards
   - [x] slerp
   - [ ] slerpUnclamped ${\color{grey}not \space major \space rn}$
-  - [x] identity
-  - [ ] setfFromToRotation,
-  - [x] SetLookRotation
-  - [ ] toAngleAxis
+  - [x] transform
 - [ ] Math Utils or what ever to call it
   - [x] lerp
   - [ ] ...
