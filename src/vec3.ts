@@ -130,36 +130,6 @@ export const ClampMagnitude = (v: vec3, min: number, max: number): vec3 => Magni
 //	Multiplies two vectors component-wise.
 export const Scale = (a: vec3, b: vec3): vec3 => create(a[0] * b[0], a[1] * b[1], a[2] * b[2])
 export const Scales = (v: vec3, scale: number): vec3 => create(v[0] * scale, v[1] * scale, v[2] * scale)
-// Orthonormalize provided vectors
-// Makes vectors normalized and orthogonal to each other
-// Gram-Schmidt function implementation
-export const OthoNormalize = (normal: vec3, tangent: vec3): void => {
-    let length = 0
-    let ilength = 0
-
-    let v = normal
-
-    length = Magnitude(v)
-    if (length === 0) length = 1
-    ilength = 1 / length
-    normal[0] *= ilength
-    normal[1] *= ilength
-    normal[2] *= ilength
-
-    let vn1 = Cross(normal, tangent)
-    v = vn1
-    length = Magnitude(v)
-    if (length === 0) length = 1
-    ilength = 1 / length
-    vn1[0] *= ilength
-    vn1[1] *= ilength
-    vn1[2] *= ilength
-
-    let vn2 = Cross(vn1, normal)
-
-    tangent = vn2
-
-}
 // Transforms a Vector3 by a given Matrix
 export const TransformVec3 = (v: vec3, mat: mat4): vec3 => {
     const res = create()
@@ -191,6 +161,36 @@ export const MoveTowards = (current: vec3, target: vec3, maxDistanceDelta: numbe
     if (sqrtDist === 0 || (maxDistanceDelta >= 0 && sqrtDist <= maxDistanceDelta * maxDistanceDelta)) target
     const dist = Math.sqrt(sqrtDist)
     return create(current[0] + (target[0] - current[0]) / dist * maxDistanceDelta, current[1] + (target[1] - current[1]) / dist * maxDistanceDelta, current[2] + (target[2] - current[2]) / dist * maxDistanceDelta)
+}
+// Orthonormalize provided vectors
+// Makes vectors normalized and orthogonal to each other
+// Gram-Schmidt function implementation
+export const OrthoNormalize = (normal: vec3, tangent: vec3): void => {
+    let length = 0
+    let ilength = 0
+
+    let v = normal
+
+    length = Magnitude(v)
+    if (length === 0) length = 1
+    ilength = 1 / length
+    normal[0] *= ilength
+    normal[1] *= ilength
+    normal[2] *= ilength
+
+    let vn1 = Cross(normal, tangent)
+    v = vn1
+    length = Magnitude(v)
+    if (length === 0) length = 1
+    ilength = 1 / length
+    vn1[0] *= ilength
+    vn1[1] *= ilength
+    vn1[2] *= ilength
+
+    let vn2 = Cross(vn1, normal)
+
+    tangent = vn2
+
 }
 //Reflects a vector off the plane defined by a normal.
 export const Reflect = (inDirection: vec3, inNormal: vec3): vec3 => {
