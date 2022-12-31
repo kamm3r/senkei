@@ -1,5 +1,4 @@
 import * as Vec3 from "./vec3"
-import * as Vec4 from "./vec4"
 import * as Mat4 from "./mat4"
 import { vec3, quat, RotationOrder, rotationOrder, mat4, vec4 } from "./types"
 import * as mathf from "./utils"
@@ -10,6 +9,8 @@ export const approximatelyEqual = (v1: vec3, v2: vec3): boolean => v1[0] == v2[0
 
 export const scalarAddition = (q: quat, k: number): quat => create(q[0] + k, q[1] + k, q[2] + k, q[3] + k)
 export const scalarSubtraction = (q: quat, k: number): quat => create(q[0] - k, q[1] - k, q[2] - k, q[3] - k)
+export const scalarMultiplication = (q: quat, k: number): quat => create(q[0] * k, q[1] * k, q[2] * k, q[3] * k)
+export const scalarDivision = (q: quat, k: number): quat => create(q[0] / k, q[1] / k, q[2] / k, q[3] / k)
 export const add = (q1: quat, q2: quat): quat => create(q1[0] + q2[0], q1[1] + q2[1], q1[2] + q2[2], q1[3] + q2[3])
 export const subtract = (q1: quat, q2: quat): quat => create(q1[0] - q2[0], q1[1] - q2[1], q1[2] - q2[2], q1[3] - q2[3])
 export const divide = (q1: quat, q2: quat): quat => create(q1[0] / q2[0], q1[1] / q2[1], q1[2] / q2[2], q1[3] / q2[3])
@@ -46,7 +47,7 @@ export const differentEquals = (lhs: quat, rhs: quat): boolean => lhs !== rhs
 
 export const identity = create(0, 0, 0, 1)
 /**
- * @returns Returns or sets the euler angle representation of the rotation
+ * @returns Returns or sets the euler angle representation of the rotation TODO
  */
 export const eualerAngles = () => {
     return {
@@ -55,7 +56,7 @@ export const eualerAngles = () => {
     }
 }
 
-export const Conjugate = (q: quat): quat => create(q[0] *= -1, q[1] *= -1, q[2] *= -1, q[0] *= 1)
+export const Conjugate = (q: quat): quat => create(-q[0], -q[1], -q[2], q[3])
 export const normalized = (q: quat): quat => Normalize(q)
 export const setFromToRotation = (fromDirection: vec3, toDirection: vec3): quat => create()
 export const setLookRotation = (view: vec3, up = Vec3.up): void => {
@@ -63,10 +64,6 @@ export const setLookRotation = (view: vec3, up = Vec3.up): void => {
 }
 export const magnitude = (q: quat): number => Math.sqrt(magnitudeSqrt(q))
 export const magnitudeSqrt = (q: quat): number => q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3]
-export const AxisAngle = (axis: vec3, angle: number): quat => {
-    const sina = Math.sin(0.5 * angle)
-    return create(axis[0] * sina, axis[1] * sina, axis[2] * sina, Math.cos(0.5 * angle))
-}
 export const EulerXYZ = (x: number, y: number, z: number): quat => {
     const s = Vec3.create(Math.sin(0.5 * x), Math.sin(0.5 * y), Math.sin(0.5 * z))
     const c = Vec3.create(Math.cos(0.5 * x), Math.cos(0.5 * y), Math.cos(0.5 * z))
@@ -190,12 +187,12 @@ const Internal_MakePositive = (euler: vec3): vec3 => {
 // angle= 2xatan2(mag, w) 
 //fromAngleAxis
 export const AngleAxis = (angle: number, axis: vec3): quat => {
-    if (Vec3.magnitudeSqrt(axis) === 0) identity
+    if (Vec3.SqrMagnitude(axis) === 0) identity
 
     const res = identity
     let rad = angle * mathf.Deg2Rad
     rad *= 0.5
-    let vn = Vec3.normalized(axis)
+    let vn = Vec3.Normalize(axis)
     vn = create(axis[0] * Math.sin(rad), axis[1] * Math.sin(rad), axis[2] * Math.sin(rad))
     res[0] = axis[0];
     res[1] = axis[1];
@@ -203,6 +200,10 @@ export const AngleAxis = (angle: number, axis: vec3): quat => {
     res[3] = Math.cos(rad);
 
     return Normalize(res)
+}
+export const AxisAngle = (axis: vec3, angle: number): quat => {
+    const sina = Math.sin(0.5 * angle)
+    return create(axis[0] * sina, axis[1] * sina, axis[2] * sina, Math.cos(0.5 * angle))
 }
 // export const AngleAxis = (angle: number, axis: vec3): quat => create(axis[0] * Math.sin(angle * 0.5), axis[1] * Math.sin(angle * 0.5), axis[2] * Math.sin(angle * 0.5), Math.cos(angle * 0.5))
 export const Dot = (a: quat, b: quat): number => a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3];
@@ -219,7 +220,7 @@ export const FromToRotation = (fromDirection: vec3, toDirection: vec3): quat => 
 /**
  * 
  * @param rotation 
- * @returns Returns the inverse of rotation
+ * @returns Returns the inverse of rotation TODO 
  */
 export const Inverse = (rotation: quat): quat => {
     const sqrtmag = rotation[0] * rotation[0] + rotation[1] * rotation[1] + rotation[2] * rotation[2] + rotation[3] * rotation[3];
@@ -227,8 +228,11 @@ export const Inverse = (rotation: quat): quat => {
     if (sqrtmag === 0) {
         return create()
     }
-    return create(-rotation[0] * invSqrtMag, -rotation[1] * invSqrtMag, -rotation[2] * invSqrtMag, -rotation[3] * invSqrtMag)
+    return create(-rotation[0] * invSqrtMag, -rotation[1] * invSqrtMag, -rotation[2] * invSqrtMag, rotation[3] * invSqrtMag)
 }
+
+export const Inverses = (rotation: quat): quat => Normalize(Conjugate(rotation))
+export const Inversef = (rotation: quat): quat => scalarMultiplication(Conjugate(rotation), Dot(rotation, rotation))
 /**
  * 
  * @param a Start value, returned when t = 0
@@ -306,7 +310,7 @@ export const Normalize = (q: quat): quat => Math.sqrt(Dot(q, q)) < mathf.Epsilon
  * @param maxDegreesDelta 
  * @returns TODO
  */
-export const rotateTowards = (from: quat, to: quat, maxDegreesDelta: number): quat => {
+export const RotateTowards = (from: quat, to: quat, maxDegreesDelta: number): quat => {
     const angle = Angle(from, to)
     if (angle === 0) to
     return SlerpUnclamped(from, to, Math.min(1, maxDegreesDelta / angle))
@@ -386,20 +390,9 @@ export const SlerpUnclamped = (a: quat, b: quat, t: number): quat => {
     return create()
 }
 
-
-export const vec4ToQuat = (v: vec4): quat => create(v[0], v[1], v[2], v[3])
-// export const mat3ToQuat = ():quat=>
-// export const mat4ToQuat = (m: mat4): quat => {
-//     const u = Vec4.create(m[0], m[1], m[2], m[3])
-//     const v = Vec4.create(m[4], m[5], m[6], m[7])
-//     const w = Vec4.create(m[8], m[9], m[10], m[11])
-
-//     const u_sign = 2
-// }
-
 export const fromAxisAngle = (axis: vec3, angle: number): quat => {
     const res = create(0, 0, 0, 1)
-    const axisMag = Vec3.magnitude(axis)
+    const axisMag = Vec3.Magnitude(axis)
 
     if (axisMag != 0) {
         angle *= 0.5
@@ -474,6 +467,17 @@ export const fromEuler = (pitch: number, yaw: number, roll: number): quat => {
 
     return res
 }
+
+export const vec4ToQuat = (v: vec4): quat => create(v[0], v[1], v[2], v[3])
+// export const mat3ToQuat = ():quat=>
+// export const mat4ToQuat = (m: mat4): quat => {
+//     const u = Vec4.create(m[0], m[1], m[2], m[3])
+//     const v = Vec4.create(m[4], m[5], m[6], m[7])
+//     const w = Vec4.create(m[8], m[9], m[10], m[11])
+
+//     const u_sign = 2
+// }
+
 // Get the Euler angles equivalent to quaternion (roll, pitch, yaw)
 // NOTE: Angles are returned in a Vector3 struct in radians
 export const toEuler = (q: quat): vec3 => {

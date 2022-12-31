@@ -15,7 +15,7 @@ Game dev Math
   - [x] normalized
   - [x] sqrMagnitude
   - [x] angle
-  - [ ] ClampMagnitude
+  - [x] ClampMagnitude
   - [x] Cross
   - [x] distance
   - [x] Dot
@@ -24,7 +24,7 @@ Game dev Math
   - [x] min
   - [x] max
   - [x] move towards
-  - [ ] OrthoNormalize
+  - [x] OrthoNormalize
   - [x] Normalize
   - [x] project
   - [x] project on plane
@@ -47,7 +47,7 @@ Game dev Math
   - [x] Matrix-Matrix multiplication
   - [x] identity
   - [x] inverse matrix
-  - [ ] transformPlane
+  - [ ] transformPlane ${\color{grey}not \space major \space rn}$
   - [x] Frustum
   - [ ] Inverse3DAffine
   - [x] LookAt]
@@ -63,12 +63,12 @@ Game dev Math
   - [x] Quaternion multiplication
   - [x] identity
   - [ ] eulerAngles
-  - [ ] setfFromToRotation,
-  - [ ] SetLookRotation
+  - [x] setfFromToRotation,
+  - [x] SetLookRotation ????
   - [ ] toAngleAxis
   - [x] angle
   - [x] axisAngle
-  - [x] angleAxis
+  - [ ] angleAxis
   - [x] dot
   - [x] euler
   - [ ] fromToRotation
@@ -77,7 +77,7 @@ Game dev Math
   - [x] lerpUnclamped
   - [x] lookRotation
   - [x] normalize
-  - [ ] rotateTowards
+  - [ ] rotateTowards ${\color{grey}not \space major \space rn}$
   - [x] slerp
   - [ ] slerpUnclamped ${\color{grey}not \space major \space rn}$
   - [x] transform
