@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
-import { benchmark } from '../benchmark/benchmark'
 import { quat } from "../src"
+// import { benchmark } from '../benchmark/benchmark'
 
 describe('quat', () => {
     test('create, no values given', () => {
@@ -36,8 +36,8 @@ describe('quat', () => {
     test('inverse', () => {
         const v = quat.create(3, 1, 2, 4)
         const inv = quat.Inverse(v)
-        const sa = benchmark(() => inv, null, 100)
-        console.log('inverse', sa);
+        // const sa = benchmark(() => inv, null, 100)
+        // console.log('inverse', sa);
         expect(inv[0]).toBe(-0.10000000149011612)
         expect(inv[1]).toBe(-0.03333333507180214)
         expect(inv[2]).toBe(-0.06666667014360428)
@@ -46,8 +46,8 @@ describe('quat', () => {
     test('inverse', () => {
         const v = quat.create(3, 1, 2, 4)
         const inv = quat.Inverses(v)
-        const sa = benchmark(() => inv, null, 100)
-        console.log('inverses', sa);
+        // const sa = benchmark(() => inv, null, 100)
+        // console.log('inverses', sa);
         expect(inv[0]).toBe(-0.547722578048706)
         expect(inv[1]).toBe(-0.18257418274879456)
         expect(inv[2]).toBe(-0.3651483654975891)
@@ -56,8 +56,8 @@ describe('quat', () => {
     test('inverse', () => {
         const v = quat.create(3, 1, 2, 4)
         const inv = quat.Inversef(v)
-        const sa = benchmark(() => inv, null, 100)
-        console.log('inversef', sa);
+        // const sa = benchmark(() => inv, null, 100)
+        // console.log('inversef', sa);
         expect(inv[0]).toBe(-90)
         expect(inv[1]).toBe(-30)
         expect(inv[2]).toBe(-60)
@@ -66,8 +66,6 @@ describe('quat', () => {
     test('to Matrix', () => {
         const v = quat.create(3, 1, 2, 4)
         const mat = quat.toMatrix(v)
-        const sa = benchmark(() => mat, null, 100)
-        console.log('toMatrix', sa);
         expect(mat[0]).toBe(-9)
         expect(mat[1]).toBe(-10)
         expect(mat[2]).toBe(20)

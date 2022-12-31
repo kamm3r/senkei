@@ -1,5 +1,4 @@
 import { describe, expect, test } from 'vitest'
-import { benchmark } from '../benchmark/benchmark'
 import { vec2 } from "../src"
 
 describe('Vec2', () => {
@@ -127,8 +126,6 @@ describe('Vec2', () => {
     test('ClampMagnitude', () => {
         const v = vec2.create(53, 79)
         const dist = vec2.ClampMagnitude(v, 2, 10)
-        const sa = benchmark(() => dist, null, 100)
-        console.log('ClampMagnitude', sa);
         expect(dist[0]).toBe(5.5712361335754395)
         expect(dist[1]).toBe(8.304295539855957)
     })
