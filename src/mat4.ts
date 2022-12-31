@@ -1,5 +1,6 @@
-import { mat4, quat, vec3 } from "./types"
+import { mat4, quat, vec3, vec4 } from "./types"
 import * as Vec3 from "./vec3"
+import * as Vec4 from "./vec4"
 import * as Quat from "./quat"
 
 
@@ -11,8 +12,8 @@ export const create = (m00 = 1, m01 = 0, m02 = 0, m03 = 0, m10 = 0, m11 = 1, m12
         m30, m31, m32, m33
     ])
 }
-export const identity = create(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0)
-export const zero = create(1.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0)
+export const identity = create(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
+export const zero = create(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 // Add two matrices
 export const add = (m1: mat4, m2: mat4): mat4 => create(m1[0] + m2[0], m1[1] + m2[1], m1[2] + m2[2], m1[3] + m2[3], m1[4] + m2[4], m1[5] + m2[5], m1[6] + m2[6], m1[7] + m2[7], m1[8] + m2[8], m1[9] + m2[9], m1[10] + m2[10], m1[11] + m2[11], m1[12] + m2[12], m1[13] + m2[13], m1[14] + m2[14], m1[15] + m2[15])
 // Subtract two matrices (m1 - m2)
@@ -37,10 +38,62 @@ export const multiply = (m1: mat4, m2: mat4): mat4 => create(
     m1[3] * m2[8] + m1[7] * m2[9] + m1[11] * m2[10] + m1[15] * m2[11],
     m1[3] * m2[12] + m1[7] * m2[13] + m1[11] * m2[14] + m1[15] * m2[15])
 
-// TODO
-export const multiply3x4 = (point: vec3): vec3 => Vec3.create()
-// TODO
-export const multiplyFromVec3 = (v: vec3): vec3 => Vec3.create()
+// Transforms a position by this matrix, with a perspective divide. (generic)
+export const multiplyPoint = (m: mat4, point: vec3): vec3 => {
+    const res = Vec3.create()
+    let w
+    res[0] = m[0] * point[0] + m[1] * point[1] + m[2] * point[2] + m[3]
+    res[1] = m[4] * point[0] + m[5] * point[1] + m[6] * point[2] + m[7]
+    res[2] = m[8] * point[0] + m[9] * point[1] + m[10] * point[2] + m[11]
+    w = m[12] * point[0] + m[13] * point[1] + m[14] * point[2] + m[15]
+
+    w = 1 / w
+    res[0] *= w
+    res[1] *= w
+    res[2] *= w
+    return res
+}
+// Transforms a position by this matrix, without a perspective divide. (fast)
+export const multiplyPoint3x4 = (m: mat4, point: vec3): vec3 => {
+    const res = Vec3.create()
+    res[0] = m[0] * point[0] + m[1] * point[1] + m[2] * point[2] + m[3]
+    res[1] = m[4] * point[0] + m[5] * point[1] + m[6] * point[2] + m[7]
+    res[2] = m[8] * point[0] + m[9] * point[1] + m[10] * point[2] + m[11]
+    return res
+}
+// Transforms a direction by this matrix.
+export const multiplyFromVec3 = (m: mat4, v: vec3): vec3 => {
+    const res = Vec3.create()
+    res[0] = m[0] * v[0] + m[1] * v[1] + m[2] * v[2]
+    res[1] = m[4] * v[0] + m[5] * v[1] + m[6] * v[2]
+    res[2] = m[8] * v[0] + m[9] * v[1] + m[10] * v[2]
+    return res
+}
+
+export const GetColumn = (m: mat4, i: number): vec4 => {
+    switch (i) {
+        case 0: return Vec4.create(m[0], m[4], m[8], m[12]);
+        case 1: return Vec4.create(m[1], m[5], m[9], m[13]);
+        case 2: return Vec4.create(m[2], m[6], m[10], m[14]);
+        case 3: return Vec4.create(m[3], m[7], m[11], m[15]);
+        default:
+            throw new Error("Invalid column index!");
+    }
+
+}
+export const GetRow = (m: mat4, i: number): vec4 => {
+    switch (i) {
+        case 0: return Vec4.create(m[0], m[1], m[2], m[3]);
+        case 1: return Vec4.create(m[4], m[5], m[6], m[7]);
+        case 2: return Vec4.create(m[8], m[9], m[10], m[11]);
+        case 3: return Vec4.create(m[12], m[13], m[14], m[15]);
+        default:
+            throw new Error("Invalid row index!");
+    }
+
+}
+export const GetPosition = (m: mat4): vec3 => Vec3.create(m[3], m[7], m[11])
+
 // export const TransformPlane = ():any=>
 
 // Compute matrix determinant
@@ -119,7 +172,7 @@ export const rotation = (mat: mat4): quat => {
 // Get the trace of the matrix (sum of the values along the diagonal)
 export const Trace = (mat: mat4): number => mat[0] + mat[5] + mat[10] + mat[15]
 // Transposes provided matrix
-export const Transpose = (mat: mat4): mat4 => create(mat[0], mat[1], mat[2], mat[3], mat[4], mat[5], mat[6], mat[7], mat[8], mat[9], mat[10], mat[11], mat[12], mat[13], mat[14], mat[15])
+export const Transpose = (mat: mat4): mat4 => create(mat[0], mat[4], mat[8], mat[12], mat[1], mat[5], mat[9], mat[13], mat[2], mat[6], mat[10], mat[14], mat[3], mat[7], mat[11], mat[15])
 // Invert provided matrix
 export const Invert = (mat: mat4): mat4 => {
     let a00 = mat[0], a01 = mat[1], a02 = mat[2], a03 = mat[3]
@@ -165,6 +218,29 @@ export const Rotate = (axis: vec3, angle: number): mat4 => {
     const t = 1 - cosres
 
     return create(x * x * t + cosres, y * x * t + z * sinres, z * x * t - y * sinres, 0, x * y * t - z * sinres, y * y * t + cosres, z * y * t + x * sinres, 0, x * z * t + y * sinres, y * z * t - x * sinres, z * z * t + cosres, 0, 0, 0, 0, 1)
+}
+export const Rotates = (q: quat): mat4 => {
+    // Precalculate coordinate products
+    const x = q[0] * 2.0;
+    const y = q[1] * 2.0;
+    const z = q[2] * 2.0;
+    const xx = q[0] * x;
+    const yy = q[1] * y;
+    const zz = q[2] * z;
+    const xy = q[0] * y;
+    const xz = q[0] * z;
+    const yz = q[1] * z;
+    const wx = q[3] * x;
+    const wy = q[3] * y;
+    const wz = q[3] * z;
+
+    // Calculate 3x3 matrix from orthonormal basis
+    const m = create()
+    m[0] = 1.0 - (yy + zz); m[4] = xy + wz; m[8] = xz - wy; m[12] = 0.0;
+    m[1] = xy - wz; m[5] = 1.0 - (xx + zz); m[9] = yz + wx; m[13] = 0.0;
+    m[2] = xz + wy; m[6] = yz - wx; m[10] = 1.0 - (xx + yy); m[14] = 0.0;
+    m[3] = 0.0; m[7] = 0.0; m[11] = 0.0; m[15] = 1.0;
+    return m;
 }
 // Get scaling matrix
 export const Scale = (x: number, y: number, z: number): mat4 => create(x, 0, 0, 0, 0, y, 0, 0, 0, 0, z, 0, 0, 0, 0, 1)
@@ -240,7 +316,7 @@ export const LookAt = (from: vec3, to: vec3, up: vec3): mat4 => {
 
     const vz = Vec3.subtract(from, to)
     let v = Vec3.normalized(vz)
-    mag = Math.sqrt(Vec3.magnitudeSqrt(v))
+    mag = Vec3.Magnitude(v)
     if (mag === 0) mag = 1
     imag = 1 / mag
     vz[0] *= imag
@@ -249,7 +325,7 @@ export const LookAt = (from: vec3, to: vec3, up: vec3): mat4 => {
 
     const vx = Vec3.Cross(up, vz)
     v = Vec3.normalized(vx)
-    mag = Math.sqrt(Vec3.magnitudeSqrt(v))
+    mag = Vec3.Magnitude(v)
     if (mag === 0) mag = 1
     imag = 1 / mag
     vx[0] *= imag
@@ -264,4 +340,38 @@ export const LookAt = (from: vec3, to: vec3, up: vec3): mat4 => {
         vz[0], vz[1], vz[2], -Vec3.dot(vz, up),
         0, 0, 0, 1
     )
+}
+
+/**
+ * Converts this quaternion to a rotation matrix
+ */
+export const toMatrix = (q: quat): mat4 => {
+    const res = create()
+    // you could just use Matrix4x4.Rotate( q ) but that's not as fun as doing this math myself
+    const xx = q[0] * q[0];
+    const yy = q[1] * q[1];
+    const zz = q[2] * q[2];
+    const ww = q[3] * q[3];
+    const xy = q[0] * q[1];
+    const yz = q[1] * q[2];
+    const zw = q[2] * q[3];
+    const wx = q[3] * q[0];
+    const xz = q[0] * q[2];
+    const yw = q[1] * q[3];
+
+    res[0] = xx - yy - zz + ww, // X
+        res[4] = 2 * (xy + zw),
+        res[8] = 2 * (xz - yw),
+
+        res[1] = 2 * (xy - zw), // Y
+        res[5] = -xx + yy - zz + ww,
+        res[9] = 2 * (wx + yz),
+
+        res[2] = 2 * (xz + yw), // Z
+        res[6] = 2 * (yz - wx),
+        res[10] = -xx - yy + zz + ww,
+
+        res[15] = 1
+
+    return res
 }

@@ -67,36 +67,13 @@ export const Cross = (v1: vec3, v2: vec3): vec3 => create((v1[1] * v2[2]) - (v1[
 // {x:0,y:0,z:0 w:wedget product}
 export const wedge = (v1: vec3, v2: vec3): number => v1[0] * v2[1] - v1[1] * v2[0]
 // Returns the length of this vector
-export const magnitude = (v: vec3): number => Math.sqrt(magnitudeSqrt(v))
+export const Magnitude = (v: vec3): number => Math.sqrt(SqrMagnitude(v))
 //	Returns the squared length of this vector
-export const magnitudeSqrt = (v: vec3): number => v[0] * v[0] + v[1] * v[1] + v[2] * v[2]
-//	Returns a copy of vector with its magnitude clamped to maxLength.
-export const clampMagnitude = (v: vec3, maxLength: number): vec3 => {
-    const sqrtmag = magnitudeSqrt(v)
-    if (sqrtmag > maxLength * maxLength) {
-        const mag = Math.sqrt(sqrtmag)
-        const normx = v[0] / mag
-        const normy = v[1] / mag
-        const normz = v[2] / mag
-        return create(normx / maxLength, normy / maxLength, normz / maxLength)
-    }
-    return v
-}
-// export const clampMagnitude = (v: vec3, min: number, max: number): vec3 => {
-//     let mag = magnitudeSqrt(v)
-//     return mag < min ? ({ x: v[0] / mag, y: v[1] / mag, z: v[2] / mag }) * min : mag > max ? (v / mag) * max : v;
-// }
+export const SqrMagnitude = (v: vec3): number => v[0] * v[0] + v[1] * v[1] + v[2] * v[2]
 //Returns this vector with a magnitude of 1
-export const normalized = (v: vec3): vec3 => magnitude(v) > mathf.kEpsilon ? create(v[0] / magnitude(v), v[1] / magnitude(v), v[2] / magnitude(v)) : zero
+export const normalized = (v: vec3): vec3 => Normalize(v)
+export const Normalize = (v: vec3): vec3 => Magnitude(v) > mathf.kEpsilon ? scalarDivision(v, Magnitude(v)) : zero
 //Makes this vector have a magnitude of 1.
-export const Normalize = (v: vec3): vec3 => {
-    const mag = magnitude(v)
-    if (mag > mathf.kEpsilon) {
-        return create(v[0] / mag, v[1] / mag, v[2] / mag)
-    } else {
-        return zero
-    }
-}
 type Negate = (v: vec3) => vec3
 export const negate: Negate = (v) => create(-v[0], -v[1], -v[2])
 // when you want specific distance between a^ and b
@@ -129,7 +106,7 @@ export const SlerpUnclamped = (a: vec3, b: vec3, t: number): vec3 => {
 }
 //	Calculates the angle between vectors from and.
 export const Angle = (from: vec3, to: vec3): number => {
-    const denominator = Math.sqrt(magnitudeSqrt(from) * magnitudeSqrt(to))
+    const denominator = Math.sqrt(SqrMagnitude(from) * SqrMagnitude(to))
     let Dot = mathf.clamp(dot(from, to) / denominator, -1, 1)
     return Math.acos(Dot) * mathf.Rad2Deg
 }
@@ -142,6 +119,14 @@ export const SignedAngle = (from: vec3, to: vec3, axis: vec3): number => {
     const sign = Math.sign(axis[0] * cx + axis[1] * cy + axis[2] * cz);
     return unsignedAngle * sign
 }
+/**
+ * Clamps the length of the vector between <c>min</c> and <c>max</c>
+ * @param v The vector to clamp
+ * @param min Minimum length
+ * @param max Maximum length
+ * Note could normalize the v inside scalarMult
+ */
+export const ClampMagnitude = (v: vec3, min: number, max: number): vec3 => Magnitude(v) < min ? scalarMultiplication((scalarDivision(v, Magnitude(v))), min) : Magnitude(v) > max ? scalarMultiplication((scalarDivision(v, Magnitude(v))), max) : v
 //	Multiplies two vectors component-wise.
 export const Scale = (a: vec3, b: vec3): vec3 => create(a[0] * b[0], a[1] * b[1], a[2] * b[2])
 export const Scales = (v: vec3, scale: number): vec3 => create(v[0] * scale, v[1] * scale, v[2] * scale)
@@ -154,7 +139,7 @@ export const OthoNormalize = (normal: vec3, tangent: vec3): void => {
 
     let v = normal
 
-    length = Math.sqrt(magnitudeSqrt(v))
+    length = Magnitude(v)
     if (length === 0) length = 1
     ilength = 1 / length
     normal[0] *= ilength
@@ -163,7 +148,7 @@ export const OthoNormalize = (normal: vec3, tangent: vec3): void => {
 
     let vn1 = Cross(normal, tangent)
     v = vn1
-    length = Math.sqrt(magnitudeSqrt(v))
+    length = Magnitude(v)
     if (length === 0) length = 1
     ilength = 1 / length
     vn1[0] *= ilength
