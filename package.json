@@ -1,6 +1,6 @@
 {
   "name": "math",
-  "private": true,
+  "private": false,
   "version": "0.1.0",
   "description": "Gamedev math libary",
   "type": "module",
