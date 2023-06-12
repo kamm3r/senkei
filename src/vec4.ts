@@ -105,7 +105,7 @@ export const SqrMagnitude = (v: vec4): number => v[0] * v[0] + v[1] * v[1] + v[2
  */
 export const normalized = (v: vec4): vec4 => Normalize(v)
 /**
- * Returns this vector with a magnitude of 1. 
+ * Returns this vector with a magnitude of 1.
  */
 export const Normalize = (v: vec4): vec4 => Magnitude(v) > mathf.kEpsilon ? create(v[0] / Magnitude(v), v[1] / Magnitude(v), v[2] / Magnitude(v), v[3] / Magnitude(v)) : zero
 /**
@@ -121,28 +121,28 @@ export const SqrDistance = (v1: vec4, v2: vec4): number => {
     return x * x + y * y + z * z + w * w
 }
 /**
- * Blends between a and b, based on the t-value. When t = 0 it returns a, when t = 1 it returns b, and any values between are blended linearly 
+ * Blends between a and b, based on the t-value. When t = 0 it returns a, when t = 1 it returns b, and any values between are blended linearly
  * @param a The start value, when t is 0
  * @param b The start value, when t is 1
  * @param t The t-value from 0 to 1 representing position along the lerp, clamped between 0 and 1
- *  
+ *
  */
 export const Lerp = (a: vec4, b: vec4, t: number): vec4 => create(mathf.LerpClamped(a[0], b[0], t), mathf.LerpClamped(a[1], b[1], t), mathf.LerpClamped(a[2], b[2], t), mathf.LerpClamped(a[3], b[3], t))
 /**
- * Blends between a and b of each component, based on the t-value of each component in the t-vector. When t = 0 it returns a, 
+ * Blends between a and b of each component, based on the t-value of each component in the t-vector. When t = 0 it returns a,
  * when t = 1 it returns b, and any values between are blended linearly
  * @param a The start value, when t is 0
  * @param b The start value, when t is 1
  * @param t The t-values from 0 to 1 representing position along the lerp
- * 
+ *
 */
 export const Lerps = (a: vec4, b: vec4, t: vec4): vec4 => create(mathf.Lerp(a[0], b[0], t[0]), mathf.Lerp(a[1], b[1], t[1]), mathf.Lerp(a[2], b[2], t[2]), mathf.Lerp(a[3], b[3], t[3]))
 /**
- * Blends between a and b, based on the t-value. When t = 0 it returns a, when t = 1 it returns b, and any values between are blended linearly 
+ * Blends between a and b, based on the t-value. When t = 0 it returns a, when t = 1 it returns b, and any values between are blended linearly
  * @param a Start value, returned when t = 0.
  * @param b End value, returned when t = 1.
  * @param t The t-value from 0 to 1 representing position along the lerp
- *  
+ *
  */
 export const LerpUnclamped = (a: vec4, b: vec4, t: number): vec4 => create(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, a[3] + (b[3] - a[3]) * t)
 /**
@@ -150,7 +150,7 @@ export const LerpUnclamped = (a: vec4, b: vec4, t: number): vec4 => create(a[0] 
  * @param a The start of the range, where it would return 0
  * @param b The end of the range, where it would return 1
  * @param v A value between a and b. Note: values outside this range are still valid, and will be extrapolate
- * 
+ *
  */
 export const InverseLerp = (a: vec4, b: vec4, v: vec4): vec4 => create((v[0] - a[0]) / (b[0] - a[0]), (v[1] - a[1]) / (b[1] - a[1]), (v[2] - a[2]) / (b[2] - a[2]), (v[3] - a[3]) / (b[3] - a[3]))
 /**

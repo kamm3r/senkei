@@ -1,9 +1,8 @@
 {
   "compilerOptions": {
-    "outDir": "dist",
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "strict": true,
     "isolatedModules": true,
     "esModuleInterop": true,
@@ -19,7 +18,7 @@
     "noImplicitThis": true,
     "useUnknownInCatchVariables": true,
     "declaration": true,
-    "emitDeclarationOnly": true
+    "noEmit": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
