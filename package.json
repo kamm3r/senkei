@@ -12,33 +12,21 @@
   "homepage": "https://github.com/kamm3r/math",
   "repository": "https://github.com/kamm3r/math",
   "license": "MIT",
-  "files": [
-    "dist"
-  ],
-  "exports": {
-    ".": {
-      "types": "./dist/math.d.ts",
-      "import": "./dist/math.mjs",
-      "module": "./dist/math.js",
-      "default": "./dist/math.js"
-    },
-    "./package.json": "./package.json"
-  },
-  "main": "./dist/math.js",
-  "types": "./dist/math.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "vitest",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
-    "clean": "rm -rf dist",
-    "build": "pnpm clean && vite build && tsc",
-    "build:tsc": "pnpm clean && tsc",
-    "build:fast": "pnpm build && pnpm typecheck",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "release": "pnpm run build && changeset publish",
+    "lint": "tsc",
     "benchmark": "./benchmark"
   },
   "devDependencies": {
-    "@types/node": "^18.11.18",
-    "typescript": "^4.9.4",
-    "vite": "^4.0.3",
-    "vitest": "^0.26.2"
+    "@changesets/cli": "2.26.1",
+    "@types/node": "^20.3.0",
+    "tsup": "6.7.0",
+    "typescript": "5.1.3",
+    "vitest": "0.32.0"
   }
 }
