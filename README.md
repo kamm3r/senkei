@@ -1,3 +1,7 @@
+[![Size](https://img.shields.io/bundlephobia/minzip/senkei?label=gzip&style=flat&colorA=000000&colorB=000000)](https://bundlephobia.com/package/senkei)
+[![Version](https://img.shields.io/npm/v/senkei?style=flat&colorA=000000&colorB=000000)](https://npmjs.com/package/senkei)
+[![Downloads](https://img.shields.io/npm/dt/senkei.svg?style=flat&colorA=000000&colorB=000000)](https://npmjs.com/package/senkei)
+
 # Senkei
 
 Game dev Math
