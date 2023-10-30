@@ -74,7 +74,7 @@ export class Mat4 {
         );
     }
 
-    private GetDeterminant(): number {
+    private getDeterminant(): number {
         let res = 0.0;
 
         // Cache the matrix values (speed optimization)
@@ -124,35 +124,29 @@ export class Mat4 {
         return res;
     }
 
-    static Determinant(m: Mat4): number {
+    static determinant(m: Mat4): number {
         return m.determinant;
     }
     /**
      * The determinant of the matrix
      */
     get determinant(): number {
-        return this.GetDeterminant();
+        return this.getDeterminant();
     }
-    /** TODO:TEST that it works correctly */
-    static Inverse(m: Mat4): Mat4 {
+    /**
+        * Invert provided matrix
+        * If determinant is zero, the matrix will be set to zero matrix.
+        * TODO:if determinant is zero return current matrix (do not change it)
+        * throw your nan when only positive numbers (determinant is zero)
+    */
+    static inverse(m: Mat4): Mat4 {
         const res = Mat4.zero;
+
         // Cache the matrix values (speed optimization)
-        const a00 = m.m00,
-            a01 = m.m10,
-            a02 = m.m20,
-            a03 = m.m30;
-        const a10 = m.m01,
-            a11 = m.m11,
-            a12 = m.m21,
-            a13 = m.m31;
-        const a20 = m.m02,
-            a21 = m.m12,
-            a22 = m.m22,
-            a23 = m.m32;
-        const a30 = m.m03,
-            a31 = m.m13,
-            a32 = m.m23,
-            a33 = m.m33;
+        const a00 = m.m00, a01 = m.m01, a02 = m.m02, a03 = m.m03;
+        const a10 = m.m10, a11 = m.m11, a12 = m.m12, a13 = m.m13
+        const a20 = m.m20, a21 = m.m21, a22 = m.m22, a23 = m.m23;
+        const a30 = m.m30, a31 = m.m31, a32 = m.m32, a33 = m.m33;
 
         const b00 = a00 * a11 - a01 * a10;
         const b01 = a00 * a12 - a02 * a10;
@@ -168,35 +162,37 @@ export class Mat4 {
         const b11 = a22 * a33 - a23 * a32;
 
         // Calculate the invert determinant (inlined to avoid double-caching)
-        const invDet =
-            1.0 /
-            (b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06);
+        const invDet = 1.0 / (b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06);
 
         res.m00 = (a11 * b11 - a12 * b10 + a13 * b09) * invDet;
-        res.m10 = (-a01 * b11 + a02 * b10 - a03 * b09) * invDet;
-        res.m20 = (a31 * b05 - a32 * b04 + a33 * b03) * invDet;
-        res.m30 = (-a21 * b05 + a22 * b04 - a23 * b03) * invDet;
-        res.m01 = (-a10 * b11 + a12 * b08 - a13 * b07) * invDet;
+        res.m01 = (-a01 * b11 + a02 * b10 - a03 * b09) * invDet;
+        res.m02 = (a31 * b05 - a32 * b04 + a33 * b03) * invDet;
+        res.m03 = (-a21 * b05 + a22 * b04 - a23 * b03) * invDet;
+
+        res.m10 = (-a10 * b11 + a12 * b08 - a13 * b07) * invDet;
         res.m11 = (a00 * b11 - a02 * b08 + a03 * b07) * invDet;
-        res.m21 = (-a30 * b05 + a32 * b02 - a33 * b01) * invDet;
-        res.m31 = (a20 * b05 - a22 * b02 + a23 * b01) * invDet;
-        res.m02 = (a10 * b10 - a11 * b08 + a13 * b06) * invDet;
-        res.m12 = (-a00 * b10 + a01 * b08 - a03 * b06) * invDet;
+        res.m12 = (-a30 * b05 + a32 * b02 - a33 * b01) * invDet;
+        res.m13 = (a20 * b05 - a22 * b02 + a23 * b01) * invDet;
+
+        res.m20 = (a10 * b10 - a11 * b08 + a13 * b06) * invDet;
+        res.m21 = (-a00 * b10 + a01 * b08 - a03 * b06) * invDet;
         res.m22 = (a30 * b04 - a31 * b02 + a33 * b00) * invDet;
-        res.m32 = (-a20 * b04 + a21 * b02 - a23 * b00) * invDet;
-        res.m03 = (-a10 * b09 + a11 * b07 - a12 * b06) * invDet;
-        res.m13 = (a00 * b09 - a01 * b07 + a02 * b06) * invDet;
-        res.m23 = (-a30 * b03 + a31 * b01 - a32 * b00) * invDet;
+        res.m23 = (-a20 * b04 + a21 * b02 - a23 * b00) * invDet;
+
+        res.m30 = (-a10 * b09 + a11 * b07 - a12 * b06) * invDet;
+        res.m31 = (a00 * b09 - a01 * b07 + a02 * b06) * invDet;
+        res.m32 = (-a30 * b03 + a31 * b01 - a32 * b00) * invDet;
         res.m33 = (a20 * b03 - a21 * b01 + a22 * b00) * invDet;
+
         return res;
     }
     /**
-     * The determinant of the matrix.
+     * the determinant of the matrix.
      */
     get inverse(): Mat4 {
-        return Mat4.Inverse(this);
+        return Mat4.inverse(this);
     }
-    private GetRotation(): Quaternion {
+    private getRotation(): Quaternion {
         const res = Quaternion.identity;
         const fourWSquaredMinus1 = this.m00 + this.m11 + this.m22;
         const fourXSquaredMinus1 = this.m00 - this.m11 - this.m22;
@@ -256,9 +252,9 @@ export class Mat4 {
      * Attempts to get a rotation quaternion from this matrix
      */
     get rotation(): Quaternion {
-        return this.GetRotation();
+        return this.getRotation();
     }
-    static Transpose(m: Mat4): Mat4 {
+    static transpose(m: Mat4): Mat4 {
         const res = Mat4.zero;
         res.m00 = m.m00;
         res.m10 = m.m01;
@@ -282,7 +278,7 @@ export class Mat4 {
      * Returns the transpose of this matrix
      */
     get transpose(): Mat4 {
-        return Mat4.Transpose(this);
+        return Mat4.transpose(this);
     }
 
     GetColumn(index: number): Vec4 {
@@ -333,126 +329,126 @@ export class Mat4 {
     /**
      * Multiplies two matrices
      */
-    static mult(lhs: Mat4, rhs: Mat4): Mat4 {
+    static mult(matA: Mat4, matB: Mat4): Mat4 {
         const res = Mat4.zero;
 
         res.m00 =
-            lhs.m00 * rhs.m00 +
-            lhs.m01 * rhs.m10 +
-            lhs.m02 * rhs.m20 +
-            lhs.m03 * rhs.m30;
+            matA.m00 * matB.m00 +
+            matA.m01 * matB.m10 +
+            matA.m02 * matB.m20 +
+            matA.m03 * matB.m30;
         res.m01 =
-            lhs.m00 * rhs.m01 +
-            lhs.m01 * rhs.m11 +
-            lhs.m02 * rhs.m21 +
-            lhs.m03 * rhs.m31;
+            matA.m00 * matB.m01 +
+            matA.m01 * matB.m11 +
+            matA.m02 * matB.m21 +
+            matA.m03 * matB.m31;
         res.m02 =
-            lhs.m00 * rhs.m02 +
-            lhs.m01 * rhs.m12 +
-            lhs.m02 * rhs.m22 +
-            lhs.m03 * rhs.m32;
+            matA.m00 * matB.m02 +
+            matA.m01 * matB.m12 +
+            matA.m02 * matB.m22 +
+            matA.m03 * matB.m32;
         res.m03 =
-            lhs.m00 * rhs.m03 +
-            lhs.m01 * rhs.m13 +
-            lhs.m02 * rhs.m23 +
-            lhs.m03 * rhs.m33;
+            matA.m00 * matB.m03 +
+            matA.m01 * matB.m13 +
+            matA.m02 * matB.m23 +
+            matA.m03 * matB.m33;
 
         res.m10 =
-            lhs.m10 * rhs.m00 +
-            lhs.m11 * rhs.m10 +
-            lhs.m12 * rhs.m20 +
-            lhs.m13 * rhs.m30;
+            matA.m10 * matB.m00 +
+            matA.m11 * matB.m10 +
+            matA.m12 * matB.m20 +
+            matA.m13 * matB.m30;
         res.m11 =
-            lhs.m10 * rhs.m01 +
-            lhs.m11 * rhs.m11 +
-            lhs.m12 * rhs.m21 +
-            lhs.m13 * rhs.m31;
+            matA.m10 * matB.m01 +
+            matA.m11 * matB.m11 +
+            matA.m12 * matB.m21 +
+            matA.m13 * matB.m31;
         res.m12 =
-            lhs.m10 * rhs.m02 +
-            lhs.m11 * rhs.m12 +
-            lhs.m12 * rhs.m22 +
-            lhs.m13 * rhs.m32;
+            matA.m10 * matB.m02 +
+            matA.m11 * matB.m12 +
+            matA.m12 * matB.m22 +
+            matA.m13 * matB.m32;
         res.m13 =
-            lhs.m10 * rhs.m03 +
-            lhs.m11 * rhs.m13 +
-            lhs.m12 * rhs.m23 +
-            lhs.m13 * rhs.m33;
+            matA.m10 * matB.m03 +
+            matA.m11 * matB.m13 +
+            matA.m12 * matB.m23 +
+            matA.m13 * matB.m33;
 
         res.m20 =
-            lhs.m20 * rhs.m00 +
-            lhs.m21 * rhs.m10 +
-            lhs.m22 * rhs.m20 +
-            lhs.m23 * rhs.m30;
+            matA.m20 * matB.m00 +
+            matA.m21 * matB.m10 +
+            matA.m22 * matB.m20 +
+            matA.m23 * matB.m30;
         res.m21 =
-            lhs.m20 * rhs.m01 +
-            lhs.m21 * rhs.m11 +
-            lhs.m22 * rhs.m21 +
-            lhs.m23 * rhs.m31;
+            matA.m20 * matB.m01 +
+            matA.m21 * matB.m11 +
+            matA.m22 * matB.m21 +
+            matA.m23 * matB.m31;
         res.m22 =
-            lhs.m20 * rhs.m02 +
-            lhs.m21 * rhs.m12 +
-            lhs.m22 * rhs.m22 +
-            lhs.m23 * rhs.m32;
+            matA.m20 * matB.m02 +
+            matA.m21 * matB.m12 +
+            matA.m22 * matB.m22 +
+            matA.m23 * matB.m32;
         res.m23 =
-            lhs.m20 * rhs.m03 +
-            lhs.m21 * rhs.m13 +
-            lhs.m22 * rhs.m23 +
-            lhs.m23 * rhs.m33;
+            matA.m20 * matB.m03 +
+            matA.m21 * matB.m13 +
+            matA.m22 * matB.m23 +
+            matA.m23 * matB.m33;
 
         res.m30 =
-            lhs.m30 * rhs.m00 +
-            lhs.m31 * rhs.m10 +
-            lhs.m32 * rhs.m20 +
-            lhs.m33 * rhs.m30;
+            matA.m30 * matB.m00 +
+            matA.m31 * matB.m10 +
+            matA.m32 * matB.m20 +
+            matA.m33 * matB.m30;
         res.m31 =
-            lhs.m30 * rhs.m01 +
-            lhs.m31 * rhs.m11 +
-            lhs.m32 * rhs.m21 +
-            lhs.m33 * rhs.m31;
+            matA.m30 * matB.m01 +
+            matA.m31 * matB.m11 +
+            matA.m32 * matB.m21 +
+            matA.m33 * matB.m31;
         res.m32 =
-            lhs.m30 * rhs.m02 +
-            lhs.m31 * rhs.m12 +
-            lhs.m32 * rhs.m22 +
-            lhs.m33 * rhs.m32;
+            matA.m30 * matB.m02 +
+            matA.m31 * matB.m12 +
+            matA.m32 * matB.m22 +
+            matA.m33 * matB.m32;
         res.m33 =
-            lhs.m30 * rhs.m03 +
-            lhs.m31 * rhs.m13 +
-            lhs.m32 * rhs.m23 +
-            lhs.m33 * rhs.m33;
+            matA.m30 * matB.m03 +
+            matA.m31 * matB.m13 +
+            matA.m32 * matB.m23 +
+            matA.m33 * matB.m33;
 
         return res;
     }
     /**
      * Transforms a Vec4 by a matrix
      */
-    static multiplyVec4(lhs: Mat4, vector: Vec4): Vec4 {
+    static multiplyVec4(mat: Mat4, vector: Vec4): Vec4 {
         const res = new Vec4();
         res.x =
-            lhs.m00 * vector.x +
-            lhs.m01 * vector.y +
-            lhs.m02 * vector.z +
-            lhs.m03 * vector.w;
+            mat.m00 * vector.x +
+            mat.m01 * vector.y +
+            mat.m02 * vector.z +
+            mat.m03 * vector.w;
         res.y =
-            lhs.m10 * vector.x +
-            lhs.m11 * vector.y +
-            lhs.m12 * vector.z +
-            lhs.m13 * vector.w;
+            mat.m10 * vector.x +
+            mat.m11 * vector.y +
+            mat.m12 * vector.z +
+            mat.m13 * vector.w;
         res.z =
-            lhs.m20 * vector.x +
-            lhs.m21 * vector.y +
-            lhs.m22 * vector.z +
-            lhs.m23 * vector.w;
+            mat.m20 * vector.x +
+            mat.m21 * vector.y +
+            mat.m22 * vector.z +
+            mat.m23 * vector.w;
         res.w =
-            lhs.m30 * vector.x +
-            lhs.m31 * vector.y +
-            lhs.m32 * vector.z +
-            lhs.m33 * vector.w;
+            mat.m30 * vector.x +
+            mat.m31 * vector.y +
+            mat.m32 * vector.z +
+            mat.m33 * vector.w;
         return res;
     }
     /**
      * Transforms a position by this matrix, with a perspective divide
      */
-    MultiplyPoint(point: Vec3): Vec3 {
+    multiplyPoint(point: Vec3): Vec3 {
         const res = new Vec3();
         let w: number;
         res.x =
@@ -472,7 +468,7 @@ export class Mat4 {
     /**
      * Transforms a position by this matrix, without a perspective divide
      */
-    MultiplyPoint3x4(point: Vec3): Vec3 {
+    multiplyPoint3x4(point: Vec3): Vec3 {
         const res = new Vec3();
         res.x =
             this.m00 * point.x + this.m01 * point.y + this.m02 * point.z + this.m03;
@@ -485,7 +481,7 @@ export class Mat4 {
     /**
      * Transforms a direction by this matrix
      */
-    MultiplyVector(vector: Vec3): Vec3 {
+    multiplyVector(vector: Vec3): Vec3 {
         const res = new Vec3();
         res.x = this.m00 * vector.x + this.m01 * vector.y + this.m02 * vector.z;
         res.y = this.m10 * vector.x + this.m11 * vector.y + this.m12 * vector.z;
@@ -495,7 +491,7 @@ export class Mat4 {
     /**
      * Creates a scaling matrix
      */
-    static Scale(vector: Vec3): Mat4 {
+    static scale(vector: Vec3): Mat4 {
         const m = Mat4.zero;
         m.m00 = vector.x;
         m.m11 = vector.y;
@@ -506,7 +502,7 @@ export class Mat4 {
     /**
      * Creates a translation matrix
      */
-    static Translate(vector: Vec3): Mat4 {
+    static translate(vector: Vec3): Mat4 {
         const m = Mat4.identity;
         m.m03 = vector.x;
         m.m13 = vector.y;
@@ -516,7 +512,7 @@ export class Mat4 {
     /**
      * Creates a rotation matrix. Note: Assumes unit quaternion
      */
-    static Rotate(q: Quaternion): Mat4 {
+    static rotate(q: Quaternion): Mat4 {
         const m = Mat4.identity;
 
         const xx = q.x * q.x;
@@ -545,7 +541,7 @@ export class Mat4 {
     /**
      * This function returns a projection matrix with viewing frustum that has a near plane defined by the coordinates that were passed in
      */
-    static Frustum(
+    static frustum(
         left: number,
         right: number,
         bottom: number,
@@ -570,7 +566,7 @@ export class Mat4 {
     /**
      * Create a perspective projection matrix
      */
-    static Perspective(
+    static perspective(
         fov: number,
         aspect: number,
         zNear: number,
@@ -600,7 +596,7 @@ export class Mat4 {
     /**
      * Create an orthogonal projection matrix
      */
-    static Ortho(
+    static ortho(
         left: number,
         right: number,
         bottom: number,
@@ -627,7 +623,7 @@ export class Mat4 {
     /**
      * Create a "look at" matrix.
      */
-    static LookAt(from: Vec3, to: Vec3, up: Vec3): Mat4 {
+    static lookAt(from: Vec3, to: Vec3, up: Vec3): Mat4 {
         const res = Mat4.zero;
 
         let length = 0.0;
@@ -679,13 +675,9 @@ export class Mat4 {
 
         return res;
     }
-    //static Inverse3DAffine(input: Mat4, result: Mat4): boolean {
-    //    return true;
-    // }
-
     // TODO:TEST
     static TRS(translation: Vec3, rotation: Quaternion, scale: Vec3): Mat4 {
-        return Mat4.mult(Mat4.mult(this.Translate(translation), this.Rotate(rotation)), this.Scale(scale))
+        return Mat4.mult(Mat4.mult(this.translate(translation), this.rotate(rotation)), this.scale(scale))
     }
     // TODO:FIX
     SetTRS(translation: Vec3, rotation: Quaternion, scale: Vec3): void {
