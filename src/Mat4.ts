@@ -418,6 +418,20 @@ export class Mat4 {
 
         return res;
     }
+    static mults(matA: Mat4, matB: Mat4): Mat4 {
+        const res = Mat4.zero;
+
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 4; j++) {
+                res[`m${i}${j}`] = 0;
+                for (let k = 0; k < 4; k++) {
+                    res[`m${i}${j}`] += matA[`m${i}${k}`] * matB[`m${k}${j}`];
+                }
+            }
+        }
+
+        return res;
+    }
     /**
      * Transforms a Vec4 by a matrix
      */
@@ -504,39 +518,40 @@ export class Mat4 {
      */
     static translate(vector: Vec3): Mat4 {
         const m = Mat4.identity;
-        m.m03 = vector.x;
-        m.m13 = vector.y;
-        m.m23 = vector.z;
+        m.m30 = vector.x;
+        m.m31 = vector.y;
+        m.m32 = vector.z;
         return m;
     }
     /**
      * Creates a rotation matrix. Note: Assumes unit quaternion
      */
     static rotate(q: Quaternion): Mat4 {
-        const m = Mat4.identity;
+        const mat = Mat4.identity;
 
-        const xx = q.x * q.x;
-        const yy = q.y * q.y;
-        const zz = q.z * q.z;
-        const xy = q.x * q.y;
-        const xz = q.x * q.z;
-        const yz = q.y * q.z;
-        const wx = q.w * q.x;
-        const wy = q.w * q.y;
-        const wz = q.w * q.z;
+        const a2 = q.x * q.x;
+        const b2 = q.y * q.y;
+        const c2 = q.z * q.z;
+        const ac = q.x * q.z;
+        const ab = q.x * q.y;
+        const bc = q.y * q.z;
+        const ad = q.w * q.x;
+        const bd = q.w * q.y;
+        const cd = q.w * q.z;
 
-        m.m00 = 1 - 2 * (yy + zz);
-        m.m01 = 2 * (xy + wz);
-        m.m02 = 2 * (xz - wy);
+        mat.m00 = 1 - 2 * (b2 + c2);
+        mat.m10 = 2 * (ab + cd);
+        mat.m20 = 2 * (ac - bd);
 
-        m.m10 = 2 * (xy - wz);
-        m.m11 = 1 - 2 * (xx + zz);
-        m.m12 = 2 * (yz + wx);
+        mat.m01 = 2 * (ab - cd);
+        mat.m11 = 1 - 2 * (a2 + c2);
+        mat.m21 = 2 * (bc + ad);
 
-        m.m20 = 2 * (xz + wy);
-        m.m21 = 2 * (yz - wx);
-        m.m22 = 1 - 2 * (xx + yy);
-        return m;
+        mat.m02 = 2 * (ac + bd);
+        mat.m12 = 2 * (bc - ad);
+        mat.m22 = 1 - 2 * (a2 + b2);
+
+        return mat;
     }
     /**
      * This function returns a projection matrix with viewing frustum that has a near plane defined by the coordinates that were passed in
@@ -677,10 +692,25 @@ export class Mat4 {
     }
     // TODO:TEST
     static TRS(translation: Vec3, rotation: Quaternion, scale: Vec3): Mat4 {
-        return Mat4.mult(Mat4.mult(this.translate(translation), this.rotate(rotation)), this.scale(scale))
+        return Mat4.mults(
+            Mat4.mults(this.translate(translation), this.rotate(rotation)),
+            this.scale(scale)
+        );
     }
     // TODO:FIX
     SetTRS(translation: Vec3, rotation: Quaternion, scale: Vec3): void {
         Mat4.TRS(translation, rotation, scale);
+        console.log(Mat4.TRS(translation, rotation, scale));
+    }
+    static print(m: Mat4): void {
+        console.log("+------+------+------+------+");
+        for (let i = 0; i < 4; i++) {
+            let row = "|";
+            for (let j = 0; j < 4; j++) {
+                row += ` ${m[`m${i}${j}`].toString().padEnd(4, ' ')} |`;
+            }
+            console.log(row);
+            console.log("+------+------+------+------+");
+        }
     }
 }
