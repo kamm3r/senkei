@@ -690,24 +690,31 @@ export class Mat4 {
 
         return res;
     }
-    // TODO:TEST
+    /**
+    * Creates a TRS matrix from the provided translation, rotation, and scale values.
+    * @param translation - The translation to apply.
+    * @param rotation - The rotation to apply.
+    * @param scale - The scale to apply.
+    * TODO:Make sure this work correctly
+    */
     static TRS(translation: Vec3, rotation: Quaternion, scale: Vec3): Mat4 {
         return Mat4.mults(
             Mat4.mults(this.translate(translation), this.rotate(rotation)),
             this.scale(scale)
         );
     }
-    // TODO:FIX
+    // TODO:makesure this work correctly
     SetTRS(translation: Vec3, rotation: Quaternion, scale: Vec3): void {
         Mat4.TRS(translation, rotation, scale);
         console.log(Mat4.TRS(translation, rotation, scale));
     }
+    // print matrix to console
     static print(m: Mat4): void {
         console.log("+------+------+------+------+");
         for (let i = 0; i < 4; i++) {
             let row = "|";
             for (let j = 0; j < 4; j++) {
-                row += ` ${m[`m${i}${j}`].toString().padEnd(4, ' ')} |`;
+                row += ` ${m[`m${i}${j}`].toFixed(2).toString().padEnd(4, ' ')} |`;
             }
             console.log(row);
             console.log("+------+------+------+------+");
