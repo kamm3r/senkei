@@ -1,0 +1,6 @@
+export {Vec2} from "./Vec2"
+export {Vec3} from "./Vec3"
+export {Vec4} from "./Vec4"
+export {Quaternion} from "./Quat"
+export {Mat4} from "./Mat4"
+export {Transform} from "./Transform"
