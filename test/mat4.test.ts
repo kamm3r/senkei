@@ -67,38 +67,6 @@ describe('Mat4', () => {
         expect(mat3.m23).toBe(542)
         expect(mat3.m33).toBe(600)
     })
-    test('matrix multiplication', () => {
-        const mat1 = new Mat4(
-            new Vec4(1, 2, 3, 4),
-            new Vec4(5, 6, 7, 8),
-            new Vec4(9, 10, 11, 12),
-            new Vec4(13, 14, 15, 16)
-        )
-        const mat2 = new Mat4(
-            new Vec4(1, 2, 3, 4),
-            new Vec4(5, 6, 7, 8),
-            new Vec4(9, 10, 11, 12),
-            new Vec4(13, 14, 15, 16)
-        )
-        const mat3 = Mat4.mults(mat1, mat2)
-        expect(mat3.m00).toBe(90)
-        expect(mat3.m10).toBe(100)
-        expect(mat3.m20).toBe(110)
-        expect(mat3.m30).toBe(120)
-        expect(mat3.m01).toBe(202)
-        expect(mat3.m11).toBe(228)
-        expect(mat3.m21).toBe(254)
-        expect(mat3.m31).toBe(280)
-        expect(mat3.m02).toBe(314)
-        expect(mat3.m12).toBe(356)
-        expect(mat3.m22).toBe(398)
-        expect(mat3.m32).toBe(440)
-        expect(mat3.m03).toBe(426)
-        expect(mat3.m13).toBe(484)
-        expect(mat3.m23).toBe(542)
-        expect(mat3.m33).toBe(600)
-    })
-
     test('inverse of identity matrix', () => {
         const mat = Mat4.identity
         const inv = mat.inverse
@@ -190,8 +158,6 @@ describe('Mat4', () => {
     })
     test('rotate Quaternion{3, 5, 7, 1}', () => {
         const mat = Mat4.rotate(new Quaternion(3, 5, 7, 1).normalized)
-        console.log("rotate");
-        Mat4.print(mat)
         expect(roundTo(mat.m00, 2)).toBe(-0.76)
         expect(roundTo(mat.m10, 2)).toBe(0.52)
         expect(roundTo(mat.m20, 2)).toBe(0.38)
@@ -234,8 +200,6 @@ describe('Mat4', () => {
         const rotation = new Quaternion(3, 5, 7, 1).normalized
         const scale = new Vec3(2, 2, 2)
         mat = Mat4.TRS(translation, rotation, scale)
-        console.log("TRS");
-        Mat4.print(mat)
         expect(roundTo(mat.m00, 2)).toBe(-1.52)
         expect(roundTo(mat.m10, 2)).toBe(1.05)
         expect(roundTo(mat.m20, 2)).toBe(0.76)

@@ -2,6 +2,10 @@ import { Quaternion } from './Quat';
 import { Vec3 } from './Vec3';
 import { Vec4 } from './Vec4';
 
+type TempType ={
+     [K in `m${number}${number}`]: number;
+}
+
 export class Mat4 {
     // memory layout:
     //
@@ -418,20 +422,6 @@ export class Mat4 {
 
         return res;
     }
-    static mults(matA: Mat4, matB: Mat4): Mat4 {
-        const res = Mat4.zero;
-
-        for (let i = 0; i < 4; i++) {
-            for (let j = 0; j < 4; j++) {
-                res[`m${i}${j}`] = 0;
-                for (let k = 0; k < 4; k++) {
-                    res[`m${i}${j}`] += matA[`m${i}${k}`] * matB[`m${k}${j}`];
-                }
-            }
-        }
-
-        return res;
-    }
     /**
      * Transforms a Vec4 by a matrix
      */
@@ -698,8 +688,8 @@ export class Mat4 {
     * TODO:Make sure this work correctly
     */
     static TRS(translation: Vec3, rotation: Quaternion, scale: Vec3): Mat4 {
-        return Mat4.mults(
-            Mat4.mults(this.translate(translation), this.rotate(rotation)),
+        return Mat4.mult(
+            Mat4.mult(this.translate(translation), this.rotate(rotation)),
             this.scale(scale)
         );
     }
@@ -707,18 +697,5 @@ export class Mat4 {
     SetTRS(translation: Vec3, rotation: Quaternion, scale: Vec3): void {
         Mat4.TRS(translation, rotation, scale);
         console.log(Mat4.TRS(translation, rotation, scale));
-    }
-    // print matrix to console
-    static print(m: Mat4): void {
-        console.log("+------+------+------+------+");
-        for (let i = 0; i < 4; i++) {
-            let row = "|";
-            for (let j = 0; j < 4; j++) {
-                //@ts-ignore
-                row += ` ${m[`m${i}${j}`].toFixed(2).toString().padEnd(4, ' ')} |`;
-            }
-            console.log(row);
-            console.log("+------+------+------+------+");
-        }
     }
 }
