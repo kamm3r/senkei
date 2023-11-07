@@ -714,6 +714,7 @@ export class Mat4 {
         for (let i = 0; i < 4; i++) {
             let row = "|";
             for (let j = 0; j < 4; j++) {
+                //@ts-ignore
                 row += ` ${m[`m${i}${j}`].toFixed(2).toString().padEnd(4, ' ')} |`;
             }
             console.log(row);

@@ -1,33 +1,36 @@
-import { vec2 } from "../types";
-import * as Vec2 from "../vec2";
-import * as mathf from './'
+import { Mathf } from "../Utils"
+import { Vec2 } from "../Vec2"
+import { clampNeg1to1 } from "./Mathf"
+import { kEpsilon } from "./floatingPoints"
+import { Sqrt, Sqrt2 } from "./mathOperation"
+import { ClampMagnitude } from "./vectorMath"
 
 /**
- * 
+ *
  * @param c The input position inside the square
  * @returns Given a position within a -1 to 1 square, remaps it to the unit circle
  */
-export const SquareToDisc = (c: vec2): vec2 => {
-    c[0] = mathf.clampNeg1to1(c[0])
-    c[1] = mathf.clampNeg1to1(c[1])
-    const u = c[0] * mathf.Sqrt(1 - (c[1] * c[1]) / 2)
-    const v = c[1] * mathf.Sqrt(1 - (c[0] * c[0]) / 2)
-    return Vec2.create(u, v)
+export function SquareToDisc(c: Vec2): Vec2 {
+    c.x = clampNeg1to1(c.x)
+    c.y = clampNeg1to1(c.y)
+    const u = c.x * Sqrt(1 - (c.y * c.y) / 2)
+    const v = c.y * Sqrt(1 - (c.x * c.x) / 2)
+    return new Vec2(u, v)
 }
 /**
- * 
+ *
  * @param c The input position inside the circle
- * @returns Given a position within the unit circle, remaps it to a square in the -1 to 1 range 
+ * @returns Given a position within the unit circle, remaps it to a square in the -1 to 1 range
  */
-export const DiscToSquare = (c: vec2): vec2 => {
-    c = mathf.ClampMagnitude(c, 0, 1)
-    const u2 = c[0] * c[0]
-    const v2 = c[1] * c[1]
-    const n = Vec2.create(1, -1)
-    const p = Vec2.create(2 + n[0] * (u2 - v2), 2 + n[1] * (u2 - v2))
-    const q = Vec2.create(2 * mathf.SQRT2 * c[0], 2 * mathf.SQRT2 * c[1])
-    const smolVec = Vec2.create(Vec2.one[0] * mathf.kEpsilon, Vec2.one[1] * mathf.kEpsilon)
-    const s = mathf.Sqrt2(Vec2.Max(smolVec, Vec2.create(p[0] + q[0], p[1] + q[1])))
-    const d = mathf.Sqrt2(Vec2.Max(smolVec, Vec2.create(p[0] - q[0], p[1] - q[1])))
-    return Vec2.create(0.5 * (s[0] - d[0]), 0.5 * (s[1] - d[1]))
+export function DiscToSquare(c: Vec2): Vec2 {
+    c = ClampMagnitude(c, 0, 1)
+    const u2 = c.x * c.x
+    const v2 = c.y * c.y
+    const n = new Vec2(1, -1)
+    const p = new  Vec2(2 + n.x * (u2 - v2), 2 + n.y * (u2 - v2))
+    const q = new Vec2(2 * Mathf.SQRT2 * c.x, 2 * Mathf.SQRT2 * c.y)
+    const smolVec = new Vec2(Vec2.one.x * kEpsilon, Vec2.one.y * kEpsilon)
+    const s = Sqrt2(Vec2.Max(smolVec, new Vec2(p.x + q.x, p.y + q.y)))
+    const d = Sqrt2(Vec2.Max(smolVec, new Vec2(p.x - q.x, p.y - q.y)))
+    return new Vec2(0.5 * (s.x - d.x), 0.5 * (s.y - d.y))
 }

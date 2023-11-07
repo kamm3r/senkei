@@ -1,44 +1,15 @@
-import type { vec2, vec3, vec4 } from "../types";
-import * as Vec2 from "../vec2";
-import * as Vec3 from "../vec3";
-import * as Vec4 from "../vec4";
-
+import { Vec2 } from "../Vec2";
+import { Vec3 } from "../Vec3";
+import { Vec4 } from "../Vec4";
+//TODO:Rename to WeightedSum functions to be more clearer
 /**
  * Multiplies each component of <c>w</c> by the input values, and returns their sum
  * @param w The weights (per component) to apply to the rest of the values
  * @param a The first value, weighted by <c>w[0]</c>
  * @param b The second value, weighted by <c>w[1]</c>
  */
-export const WeightedSum2 = (w: vec2, a: number, b: number): number => a * w[0] + b * w[1];
-/**
- * Multiplies each component of w by the input values, and returns their sum
- * @param w The weights (per component) to apply to the rest of the values
- * @param a The first value, weighted by w[0]
- * @param b The second value, weighted by w[1]
- * @param c The third value, weighted by w[2]
- *
- */
-export const WeightedSum3 = (w: vec3, a: number, b: number, c: number): number => a * w[0] + b * w[1] + c * w[2];
-/**
- * Multiplies each component of w by the input values, and returns their sum
- * @param w The weights (per component) to apply to the rest of the values
- * @param a The first value, weighted by w[0]
- * @param b The second value, weighted by w[1]
- * @param c The third value, weighted by w[2]
- * @param d The fourth value, weighted by w[3]
- *
- */
-export const WeightedSum4 = (w: vec4, a: number, b: number, c: number, d: number) => a * w[0] + b * w[1] + c * w[2] + d * w[3];
-/**
- * Multiplies each component of <c>w</c> by the input values, and returns their sum
- * @param w The weights (per component) to apply to the rest of the values
- * @param a The first value, weighted by w[0]
- * @param b The second value, weighted by w[1]
- */
-export const WeightedSumvec2 = (w: vec2, a: vec2, b: vec2): vec2 => {
-    const wx = a[0] * w[0] + b[0] * w[1]
-    const wy = a[1] * w[0] + b[1] * w[1]
-    return Vec2.create(wx, wy)
+export function WeightedSum2(w: Vec2, a: number, b: number): number {
+    return a * w.x + b * w.y;
 }
 /**
  * Multiplies each component of w by the input values, and returns their sum
@@ -48,10 +19,8 @@ export const WeightedSumvec2 = (w: vec2, a: vec2, b: vec2): vec2 => {
  * @param c The third value, weighted by w[2]
  *
  */
-export const WeightedSumBnH = (w: vec3, a: vec2, b: vec2, c: vec2): vec2 => {
-    const wx = a[0] * w[0] + b[0] * w[1] + c[0] * w[2]
-    const wy = a[1] * w[0] + b[1] * w[1] + c[1] * w[2]
-    return Vec2.create(wx, wy)
+export function WeightedSum3(w: Vec3, a: number, b: number, c: number): number {
+    return a * w.x + b * w.y + c * w.z;
 }
 /**
  * Multiplies each component of w by the input values, and returns their sum
@@ -62,10 +31,8 @@ export const WeightedSumBnH = (w: vec3, a: vec2, b: vec2, c: vec2): vec2 => {
  * @param d The fourth value, weighted by w[3]
  *
  */
-export const WeightedSumSoHo = (w: vec4, a: vec2, b: vec2, c: vec2, d: vec2): vec2 => {
-    const wx = a[0] * w[0] + b[0] * w[1] + c[0] * w[2] + d[0] * w[3]
-    const wy = a[1] * w[0] + b[1] * w[1] + c[1] * w[2] + d[1] * w[3]
-    return Vec2.create(wx, wy)
+export function WeightedSum4(w: Vec4, a: number, b: number, c: number, d: number) {
+    return a * w.x + b * w.y + c * w.z + d * w.w;
 }
 /**
  * Multiplies each component of <c>w</c> by the input values, and returns their sum
@@ -73,11 +40,10 @@ export const WeightedSumSoHo = (w: vec4, a: vec2, b: vec2, c: vec2, d: vec2): ve
  * @param a The first value, weighted by w[0]
  * @param b The second value, weighted by w[1]
  */
-export const WeightedSumWtf = (w: vec3, a: vec3, b: vec3): vec3 => {
-    const wx = a[0] * w[0] + b[0] * w[1]
-    const wy = a[1] * w[0] + b[1] * w[1]
-    const wz = a[2] * w[0] + b[2] * w[1]
-    return Vec3.create(wx, wy, wz)
+export function WeightedSumvec2(w: Vec2, a: Vec2, b: Vec2): Vec2 {
+    const wx = a.x * w.x + b.x * w.y
+    const wy = a.y * w.x + b.y * w.y
+    return new Vec2(wx, wy)
 }
 /**
  * Multiplies each component of w by the input values, and returns their sum
@@ -87,11 +53,10 @@ export const WeightedSumWtf = (w: vec3, a: vec3, b: vec3): vec3 => {
  * @param c The third value, weighted by w[2]
  *
  */
-export const WeightedSumvec3 = (w: vec3, a: vec3, b: vec3, c: vec3): vec3 => {
-    const wx = a[0] * w[0] + b[0] * w[1] + c[0] * w[2];
-    const wy = a[1] * w[0] + b[1] * w[1] + c[1] * w[2];
-    const wz = a[2] * w[0] + b[2] * w[1] + c[2] * w[2];
-    return Vec3.create(wx, wy, wz)
+export function WeightedSumBnH(w: Vec3, a: Vec2, b: Vec2, c: Vec2): Vec2 {
+    const wx = a.x * w.x + b.x * w.y + c.x * w.z
+    const wy = a.y * w.x + b.y * w.y + c.y * w.z
+    return new Vec2(wx, wy)
 }
 /**
  * Multiplies each component of w by the input values, and returns their sum
@@ -102,26 +67,22 @@ export const WeightedSumvec3 = (w: vec3, a: vec3, b: vec3, c: vec3): vec3 => {
  * @param d The fourth value, weighted by w[3]
  *
  */
-export const WeightedSumZara = (w: vec4, a: vec3, b: vec3, c: vec3, d: vec3): vec3 => {
-    const wx = a[0] * w[0] + b[0] * w[1] + c[0] * w[2] + d[0] * w[3];
-    const wy = a[1] * w[0] + b[1] * w[1] + c[1] * w[2] + d[1] * w[3];
-    const wz = a[2] * w[0] + b[2] * w[1] + c[2] * w[2] + d[2] * w[3];
-    return Vec3.create(wx, wy, wz)
+export function WeightedSumSoHo(w: Vec4, a: Vec2, b: Vec2, c: Vec2, d: Vec2): Vec2 {
+    const wx = a.x * w.x + b.x * w.y + c.x * w.z + d.x * w.w
+    const wy = a.y * w.x + b.y * w.y + c.y * w.z + d.y * w.w
+    return new Vec2(wx, wy)
 }
 /**
- * Multiplies each component of w by the input values, and returns their sum
+ * Multiplies each component of <c>w</c> by the input values, and returns their sum
  * @param w The weights (per component) to apply to the rest of the values
  * @param a The first value, weighted by w[0]
  * @param b The second value, weighted by w[1]
- *
  */
-export const WeightedSumYo = (w: vec4, a: vec4, b: vec4): vec4 => {
-    const wx = a[0] * w[0] + b[0] * w[1]
-    const wy = a[1] * w[0] + b[1] * w[1]
-    const wz = a[2] * w[0] + b[2] * w[1]
-    const ww = a[3] * w[0] + b[3] * w[1]
-
-    return Vec4.create(wx, wy, wz, ww)
+export function WeightedSumWtf(w: Vec3, a: Vec3, b: Vec3): Vec3 {
+    const wx = a.x * w.x + b.x * w.y
+    const wy = a.y * w.x + b.y * w.y
+    const wz = a.z * w.x + b.z * w.y
+    return new Vec3(wx, wy, wz)
 }
 /**
  * Multiplies each component of w by the input values, and returns their sum
@@ -131,13 +92,11 @@ export const WeightedSumYo = (w: vec4, a: vec4, b: vec4): vec4 => {
  * @param c The third value, weighted by w[2]
  *
  */
-export const WeightedSumSup = (w: vec4, a: vec4, b: vec4, c: vec4): vec4 => {
-    const wx = a[0] * w[0] + b[0] * w[1] + c[0] * w[2]
-    const wy = a[1] * w[0] + b[1] * w[1] + c[1] * w[2]
-    const wz = a[2] * w[0] + b[2] * w[1] + c[2] * w[2]
-    const ww = a[3] * w[0] + b[3] * w[1] + c[3] * w[2]
-
-    return Vec4.create(wx, wy, wz, ww)
+export function WeightedSumvec3(w: Vec3, a: Vec3, b: Vec3, c: Vec3): Vec3 {
+    const wx = a.x * w.x + b.x * w.y + c.x * w.z;
+    const wy = a.y * w.x + b.y * w.y + c.y * w.z;
+    const wz = a.z * w.x + b.z * w.y + c.z * w.z;
+    return new Vec3(wx, wy, wz)
 }
 /**
  * Multiplies each component of w by the input values, and returns their sum
@@ -148,11 +107,57 @@ export const WeightedSumSup = (w: vec4, a: vec4, b: vec4, c: vec4): vec4 => {
  * @param d The fourth value, weighted by w[3]
  *
  */
-export const WeightedSumBruh = (w: vec4, a: vec4, b: vec4, c: vec4, d: vec4): vec4 => {
-    const wx = a[0] * w[0] + b[0] * w[1] + c[0] * w[2] + d[0] * w[3]
-    const wy = a[1] * w[0] + b[1] * w[1] + c[1] * w[2] + d[1] * w[3]
-    const wz = a[2] * w[0] + b[2] * w[1] + c[2] * w[2] + d[2] * w[3]
-    const ww = a[3] * w[0] + b[3] * w[1] + c[3] * w[2] + d[3] * w[3]
+export function WeightedSumZara(w: Vec4, a: Vec3, b: Vec3, c: Vec3, d: Vec3): Vec3 {
+    const wx = a.x * w.x + b.x * w.y + c.x * w.y + d.x * w.w;
+    const wy = a.y * w.x + b.y * w.y + c.y * w.y + d.y * w.w;
+    const wz = a.z * w.x + b.z * w.y + c.z * w.y + d.z * w.w;
+    return new Vec3(wx, wy, wz)
+}
+/**
+ * Multiplies each component of w by the input values, and returns their sum
+ * @param w The weights (per component) to apply to the rest of the values
+ * @param a The first value, weighted by w[0]
+ * @param b The second value, weighted by w[1]
+ *
+ */
+export function WeightedSumYo(w: Vec4, a: Vec4, b: Vec4): Vec4 {
+    const wx = a.x * w.x + b.x * w.y
+    const wy = a.y * w.x + b.y * w.y
+    const wz = a.z * w.x + b.z * w.y
+    const ww = a.w * w.x + b.w * w.y
 
-    return Vec4.create(wx, wy, wz, ww)
+    return new Vec4(wx, wy, wz, ww)
+}
+/**
+ * Multiplies each component of w by the input values, and returns their sum
+ * @param w The weights (per component) to apply to the rest of the values
+ * @param a The first value, weighted by w[0]
+ * @param b The second value, weighted by w[1]
+ * @param c The third value, weighted by w[2]
+ *
+ */
+export function WeightedSumSup(w: Vec4, a: Vec4, b: Vec4, c: Vec4): Vec4 {
+    const wx = a.x * w.x + b.x * w.y + c.x * w.z
+    const wy = a.y * w.x + b.y * w.y + c.y * w.z
+    const wz = a.z * w.x + b.z * w.y + c.z * w.z
+    const ww = a.w * w.x + b.w * w.y + c.w * w.z
+
+    return new Vec4(wx, wy, wz, ww)
+}
+/**
+ * Multiplies each component of w by the input values, and returns their sum
+ * @param w The weights (per component) to apply to the rest of the values
+ * @param a The first value, weighted by w[0]
+ * @param b The second value, weighted by w[1]
+ * @param c The third value, weighted by w[2]
+ * @param d The fourth value, weighted by w[3]
+ *
+ */
+export function WeightedSumBruh(w: Vec4, a: Vec4, b: Vec4, c: Vec4, d: Vec4): Vec4 {
+    const wx = a.x * w.x + b.x * w.y + c.x * w.z + d.x * w.w
+    const wy = a.y * w.x + b.y * w.y + c.y * w.z + d.y * w.w
+    const wz = a.z * w.x + b.z * w.y + c.z * w.z + d.z * w.w
+    const ww = a.w * w.x + b.w * w.y + c.w * w.z + d.w * w.w
+
+    return new Vec4(wx, wy, wz, ww)
 }

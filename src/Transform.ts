@@ -166,7 +166,7 @@ export class Transform {
      * @param worldUp Vector specifying the upward direction
      */
     LookAt(target: Transform, worldUp = Vec3.up): void {
-        const d = Mat4.LookAt(this.translation, target.translation, worldUp);
+        const d = Mat4.lookAt(this.translation, target.translation, worldUp);
         this.translation = d.GetPosition();
         this.rotation = d.rotation;
     }
@@ -201,10 +201,10 @@ export class Transform {
     }
     /** Transforms point from local space to world space */
     TransformPoint(local: Vec3): Vec3 {
-        return this.localToWorldMatrix.MultiplyPoint3x4(local);
+        return this.localToWorldMatrix.multiplyPoint3x4(local);
     }
     /** Transforms point from world space to local space */
     InverseTransformPoint(world: Vec3): Vec3 {
-        return this.worldToLocalMatrix.MultiplyPoint3x4(world);
+        return this.worldToLocalMatrix.multiplyPoint3x4(world);
     }
 }
