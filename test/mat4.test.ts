@@ -123,7 +123,8 @@ describe('Mat4', () => {
         expect(() => Mat4.Scale(new Vec3(0, 0, 0)).inverse).toThrow();
     });
 
-    test('matrix times its inverse is identity', () => {        const mat = Mat4.TRS(
+    test('matrix times its inverse is identity', () => {
+        const mat = Mat4.TRS(
             new Vec3(20, 1, 5),
             Quaternion.Euler(new Vec3(10, 20, 30)),
             new Vec3(2, 2, 2)
@@ -264,6 +265,58 @@ describe('Mat4', () => {
         mat.SetTRS(new Vec3(20, 1, 5), Quaternion.identity, new Vec3(1, 1, 1));
         expectVec3Close(mat.GetPosition(), 20, 1, 5);
         expectVec3Close(mat.MultiplyPoint3x4(new Vec3(1, 0, 0)), 21, 1, 5);
+    });
+
+    test('fused TRS matches explicit T*R*S composition (differential fuzz)', () => {
+        // Seeded RNG: deterministic across runs (mulberry32).
+        let seed = 0x9e3779b9;
+        const rand = () => {
+            seed |= 0;
+            seed = (seed + 0x6d2b79f5) | 0;
+            let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+            t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+        // Uniform random unit quaternion (Shoemake).
+        const randQuat = () => {
+            const u1 = rand(), u2 = rand(), u3 = rand();
+            const s1 = Math.sqrt(1 - u1), s2 = Math.sqrt(u1);
+            return new Quaternion(
+                s1 * Math.sin(2 * Math.PI * u2),
+                s1 * Math.cos(2 * Math.PI * u2),
+                s2 * Math.sin(2 * Math.PI * u3),
+                s2 * Math.cos(2 * Math.PI * u3)
+            );
+        };
+        const fields = [
+            'm00', 'm01', 'm02', 'm03',
+            'm10', 'm11', 'm12', 'm13',
+            'm20', 'm21', 'm22', 'm23',
+            'm30', 'm31', 'm32', 'm33',
+        ] as const;
+
+        for (let i = 0; i < 200; i++) {
+            const t = new Vec3(rand() * 200 - 100, rand() * 200 - 100, rand() * 200 - 100);
+            const r = randQuat();
+            // Positive, fractional, mirrored and near-zero scales.
+            const s = new Vec3(
+                (rand() < 0.1 ? -1 : 1) * (0.001 + rand() * 10),
+                (rand() < 0.1 ? -1 : 1) * (0.001 + rand() * 10),
+                (rand() < 0.1 ? -1 : 1) * (0.001 + rand() * 10)
+            );
+            const fused = Mat4.TRS(t, r, s);
+            const composed = Mat4.Multiply(
+                Mat4.Multiply(Mat4.Translate(t), Mat4.Rotate(r)),
+                Mat4.Scale(s)
+            );
+            for (const f of fields) {
+                // Same math in different order: float rounding only.
+                expect(
+                    Math.abs(fused[f] - composed[f]) <= 1e-9 * (1 + Math.abs(composed[f])),
+                    `${f} at iteration ${i}`
+                ).toBe(true);
+            }
+        }
     });
 
     test('Get/SetColumn and Get/SetRow', () => {
