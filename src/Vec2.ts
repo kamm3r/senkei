@@ -35,30 +35,30 @@ export class Vec2 {
         return this.x * this.x + this.y * this.y;
     }
 
-    static add(a: Vec2, b: Vec2): Vec2 {
+    static Add(a: Vec2, b: Vec2): Vec2 {
         return new Vec2(a.x + b.x, a.y + b.y);
     }
-    static sub(a: Vec2, b: Vec2): Vec2 {
+    static Subtract(a: Vec2, b: Vec2): Vec2 {
         return new Vec2(a.x - b.x, a.y - b.y);
     }
     /**
-     * @deprecated Component-wise multiplication conflicts with the scalar
-     * mult on Vec3/Vec4. Use Scale instead.
+     * Multiply by a scalar or component-wise by another vector.
      */
-    static mult(a: Vec2, b: Vec2): Vec2 {
-        return Vec2.Scale(a, b);
+    static Multiply(a: Vec2, b: Vec2 | number): Vec2 {
+        return typeof b === 'number'
+            ? new Vec2(a.x * b, a.y * b)
+            : new Vec2(a.x * b.x, a.y * b.y);
     }
-    static div(a: Vec2, b: Vec2): Vec2 {
-        return new Vec2(a.x / b.x, a.y / b.y);
+    /**
+     * Divide by a scalar or component-wise by another vector.
+     */
+    static Divide(a: Vec2, b: Vec2 | number): Vec2 {
+        return typeof b === 'number'
+            ? new Vec2(a.x / b, a.y / b)
+            : new Vec2(a.x / b.x, a.y / b.y);
     }
-    static negate(a: Vec2): Vec2 {
+    static Negate(a: Vec2): Vec2 {
         return new Vec2(-a.x, -a.y);
-    }
-    static scalarMult(a: Vec2, d: number): Vec2 {
-        return new Vec2(a.x * d, a.y * d);
-    }
-    static scalarDiv(a: Vec2, d: number): Vec2 {
-        return new Vec2(a.x / d, a.y / d);
     }
     static Min(a: Vec2, b: Vec2): Vec2 {
         return new Vec2(Math.min(a.x, b.x), Math.min(a.y, b.y));
@@ -86,14 +86,14 @@ export class Vec2 {
     }
     static Lerp(a: Vec2, b: Vec2, t: number): Vec2 {
         const res = Vec2.zero;
-        res.x = Mathf.LerpClamped(a.x, b.x, t);
-        res.y = Mathf.LerpClamped(a.y, b.y, t);
+        res.x = Mathf.Lerp(a.x, b.x, t);
+        res.y = Mathf.Lerp(a.y, b.y, t);
         return res;
     }
     static LerpUnclamped(a: Vec2, b: Vec2, t: number): Vec2 {
         const res = Vec2.zero;
-        res.x = Mathf.Lerp(a.x, b.x, t);
-        res.y = Mathf.Lerp(a.y, b.y, t);
+        res.x = Mathf.LerpUnclamped(a.x, b.x, t);
+        res.y = Mathf.LerpUnclamped(a.y, b.y, t);
         return res;
     }
     static MoveTowards(
@@ -157,7 +157,7 @@ export class Vec2 {
     static Normalize(value: Vec2): Vec2 {
         const mag = value.magnitude;
         if (mag > Mathf.kEpsilon) {
-            return Vec2.scalarDiv(value, mag);
+            return Vec2.Divide(value, mag);
         }
         return Vec2.zero;
     }
@@ -185,7 +185,7 @@ export class Vec2 {
         if (denominator < Mathf.kEpsilonNormalSqrt) {
             return 0.0;
         }
-        const dot = Mathf.clamp(Vec2.Dot(from, to) / denominator, -1.0, 1.0);
+        const dot = Mathf.Clamp(Vec2.Dot(from, to) / denominator, -1.0, 1.0);
         return Math.acos(dot) * Mathf.Rad2Deg;
     }
     static SignedAngle(from: Vec2, to: Vec2): number {
@@ -300,13 +300,13 @@ export class Vec2 {
         };
     }
 
-    static toVec2(v: Vec3): Vec2 {
+    static ToVec2(v: Vec3): Vec2 {
         return new Vec2(v.x, v.y);
     }
-    static toVec3(v: Vec2): Vec3 {
+    static ToVec3(v: Vec2): Vec3 {
         return new Vec3(v.x, v.y, 0);
     }
-    static toVec4(v: Vec2): Vec4 {
+    static ToVec4(v: Vec2): Vec4 {
         return new Vec4(v.x, v.y, 0, 0);
     }
 }

@@ -28,20 +28,20 @@ describe('Vec4', () => {
 
     test('add, sub and scalar ops', () => {
         expectVec4Close(
-            Vec4.add(new Vec4(1, 2, 3, 4), new Vec4(5, 6, 7, 8)),
+            Vec4.Add(new Vec4(1, 2, 3, 4), new Vec4(5, 6, 7, 8)),
             6, 8, 10, 12
         );
         expectVec4Close(
-            Vec4.sub(new Vec4(1, 2, 3, 4), new Vec4(5, 6, 7, 8)),
+            Vec4.Subtract(new Vec4(1, 2, 3, 4), new Vec4(5, 6, 7, 8)),
             -4, -4, -4, -4
         );
-        expectVec4Close(Vec4.mult(new Vec4(1, 2, 3, 4), 2), 2, 4, 6, 8);
-        expectVec4Close(Vec4.div(new Vec4(2, 4, 6, 8), 2), 1, 2, 3, 4);
+        expectVec4Close(Vec4.Multiply(new Vec4(1, 2, 3, 4), 2), 2, 4, 6, 8);
+        expectVec4Close(Vec4.Divide(new Vec4(2, 4, 6, 8), 2), 1, 2, 3, 4);
         expectVec4Close(
-            Vec4.MultiplyWithVector(new Vec4(1, 2, 3, 4), new Vec4(2, 2, 2, 2)),
+            Vec4.Multiply(new Vec4(1, 2, 3, 4), new Vec4(2, 2, 2, 2)),
             2, 4, 6, 8
         );
-        expectVec4Close(Vec4.negate(new Vec4(1, -2, 3, -4)), -1, 2, -3, 4);
+        expectVec4Close(Vec4.Negate(new Vec4(1, -2, 3, -4)), -1, 2, -3, 4);
     });
 
     test('Min, Max and Scale', () => {
@@ -113,11 +113,16 @@ describe('Vec4', () => {
         );
     });
 
-    test('MultiplyWithVector matches Scale, Clamp works', () => {
+    test('Multiply and Divide accept scalars and vectors', () => {
+        expectVec4Close(Vec4.Multiply(new Vec4(1, 2, 3, 4), 2), 2, 4, 6, 8);
         expectVec4Close(
-            Vec4.MultiplyWithVector(new Vec4(1, 2, 3, 4), new Vec4(2, 2, 2, 2)),
+            Vec4.Multiply(new Vec4(1, 2, 3, 4), new Vec4(2, 2, 2, 2)),
             2, 4, 6, 8
         );
+        expectVec4Close(Vec4.Divide(new Vec4(2, 4, 6, 8), 2), 1, 2, 3, 4);
+    });
+
+    test('Clamp works', () => {
         expectVec4Close(
             Vec4.Clamp(
                 new Vec4(5, -1, 0.5, 2),
@@ -143,12 +148,12 @@ describe('Vec4', () => {
     });
 
     test('dimension conversions', () => {
-        expectVec4Close(Vec4.Vec3toVec4(new Vec3(1, 2, 3)), 1, 2, 3, 0);
-        expectVec4Close(Vec4.Vec2toVec4(new Vec2(1, 2)), 1, 2, 0, 0);
-        const v3 = Vec4.toVec3(new Vec4(1, 2, 3, 4));
+        expectVec4Close(Vec4.ToVec4(new Vec3(1, 2, 3)), 1, 2, 3, 0);
+        expectVec4Close(Vec4.ToVec4(new Vec2(1, 2)), 1, 2, 0, 0);
+        const v3 = Vec4.ToVec3(new Vec4(1, 2, 3, 4));
         expect(v3.x).toBe(1);
         expect(v3.z).toBe(3);
-        const v2 = Vec4.toVec2(new Vec4(1, 2, 3, 4));
+        const v2 = Vec4.ToVec2(new Vec4(1, 2, 3, 4));
         expect(v2.x).toBe(1);
         expect(v2.y).toBe(2);
     });

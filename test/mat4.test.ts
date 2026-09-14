@@ -56,7 +56,7 @@ describe('Mat4', () => {
             new Vec4(9, 10, 11, 12),
             new Vec4(13, 14, 15, 16)
         );
-        const mat3 = Mat4.mult(mat1, mat2);
+        const mat3 = Mat4.Multiply(mat1, mat2);
         expect(mat3.m00).toBe(90);
         expect(mat3.m10).toBe(100);
         expect(mat3.m20).toBe(110);
@@ -76,8 +76,8 @@ describe('Mat4', () => {
     });
 
     test('mult by identity is a no-op', () => {
-        const mat = Mat4.translate(new Vec3(1, 2, 3));
-        const out = Mat4.mult(mat, Mat4.identity);
+        const mat = Mat4.Translate(new Vec3(1, 2, 3));
+        const out = Mat4.Multiply(mat, Mat4.identity);
         expectVec3Close(out.GetPosition(), 1, 2, 3);
         expect(out.m33).toBe(1);
     });
@@ -120,7 +120,7 @@ describe('Mat4', () => {
 
     test('inverse of a singular matrix throws instead of NaN', () => {
         expect(() => Mat4.zero.inverse).toThrow();
-        expect(() => Mat4.scale(new Vec3(0, 0, 0)).inverse).toThrow();
+        expect(() => Mat4.Scale(new Vec3(0, 0, 0)).inverse).toThrow();
     });
 
     test('matrix times its inverse is identity', () => {        const mat = Mat4.TRS(
@@ -128,7 +128,7 @@ describe('Mat4', () => {
             Quaternion.Euler(new Vec3(10, 20, 30)),
             new Vec3(2, 2, 2)
         );
-        const out = Mat4.mult(mat, mat.inverse);
+        const out = Mat4.Multiply(mat, mat.inverse);
         expect(roundTo(out.m00, 3)).toBe(1);
         expect(roundTo(out.m11, 3)).toBe(1);
         expect(roundTo(out.m22, 3)).toBe(1);
@@ -164,7 +164,7 @@ describe('Mat4', () => {
     });
 
     test('translate stores translation in the last column', () => {
-        const mat = Mat4.translate(new Vec3(20, 1, 5));
+        const mat = Mat4.Translate(new Vec3(20, 1, 5));
         expect(mat.m00).toBe(1);
         expect(mat.m11).toBe(1);
         expect(mat.m22).toBe(1);
@@ -176,11 +176,11 @@ describe('Mat4', () => {
         expect(mat.m31).toBe(0);
         expect(mat.m32).toBe(0);
         expectVec3Close(mat.GetPosition(), 20, 1, 5);
-        expectVec3Close(mat.multiplyPoint3x4(new Vec3(0, 0, 0)), 20, 1, 5);
+        expectVec3Close(mat.MultiplyPoint3x4(new Vec3(0, 0, 0)), 20, 1, 5);
     });
 
     test('rotate Quaternion{3, 5, 7, 1} normalized', () => {
-        const mat = Mat4.rotate(new Quaternion(3, 5, 7, 1).normalized);
+        const mat = Mat4.Rotate(new Quaternion(3, 5, 7, 1).normalized);
         expect(roundTo(mat.m00, 2)).toBe(-0.76);
         expect(roundTo(mat.m10, 2)).toBe(0.52);
         expect(roundTo(mat.m20, 2)).toBe(0.38);
@@ -200,7 +200,7 @@ describe('Mat4', () => {
     });
 
     test('rotate identity is identity', () => {
-        const mat = Mat4.rotate(Quaternion.identity);
+        const mat = Mat4.Rotate(Quaternion.identity);
         expect(mat.m00).toBe(1);
         expect(mat.m11).toBe(1);
         expect(mat.m22).toBe(1);
@@ -211,12 +211,12 @@ describe('Mat4', () => {
 
     test('rotation round-trips through quaternion', () => {
         const q = Quaternion.Euler(new Vec3(10, 20, 30));
-        const back = Mat4.rotate(q).rotation;
+        const back = Mat4.Rotate(q).rotation;
         expect(Math.abs(Quaternion.Dot(q, back))).toBeCloseTo(1, 4);
     });
 
     test('scale Vec3{2, 2, 2}', () => {
-        const mat = Mat4.scale(new Vec3(2, 2, 2));
+        const mat = Mat4.Scale(new Vec3(2, 2, 2));
         expect(mat.m00).toBe(2);
         expect(mat.m10).toBe(0);
         expect(mat.m20).toBe(0);
@@ -244,7 +244,7 @@ describe('Mat4', () => {
         // Translation lands in the last column untouched by rotation.
         expectVec3Close(mat.GetPosition(), 20, 1, 5);
         // +X rotated 90 degrees about Y is -Z, then translated.
-        expectVec3Close(mat.multiplyPoint3x4(new Vec3(1, 0, 0)), 20, 1, 4);
+        expectVec3Close(mat.MultiplyPoint3x4(new Vec3(1, 0, 0)), 20, 1, 4);
         // Rotation extracts back out.
         const back = mat.rotation;
         expect(Math.abs(Quaternion.Dot(back, Quaternion.AngleAxis(90, new Vec3(0, 1, 0))))).toBeCloseTo(1, 4);
@@ -256,14 +256,14 @@ describe('Mat4', () => {
             Quaternion.identity,
             new Vec3(2, 2, 2)
         );
-        expectVec3Close(mat.multiplyPoint3x4(new Vec3(1, 1, 1)), 2, 2, 2);
+        expectVec3Close(mat.MultiplyPoint3x4(new Vec3(1, 1, 1)), 2, 2, 2);
     });
 
     test('SetTRS writes the matrix in place', () => {
         const mat = Mat4.identity;
         mat.SetTRS(new Vec3(20, 1, 5), Quaternion.identity, new Vec3(1, 1, 1));
         expectVec3Close(mat.GetPosition(), 20, 1, 5);
-        expectVec3Close(mat.multiplyPoint3x4(new Vec3(1, 0, 0)), 21, 1, 5);
+        expectVec3Close(mat.MultiplyPoint3x4(new Vec3(1, 0, 0)), 21, 1, 5);
     });
 
     test('Get/SetColumn and Get/SetRow', () => {
@@ -281,12 +281,12 @@ describe('Mat4', () => {
     });
 
     test('multiplyPoint, multiplyPoint3x4 and multiplyVector', () => {
-        const mat = Mat4.translate(new Vec3(10, 0, 0));
-        expectVec3Close(mat.multiplyPoint3x4(new Vec3(1, 2, 3)), 11, 2, 3);
-        expectVec3Close(mat.multiplyPoint(new Vec3(1, 2, 3)), 11, 2, 3);
+        const mat = Mat4.Translate(new Vec3(10, 0, 0));
+        expectVec3Close(mat.MultiplyPoint3x4(new Vec3(1, 2, 3)), 11, 2, 3);
+        expectVec3Close(mat.MultiplyPoint(new Vec3(1, 2, 3)), 11, 2, 3);
         // Directions ignore translation.
-        expectVec3Close(mat.multiplyVector(new Vec3(1, 2, 3)), 1, 2, 3);
-        const v4 = Mat4.multiplyVec4(mat, new Vec4(1, 2, 3, 0));
+        expectVec3Close(mat.MultiplyVector(new Vec3(1, 2, 3)), 1, 2, 3);
+        const v4 = Mat4.Multiply(mat, new Vec4(1, 2, 3, 0));
         expect(v4.x).toBeCloseTo(1, 4);
         expect(v4.y).toBeCloseTo(2, 4);
         expect(v4.z).toBeCloseTo(3, 4);
@@ -294,16 +294,16 @@ describe('Mat4', () => {
 
     test('lookAt builds a view matrix', () => {
         const eye = new Vec3(0, 0, 5);
-        const mat = Mat4.lookAt(eye, new Vec3(0, 0, 0), new Vec3(0, 1, 0));
+        const mat = Mat4.LookAt(eye, new Vec3(0, 0, 0), new Vec3(0, 1, 0));
         // The eye maps to the origin.
-        expectVec3Close(mat.multiplyPoint3x4(eye), 0, 0, 0);
+        expectVec3Close(mat.MultiplyPoint3x4(eye), 0, 0, 0);
         // The looked-at origin sits 5 units down -Z in view space.
-        expectVec3Close(mat.multiplyPoint3x4(new Vec3(0, 0, 0)), 0, 0, -5);
+        expectVec3Close(mat.MultiplyPoint3x4(new Vec3(0, 0, 0)), 0, 0, -5);
         expectVec3Close(mat.GetPosition(), 0, 0, -5);
     });
 
     test('ortho maps the box corners', () => {
-        const mat = Mat4.ortho(-1, 1, -1, 1, 0.1, 100);
+        const mat = Mat4.Ortho(-1, 1, -1, 1, 0.1, 100);
         expect(mat.m00).toBe(1);
         expect(mat.m11).toBe(1);
         expect(mat.m22).toBeCloseTo(-2 / 99.9, 6);
@@ -311,7 +311,7 @@ describe('Mat4', () => {
     });
 
     test('frustum perspective divide sign', () => {
-        const mat = Mat4.frustum(-1, 1, -1, 1, 1, 10);
+        const mat = Mat4.Frustum(-1, 1, -1, 1, 1, 10);
         expect(mat.m00).toBe(1);
         expect(mat.m11).toBe(1);
         expect(mat.m22).toBeCloseTo(-11 / 9, 6);
@@ -320,7 +320,7 @@ describe('Mat4', () => {
     });
 
     test('perspective with a 90 degree vertical fov', () => {
-        const mat = Mat4.perspective(Math.PI / 2, 1, 1, 10);
+        const mat = Mat4.Perspective(Math.PI / 2, 1, 1, 10);
         expect(mat.m00).toBeCloseTo(1, 6);
         expect(mat.m11).toBeCloseTo(1, 6);
         expect(mat.m22).toBeCloseTo(-11 / 9, 6);

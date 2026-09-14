@@ -30,15 +30,15 @@ export class Transform {
     private _hasChanged = false;
 
     /** The position of the transform in world space */
-    get translation(): Vec3 {
+    get position(): Vec3 {
         if (this._parent === null) {
             return this._localPosition.clone();
         }
-        return this._parent.localToWorldMatrix.multiplyPoint3x4(
+        return this._parent.localToWorldMatrix.MultiplyPoint3x4(
             this._localPosition
         );
     }
-    set translation(value: Vec3) {
+    set position(value: Vec3) {
         this.SetPosition(value);
     }
     /** The rotation of the transform in world space stored as a quaternion */
@@ -46,7 +46,7 @@ export class Transform {
         if (this._parent === null) {
             return this._localRotation.clone();
         }
-        return Quaternion.mult(this._parent.rotation, this._localRotation);
+        return Quaternion.Multiply(this._parent.rotation, this._localRotation);
     }
     set rotation(value: Quaternion) {
         this.SetRotation(value);
@@ -72,10 +72,10 @@ export class Transform {
         );
     }
     /** Position of the transform relative to the parent transform */
-    get localTranslation(): Vec3 {
+    get localPosition(): Vec3 {
         return this._localPosition.clone();
     }
-    set localTranslation(value: Vec3) {
+    set localPosition(value: Vec3) {
         this._localPosition = value.clone();
         this._hasChanged = true;
     }
@@ -103,27 +103,27 @@ export class Transform {
     }
     /** The blue axis of the transform in world space */
     get forward(): Vec3 {
-        return Quaternion.multiplyWithVec3(this.rotation, Vec3.forward);
+        return Quaternion.Multiply(this.rotation, Vec3.forward);
     }
     set forward(value: Vec3) {
         this.rotation = Quaternion.LookRotation(value, Vec3.up);
     }
     /** The red axis of the transform in world space */
     get right(): Vec3 {
-        return Quaternion.multiplyWithVec3(this.rotation, Vec3.right);
+        return Quaternion.Multiply(this.rotation, Vec3.right);
     }
     set right(value: Vec3) {
-        this.rotation = Quaternion.mult(
+        this.rotation = Quaternion.Multiply(
             Quaternion.FromToRotation(this.right, value),
             this.rotation
         );
     }
     /** The green axis of the transform in world space */
     get up(): Vec3 {
-        return Quaternion.multiplyWithVec3(this.rotation, Vec3.up);
+        return Quaternion.Multiply(this.rotation, Vec3.up);
     }
     set up(value: Vec3) {
-        this.rotation = Quaternion.mult(
+        this.rotation = Quaternion.Multiply(
             Quaternion.FromToRotation(this.up, value),
             this.rotation
         );
@@ -139,7 +139,7 @@ export class Transform {
                 this._localScale
             );
         }
-        return Mat4.mult(
+        return Mat4.Multiply(
             this._parent.localToWorldMatrix,
             Mat4.TRS(this._localPosition, this._localRotation, this._localScale)
         );
@@ -176,11 +176,11 @@ export class Transform {
             return;
         }
         if (worldPositionStays) {
-            const worldPos = this.translation;
+            const worldPos = this.position;
             const worldRot = this.rotation;
             const worldScale = this.lossyScale;
             this.attach(parent);
-            this.translation = worldPos;
+            this.position = worldPos;
             this.rotation = worldRot;
             this.restoreLossyScale(worldScale);
         } else {
@@ -214,34 +214,34 @@ export class Transform {
         this._hasChanged = true;
     }
 
-    Translate(translation: Vec3, relativeTo: Space = Space.Self): void {
+    Translate(position: Vec3, relativeTo: Space = Space.Self): void {
         if (relativeTo === Space.Self) {
-            this.translation = Vec3.add(
-                this.translation,
-                this.TransformDirection(translation)
+            this.position = Vec3.Add(
+                this.position,
+                this.TransformDirection(position)
             );
         } else {
-            this.translation = Vec3.add(this.translation, translation);
+            this.position = Vec3.Add(this.position, position);
         }
     }
 
     Rotate(eulers: Vec3, relativeTo: Space = Space.Self): void {
         const eulerRot = Quaternion.Euler(eulers);
         if (relativeTo === Space.Self) {
-            this.localRotation = Quaternion.mult(this._localRotation, eulerRot);
+            this.localRotation = Quaternion.Multiply(this._localRotation, eulerRot);
         } else {
-            this.rotation = Quaternion.mult(eulerRot, this.rotation);
+            this.rotation = Quaternion.Multiply(eulerRot, this.rotation);
         }
     }
 
     RotateAround(point: Vec3, axis: Vec3, angle: number): void {
         const q = Quaternion.AngleAxis(angle, axis);
-        const offset = Vec3.sub(this.translation, point);
-        this.translation = Vec3.add(
+        const offset = Vec3.Subtract(this.position, point);
+        this.position = Vec3.Add(
             point,
-            Quaternion.multiplyWithVec3(q, offset)
+            Quaternion.Multiply(q, offset)
         );
-        this.rotation = Quaternion.mult(q, this.rotation);
+        this.rotation = Quaternion.Multiply(q, this.rotation);
     }
     /**
      * Rotates the transform so the forward vector points at the target's
@@ -250,8 +250,8 @@ export class Transform {
      * @param worldUp Vector specifying the upward direction
      */
     LookAt(target: Transform | Vec3, worldUp = Vec3.up): void {
-        const targetPos = target instanceof Transform ? target.translation : target;
-        const direction = Vec3.sub(targetPos, this.translation);
+        const targetPos = target instanceof Transform ? target.position : target;
+        const direction = Vec3.Subtract(targetPos, this.position);
         if (direction.sqrMagnitude < 1e-10) {
             return;
         }
@@ -259,19 +259,19 @@ export class Transform {
     }
     /** Transforms direction from local space to world space */
     TransformDirection(direction: Vec3): Vec3 {
-        return Quaternion.multiplyWithVec3(this.rotation, direction);
+        return Quaternion.Multiply(this.rotation, direction);
     }
     /** Transforms direction from world space to local space */
     InverseTransformDirection(direction: Vec3): Vec3 {
-        return Quaternion.multiplyWithVec3(
+        return Quaternion.Multiply(
             Quaternion.Inverse(this.rotation),
             direction
         );
     }
     /** Transforms vector from local space to world space */
     TransformVector(vector: Vec3): Vec3 {
-        return Vec4.toVec3(
-            Mat4.multiplyVec4(
+        return Vec4.ToVec3(
+            Mat4.Multiply(
                 this.localToWorldMatrix,
                 new Vec4(vector.x, vector.y, vector.z, 0)
             )
@@ -279,8 +279,8 @@ export class Transform {
     }
     /** Transforms vector from world space to local space */
     InverseTransformVector(vector: Vec3): Vec3 {
-        return Vec4.toVec3(
-            Mat4.multiplyVec4(
+        return Vec4.ToVec3(
+            Mat4.Multiply(
                 this.worldToLocalMatrix,
                 new Vec4(vector.x, vector.y, vector.z, 0)
             )
@@ -288,11 +288,11 @@ export class Transform {
     }
     /** Transforms point from local space to world space */
     TransformPoint(local: Vec3): Vec3 {
-        return this.localToWorldMatrix.multiplyPoint3x4(local);
+        return this.localToWorldMatrix.MultiplyPoint3x4(local);
     }
     /** Transforms point from world space to local space */
     InverseTransformPoint(world: Vec3): Vec3 {
-        return this.worldToLocalMatrix.multiplyPoint3x4(world);
+        return this.worldToLocalMatrix.MultiplyPoint3x4(world);
     }
 
     private SetPosition(value: Vec3): void {
@@ -300,7 +300,7 @@ export class Transform {
             this._localPosition = value.clone();
         } else {
             this._localPosition =
-                this._parent.worldToLocalMatrix.multiplyPoint3x4(value);
+                this._parent.worldToLocalMatrix.MultiplyPoint3x4(value);
         }
         this._hasChanged = true;
     }
@@ -309,7 +309,7 @@ export class Transform {
         if (this._parent === null) {
             this._localRotation = value.clone();
         } else {
-            this._localRotation = Quaternion.mult(
+            this._localRotation = Quaternion.Multiply(
                 Quaternion.Inverse(this._parent.rotation),
                 value
             );
@@ -341,18 +341,5 @@ export class Transform {
         if (parent !== null && !parent._children.includes(this)) {
             parent._children.push(this);
         }
-    }
-
-    /**
-     * @deprecated Typo kept for backwards compatibility. Use TransformDirection instead.
-     */
-    TransrformDirection(direction: Vec3): Vec3 {
-        return this.TransformDirection(direction);
-    }
-    /**
-     * @deprecated Typo kept for backwards compatibility. Use InverseTransformDirection instead.
-     */
-    InverseTransrformDirection(direction: Vec3): Vec3 {
-        return this.InverseTransformDirection(direction);
     }
 }

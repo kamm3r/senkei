@@ -45,22 +45,22 @@ export class Mathf {
   static Max(a: number, b: number): number {
     return a > b ? a : b;
   }
-  static clamp(value: number, min: number, max: number): number {
+  static Clamp(value: number, min: number, max: number): number {
     return value < min ? min : value > max ? max : value;
   }
-  static clamp01(value: number): number {
+  static Clamp01(value: number): number {
     return value < 0 ? 0 : value > 1 ? 1 : value;
   }
 
-  static Lerp(a: number, b: number, t: number): number {
+  static LerpUnclamped(a: number, b: number, t: number): number {
     return (1 - t) * a + t * b;
   }
 
   static FastLerp(a: number, b: number, t: number): number {
     return a + (b - a) * t;
   }
-  static LerpClamped(a: number, b: number, t: number): number {
-    return this.Lerp(a, b, this.clamp01(t));
+  static Lerp(a: number, b: number, t: number): number {
+    return this.LerpUnclamped(a, b, this.Clamp01(t));
   }
   static Approximately(a: number, b: number): boolean {
     return (

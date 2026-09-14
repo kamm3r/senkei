@@ -359,9 +359,14 @@ export class Mat4 {
     }
 
     /**
-     * Multiplies two matrices
+     * Multiplies two matrices, or transforms a Vec4 by a matrix.
      */
-    static mult(matA: Mat4, matB: Mat4): Mat4 {
+    static Multiply(matA: Mat4, matB: Mat4): Mat4;
+    static Multiply(mat: Mat4, vector: Vec4): Vec4;
+    static Multiply(matA: Mat4, matB: Mat4 | Vec4): Mat4 | Vec4 {
+        if (matB instanceof Vec4) {
+            return Mat4.transformVec4(matA, matB);
+        }
         const res = Mat4.zero;
 
         res.m00 =
@@ -453,7 +458,7 @@ export class Mat4 {
     /**
      * Transforms a Vec4 by a matrix
      */
-    static multiplyVec4(mat: Mat4, vector: Vec4): Vec4 {
+    private static transformVec4(mat: Mat4, vector: Vec4): Vec4 {
         const res = new Vec4();
         res.x =
             mat.m00 * vector.x +
@@ -480,8 +485,7 @@ export class Mat4 {
     /**
      * Transforms a position by this matrix, with a perspective divide
      */
-    multiplyPoint(point: Vec3): Vec3 {
-        const res = new Vec3();
+    MultiplyPoint(point: Vec3): Vec3 {        const res = new Vec3();
         let w: number;
         res.x =
             this.m00 * point.x + this.m01 * point.y + this.m02 * point.z + this.m03;
@@ -500,7 +504,7 @@ export class Mat4 {
     /**
      * Transforms a position by this matrix, without a perspective divide
      */
-    multiplyPoint3x4(point: Vec3): Vec3 {
+    MultiplyPoint3x4(point: Vec3): Vec3 {
         const res = new Vec3();
         res.x =
             this.m00 * point.x + this.m01 * point.y + this.m02 * point.z + this.m03;
@@ -513,7 +517,7 @@ export class Mat4 {
     /**
      * Transforms a direction by this matrix
      */
-    multiplyVector(vector: Vec3): Vec3 {
+    MultiplyVector(vector: Vec3): Vec3 {
         const res = new Vec3();
         res.x = this.m00 * vector.x + this.m01 * vector.y + this.m02 * vector.z;
         res.y = this.m10 * vector.x + this.m11 * vector.y + this.m12 * vector.z;
@@ -523,7 +527,7 @@ export class Mat4 {
     /**
      * Creates a scaling matrix
      */
-    static scale(vector: Vec3): Mat4 {
+    static Scale(vector: Vec3): Mat4 {
         const m = Mat4.zero;
         m.m00 = vector.x;
         m.m11 = vector.y;
@@ -536,17 +540,17 @@ export class Mat4 {
      * Translation lives in the last column (m03, m13, m23),
      * matching GetPosition, multiplyPoint and TRS.
      */
-    static translate(vector: Vec3): Mat4 {
+    static Translate(translation: Vec3): Mat4 {
         const m = Mat4.identity;
-        m.m03 = vector.x;
-        m.m13 = vector.y;
-        m.m23 = vector.z;
+        m.m03 = translation.x;
+        m.m13 = translation.y;
+        m.m23 = translation.z;
         return m;
     }
     /**
      * Creates a rotation matrix. Note: Assumes unit quaternion
      */
-    static rotate(q: Quaternion): Mat4 {
+    static Rotate(q: Quaternion): Mat4 {
         const mat = Mat4.identity;
 
         const a2 = q.x * q.x;
@@ -576,7 +580,7 @@ export class Mat4 {
     /**
      * This function returns a projection matrix with viewing frustum that has a near plane defined by the coordinates that were passed in
      */
-    static frustum(
+    static Frustum(
         left: number,
         right: number,
         bottom: number,
@@ -601,7 +605,7 @@ export class Mat4 {
     /**
      * Create a perspective projection matrix
      */
-    static perspective(
+    static Perspective(
         fov: number,
         aspect: number,
         zNear: number,
@@ -631,7 +635,7 @@ export class Mat4 {
     /**
      * Create an orthogonal projection matrix
      */
-    static ortho(
+    static Ortho(
         left: number,
         right: number,
         bottom: number,
@@ -658,14 +662,14 @@ export class Mat4 {
     /**
      * Create a "look at" matrix.
      */
-    static lookAt(from: Vec3, to: Vec3, up: Vec3): Mat4 {
+    static LookAt(from: Vec3, to: Vec3, up: Vec3): Mat4 {
         const res = Mat4.zero;
 
         let length = 0.0;
         let ilength = 0.0;
 
         // Vector3Subtract(eye, target)
-        const vz = Vec3.sub(from, to);
+        const vz = Vec3.Subtract(from, to);
 
         // Vector3Normalize(vz)
         let v = vz;
@@ -717,9 +721,9 @@ export class Mat4 {
     * @param scale - The scale to apply.
     */
     static TRS(translation: Vec3, rotation: Quaternion, scale: Vec3): Mat4 {
-        return Mat4.mult(
-            Mat4.mult(this.translate(translation), this.rotate(rotation)),
-            this.scale(scale)
+        return Mat4.Multiply(
+            Mat4.Multiply(this.Translate(translation), this.Rotate(rotation)),
+            this.Scale(scale)
         );
     }
     SetTRS(translation: Vec3, rotation: Quaternion, scale: Vec3): void {

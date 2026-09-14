@@ -7,8 +7,8 @@ import { expectQuatClose, expectVec3Close } from './helpers';
 describe('Transform', () => {
     test('defaults: origin, identity, unit scale, no parent', () => {
         const t = new Transform();
-        expectVec3Close(t.translation, 0, 0, 0);
-        expectVec3Close(t.localTranslation, 0, 0, 0);
+        expectVec3Close(t.position, 0, 0, 0);
+        expectVec3Close(t.localPosition, 0, 0, 0);
         expectQuatClose(t.rotation, 0, 0, 0, 1);
         expectQuatClose(t.localRotation, 0, 0, 0, 1);
         expectVec3Close(t.localScale, 1, 1, 1);
@@ -20,19 +20,19 @@ describe('Transform', () => {
 
     test('getters return copies, setters copy in', () => {
         const t = new Transform();
-        const leaked = t.translation;
+        const leaked = t.position;
         leaked.x = 99;
-        expect(t.translation.x).toBe(0);
+        expect(t.position.x).toBe(0);
 
         const p = new Vec3(1, 2, 3);
-        t.translation = p;
+        t.position = p;
         p.x = 99;
-        expectVec3Close(t.translation, 1, 2, 3);
+        expectVec3Close(t.position, 1, 2, 3);
     });
 
     test('local setters flag hasChanged', () => {
         const t = new Transform();
-        t.localTranslation = new Vec3(1, 0, 0);
+        t.localPosition = new Vec3(1, 0, 0);
         expect(t.hasChanged).toBe(true);
         t.hasChanged = false;
         t.localRotation = Quaternion.identity;
@@ -68,10 +68,10 @@ describe('Transform', () => {
         t.eulerAngles = new Vec3(0, 90, 0);
         t.Translate(new Vec3(1, 0, 0));
         // +X in local space is -Z in world space after the yaw.
-        expectVec3Close(t.translation, 0, 0, -1);
+        expectVec3Close(t.position, 0, 0, -1);
 
         t.Translate(new Vec3(1, 0, 0), Space.World);
-        expectVec3Close(t.translation, 1, 0, -1);
+        expectVec3Close(t.position, 1, 0, -1);
     });
 
     test('Rotate in Self and World space', () => {
@@ -88,9 +88,9 @@ describe('Transform', () => {
 
     test('RotateAround orbits position and spins rotation', () => {
         const t = new Transform();
-        t.translation = new Vec3(1, 0, 0);
+        t.position = new Vec3(1, 0, 0);
         t.RotateAround(new Vec3(0, 0, 0), new Vec3(0, 1, 0), 90);
-        expectVec3Close(t.translation, 0, 0, -1);
+        expectVec3Close(t.position, 0, 0, -1);
         expectVec3Close(t.forward, 1, 0, 0);
     });
 
@@ -98,13 +98,13 @@ describe('Transform', () => {
         const t = new Transform();
         t.LookAt(new Vec3(0, 0, 5));
         expectVec3Close(t.forward, 0, 0, 1);
-        expectVec3Close(t.translation, 0, 0, 0);
+        expectVec3Close(t.position, 0, 0, 0);
     });
 
     test('LookAt accepts another Transform', () => {
         const t = new Transform();
         const target = new Transform();
-        target.translation = new Vec3(5, 0, 0);
+        target.position = new Vec3(5, 0, 0);
         t.LookAt(target);
         expectVec3Close(t.forward, 1, 0, 0);
     });
@@ -117,53 +117,53 @@ describe('Transform', () => {
 
     test('child world translation follows the parent', () => {
         const parent = new Transform();
-        parent.translation = new Vec3(10, 0, 0);
+        parent.position = new Vec3(10, 0, 0);
         const child = new Transform();
-        child.localTranslation = new Vec3(1, 2, 3);
+        child.localPosition = new Vec3(1, 2, 3);
         child.SetParent(parent, false);
-        expectVec3Close(child.translation, 11, 2, 3);
+        expectVec3Close(child.position, 11, 2, 3);
     });
 
     test('child world rotation composes with the parent', () => {
         const parent = new Transform();
         parent.eulerAngles = new Vec3(0, 90, 0);
         const child = new Transform();
-        child.localTranslation = new Vec3(1, 0, 0);
+        child.localPosition = new Vec3(1, 0, 0);
         child.SetParent(parent, false);
-        expectVec3Close(child.translation, 0, 0, -1);
+        expectVec3Close(child.position, 0, 0, -1);
         // The child's +Z axis rides the parent's 90-degree yaw: forward is +X.
         expectVec3Close(child.forward, 1, 0, 0);
     });
 
     test('world setter converts into local space', () => {
         const parent = new Transform();
-        parent.translation = new Vec3(10, 0, 0);
+        parent.position = new Vec3(10, 0, 0);
         const child = new Transform();
         child.SetParent(parent, false);
-        child.translation = new Vec3(15, 0, 0);
-        expectVec3Close(child.localTranslation, 5, 0, 0);
+        child.position = new Vec3(15, 0, 0);
+        expectVec3Close(child.localPosition, 5, 0, 0);
     });
 
     test('SetParent keeps world transform by default', () => {
         const parent = new Transform();
-        parent.translation = new Vec3(10, 0, 0);
+        parent.position = new Vec3(10, 0, 0);
         const child = new Transform();
-        child.translation = new Vec3(5, 0, 0);
+        child.position = new Vec3(5, 0, 0);
         child.SetParent(parent);
-        expectVec3Close(child.translation, 5, 0, 0);
-        expectVec3Close(child.localTranslation, -5, 0, 0);
+        expectVec3Close(child.position, 5, 0, 0);
+        expectVec3Close(child.localPosition, -5, 0, 0);
         expect(parent.childCount).toBe(1);
         expect(child.parent).toBe(parent);
     });
 
     test('SetParent with worldPositionStays=false keeps local', () => {
         const parent = new Transform();
-        parent.translation = new Vec3(10, 0, 0);
+        parent.position = new Vec3(10, 0, 0);
         const child = new Transform();
-        child.localTranslation = new Vec3(5, 0, 0);
+        child.localPosition = new Vec3(5, 0, 0);
         child.SetParent(parent, false);
-        expectVec3Close(child.localTranslation, 5, 0, 0);
-        expectVec3Close(child.translation, 15, 0, 0);
+        expectVec3Close(child.localPosition, 5, 0, 0);
+        expectVec3Close(child.position, 15, 0, 0);
     });
 
     test('reparenting detaches from the old parent', () => {
@@ -193,14 +193,14 @@ describe('Transform', () => {
 
     test('DetachChildren unparents while keeping world transforms', () => {
         const parent = new Transform();
-        parent.translation = new Vec3(10, 0, 0);
+        parent.position = new Vec3(10, 0, 0);
         const child = new Transform();
-        child.localTranslation = new Vec3(1, 0, 0);
+        child.localPosition = new Vec3(1, 0, 0);
         child.SetParent(parent, false);
         parent.DetachChildren();
         expect(parent.childCount).toBe(0);
         expect(child.parent).toBeNull();
-        expectVec3Close(child.translation, 11, 0, 0);
+        expectVec3Close(child.position, 11, 0, 0);
     });
 
     test('lossyScale multiplies down the chain', () => {
@@ -215,23 +215,23 @@ describe('Transform', () => {
     test('SetPositionAndRotation and SetLocalPositionAndRotation', () => {
         const t = new Transform();
         t.SetPositionAndRotation(new Vec3(1, 2, 3), Quaternion.identity);
-        expectVec3Close(t.translation, 1, 2, 3);
+        expectVec3Close(t.position, 1, 2, 3);
         expectQuatClose(t.rotation, 0, 0, 0, 1);
 
         t.SetLocalPositionAndRotation(new Vec3(4, 5, 6), Quaternion.identity);
-        expectVec3Close(t.localTranslation, 4, 5, 6);
+        expectVec3Close(t.localPosition, 4, 5, 6);
     });
 
     test('TransformPoint and InverseTransformPoint round-trip', () => {
         const t = new Transform();
-        t.translation = new Vec3(5, 0, 0);
+        t.position = new Vec3(5, 0, 0);
         expectVec3Close(t.TransformPoint(new Vec3(1, 0, 0)), 6, 0, 0);
         expectVec3Close(t.InverseTransformPoint(new Vec3(6, 0, 0)), 1, 0, 0);
     });
 
     test('TransformDirection ignores position, TransformVector keeps scale', () => {
         const t = new Transform();
-        t.translation = new Vec3(5, 0, 0);
+        t.position = new Vec3(5, 0, 0);
         t.localScale = new Vec3(2, 2, 2);
         expectVec3Close(t.TransformDirection(new Vec3(1, 0, 0)), 1, 0, 0);
         expectVec3Close(t.TransformVector(new Vec3(1, 0, 0)), 2, 0, 0);
@@ -241,9 +241,9 @@ describe('Transform', () => {
 
     test('localToWorldMatrix matches TRS', () => {
         const t = new Transform();
-        t.translation = new Vec3(1, 2, 3);
+        t.position = new Vec3(1, 2, 3);
         const m = t.localToWorldMatrix;
         expectVec3Close(m.GetPosition(), 1, 2, 3);
-        expectVec3Close(t.worldToLocalMatrix.multiplyPoint3x4(new Vec3(1, 2, 3)), 0, 0, 0);
+        expectVec3Close(t.worldToLocalMatrix.MultiplyPoint3x4(new Vec3(1, 2, 3)), 0, 0, 0);
     });
 });

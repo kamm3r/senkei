@@ -94,30 +94,33 @@ export class Vec3 {
     /**
      * Vector addition
      */
-    static add(a: Vec3, b: Vec3): Vec3 {
+    static Add(a: Vec3, b: Vec3): Vec3 {
         return new Vec3(a.x + b.x, a.y + b.y, a.z + b.z);
     }
 
     /**
      * Vector subtraction
      */
-    static sub(a: Vec3, b: Vec3): Vec3 {
+    static Subtract(a: Vec3, b: Vec3): Vec3 {
         return new Vec3(a.x - b.x, a.y - b.y, a.z - b.z);
     }
+
     /**
-     * Multiply the vector with an other vector, component-wise.
-     * @deprecated Use Scale instead.
+     * Multiply by a scalar or component-wise by another vector.
      */
-    static MultiplyWithVector(a: Vec3, b: Vec3): Vec3 {
-        return Vec3.Scale(a, b);
+    static Multiply(a: Vec3, b: Vec3 | number): Vec3 {
+        return typeof b === 'number'
+            ? new Vec3(a.x * b, a.y * b, a.z * b)
+            : new Vec3(a.x * b.x, a.y * b.y, a.z * b.z);
     }
 
-    static mult(a: Vec3, d: number): Vec3 {
-        return new Vec3(a.x * d, a.y * d, a.z * d);
-    }
-
-    static div(a: Vec3, d: number): Vec3 {
-        return new Vec3(a.x / d, a.y / d, a.z / d);
+    /**
+     * Divide by a scalar or component-wise by another vector.
+     */
+    static Divide(a: Vec3, b: Vec3 | number): Vec3 {
+        return typeof b === 'number'
+            ? new Vec3(a.x / b, a.y / b, a.z / b)
+            : new Vec3(a.x / b.x, a.y / b.y, a.z / b.z);
     }
 
     static Min(a: Vec3, b: Vec3): Vec3 {
@@ -142,7 +145,7 @@ export class Vec3 {
     static Normalize(value: Vec3): Vec3 {
         const mag = this.Magnitude(value);
         if (mag > 0.000001) {
-            return this.div(value, this.Magnitude(value));
+            return this.Divide(value, this.Magnitude(value));
         } else {
             // Make something up
             return Vec3.zero;
@@ -239,12 +242,24 @@ export class Vec3 {
             );
         }
     }
+    /**
+     * Makes vectors normalized and orthogonal to each other (Gram-Schmidt).
+     * Modifies both vectors in place, like Unity's Vector3.OrthoNormalize.
+     */
+    static OrthoNormalize(normal: Vec3, tangent: Vec3): void {
+        normal.copy(Vec3.Normalize(normal));
+        const projection = Vec3.Multiply(
+            normal,
+            Vec3.Dot(tangent, normal)
+        );
+        tangent.copy(Vec3.Normalize(Vec3.Subtract(tangent, projection)));
+    }
     static Angle(from: Vec3, to: Vec3): number {
         const denominator = Math.sqrt(from.sqrMagnitude * to.sqrMagnitude);
         if (denominator < Mathf.kEpsilonNormalSqrt) {
             return 0;
         }
-        const dot = Mathf.clamp(Vec3.Dot(from, to) / denominator, -1.0, 1.0);
+        const dot = Mathf.Clamp(Vec3.Dot(from, to) / denominator, -1.0, 1.0);
         return Math.acos(dot) * Mathf.Rad2Deg;
     }
     static SignedAngle(from: Vec3, to: Vec3, axis: Vec3): number {
@@ -278,7 +293,7 @@ export class Vec3 {
     }
     static AngleBetween(from: Vec3, to: Vec3): number {
         return Math.acos(
-            Mathf.clamp(Vec3.Dot(from.normalized, to.normalized), -1.0, 1.0)
+            Mathf.Clamp(Vec3.Dot(from.normalized, to.normalized), -1.0, 1.0)
         );
     }
     /**
@@ -297,20 +312,20 @@ export class Vec3 {
      */
     static Lerp(a: Vec3, b: Vec3, t: number): Vec3 {
         const res = Vec3.zero;
-        res.x = Mathf.LerpClamped(a.x, b.x, t);
-        res.y = Mathf.LerpClamped(a.y, b.y, t);
-        res.z = Mathf.LerpClamped(a.z, b.z, t);
-        return res;
-    }
-    static LerpUnclamped(a: Vec3, b: Vec3, t: number): Vec3 {
-        const res = Vec3.zero;
         res.x = Mathf.Lerp(a.x, b.x, t);
         res.y = Mathf.Lerp(a.y, b.y, t);
         res.z = Mathf.Lerp(a.z, b.z, t);
         return res;
     }
+    static LerpUnclamped(a: Vec3, b: Vec3, t: number): Vec3 {
+        const res = Vec3.zero;
+        res.x = Mathf.LerpUnclamped(a.x, b.x, t);
+        res.y = Mathf.LerpUnclamped(a.y, b.y, t);
+        res.z = Mathf.LerpUnclamped(a.z, b.z, t);
+        return res;
+    }
     static Slerp(a: Vec3, b: Vec3, t: number): Vec3 {
-        return Vec3.slerp(a, b, Mathf.clamp01(t));
+        return Vec3.slerp(a, b, Mathf.Clamp01(t));
     }
     static SlerpUnclamped(a: Vec3, b: Vec3, t: number): Vec3 {
         return Vec3.slerp(a, b, t);
@@ -320,28 +335,28 @@ export class Vec3 {
         // Clamp it to be in the range of Acos()
         // This may be unnecessary, but floating point
         // precision can be a fickle mistress.
-        const dot = Mathf.clamp(Vec3.Dot(a, b), -1.0, 1.0);
+        const dot = Mathf.Clamp(Vec3.Dot(a, b), -1.0, 1.0);
         // Acos(dot) returns the angle between start and end,
         // And multiplying that by percent returns the angle between
         // start and the final result.
         const theta = Math.acos(dot) * t;
-        const relativeVec = Vec3.sub(b, Vec3.mult(a, dot));
+        const relativeVec = Vec3.Subtract(b, Vec3.Multiply(a, dot));
         if (relativeVec.sqrMagnitude < 1e-10) {
             // Parallel vectors: fall back to lerp.
             return Vec3.LerpUnclamped(a, b, t);
         }
         relativeVec.Normalize(); // Orthonormal basis
         // The final result.
-        return Vec3.add(
-            Vec3.mult(a, Math.cos(theta)),
-            Vec3.mult(relativeVec, Math.sin(theta))
+        return Vec3.Add(
+            Vec3.Multiply(a, Math.cos(theta)),
+            Vec3.Multiply(relativeVec, Math.sin(theta))
         );
     }
 
     /**
      * Make the vector point in the opposite direction.
      */
-    static negate(a: Vec3): Vec3 {
+    static Negate(a: Vec3): Vec3 {
         return new Vec3(-a.x, -a.y, -a.z);
     }
 
@@ -521,10 +536,10 @@ export class Vec3 {
         return new Vec3(this.x, this.y, this.z);
     }
 
-    static toVec2(v: Vec3): Vec2 {
+    static ToVec2(v: Vec3): Vec2 {
         return new Vec2(v.x, v.y);
     }
-    static toVec4(v: Vec3): Vec4 {
+    static ToVec4(v: Vec3): Vec4 {
         return new Vec4(v.x, v.y, v.z, 0);
     }
 }

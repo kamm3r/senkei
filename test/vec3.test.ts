@@ -29,15 +29,15 @@ describe('Vec3', () => {
     });
 
     test('add, sub and scalar ops', () => {
-        expectVec3Close(Vec3.add(new Vec3(1, 2, 3), new Vec3(4, 5, 6)), 5, 7, 9);
-        expectVec3Close(Vec3.sub(new Vec3(1, 2, 3), new Vec3(4, 5, 6)), -3, -3, -3);
-        expectVec3Close(Vec3.mult(new Vec3(1, 2, 3), 2), 2, 4, 6);
-        expectVec3Close(Vec3.div(new Vec3(2, 4, 6), 2), 1, 2, 3);
+        expectVec3Close(Vec3.Add(new Vec3(1, 2, 3), new Vec3(4, 5, 6)), 5, 7, 9);
+        expectVec3Close(Vec3.Subtract(new Vec3(1, 2, 3), new Vec3(4, 5, 6)), -3, -3, -3);
+        expectVec3Close(Vec3.Multiply(new Vec3(1, 2, 3), 2), 2, 4, 6);
+        expectVec3Close(Vec3.Divide(new Vec3(2, 4, 6), 2), 1, 2, 3);
         expectVec3Close(
-            Vec3.MultiplyWithVector(new Vec3(1, 2, 3), new Vec3(4, 5, 6)),
+            Vec3.Multiply(new Vec3(1, 2, 3), new Vec3(4, 5, 6)),
             4, 10, 18
         );
-        expectVec3Close(Vec3.negate(new Vec3(1, -2, 3)), -1, 2, -3);
+        expectVec3Close(Vec3.Negate(new Vec3(1, -2, 3)), -1, 2, -3);
     });
 
     test('Min, Max and Clamp', () => {
@@ -184,18 +184,40 @@ describe('Vec3', () => {
         expectVec3Close(v, 2, 6, 12);
     });
 
-    test('MultiplyWithVector matches Scale', () => {
+    test('Multiply and Divide accept scalars and vectors', () => {
+        expectVec3Close(Vec3.Multiply(new Vec3(1, 2, 3), 2), 2, 4, 6);
         expectVec3Close(
-            Vec3.MultiplyWithVector(new Vec3(1, 2, 3), new Vec3(4, 5, 6)),
+            Vec3.Multiply(new Vec3(1, 2, 3), new Vec3(4, 5, 6)),
             4, 10, 18
+        );
+        expectVec3Close(Vec3.Divide(new Vec3(2, 4, 6), 2), 1, 2, 3);
+        expectVec3Close(
+            Vec3.Divide(new Vec3(4, 10, 18), new Vec3(4, 5, 6)),
+            1, 2, 3
         );
     });
 
+    test('OrthoNormalize makes vectors normal and orthogonal', () => {
+        const normal = new Vec3(1, 0, 0);
+        const tangent = new Vec3(1, 1, 0);
+        Vec3.OrthoNormalize(normal, tangent);
+        expectVec3Close(normal, 1, 0, 0);
+        expectVec3Close(tangent, 0, 1, 0);
+        expect(Vec3.Dot(normal, tangent)).toBeCloseTo(0, 6);
+
+        // Parallel input degrades to zero, never NaN.
+        const n2 = new Vec3(0, 0, 2);
+        const t2 = new Vec3(0, 0, 5);
+        Vec3.OrthoNormalize(n2, t2);
+        expectVec3Close(n2, 0, 0, 1);
+        expect(Number.isNaN(t2.x)).toBe(false);
+    });
+
     test('toVec2 / toVec4 conversions', () => {
-        const v2 = Vec3.toVec2(new Vec3(1, 2, 3));
+        const v2 = Vec3.ToVec2(new Vec3(1, 2, 3));
         expect(v2.x).toBe(1);
         expect(v2.y).toBe(2);
-        const v4 = Vec3.toVec4(new Vec3(1, 2, 3));
+        const v4 = Vec3.ToVec4(new Vec3(1, 2, 3));
         expect(v4.x).toBe(1);
         expect(v4.z).toBe(3);
         expect(v4.w).toBe(0);

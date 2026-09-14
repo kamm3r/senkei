@@ -23,7 +23,7 @@ describe('built bundle', () => {
     });
 
     test('ESM bundle behaves like source', () => {
-        const v = esm.Vec3.add(new esm.Vec3(1, 2, 3), new esm.Vec3(4, 5, 6));
+        const v = esm.Vec3.Add(new esm.Vec3(1, 2, 3), new esm.Vec3(4, 5, 6));
         expect([v.x, v.y, v.z]).toEqual([5, 7, 9]);
         expect(esm.Mathf.PI).toBeCloseTo(Math.PI, 6);
         expect(esm.Mathf.Deg2Rad).toBeCloseTo(Math.PI / 180, 8);
@@ -31,19 +31,19 @@ describe('built bundle', () => {
         expect(esm.Space.World).toBe('World');
 
         const t = new esm.Transform();
-        t.translation = new esm.Vec3(1, 2, 3);
-        expect([t.translation.x, t.translation.y, t.translation.z]).toEqual([
+        t.position = new esm.Vec3(1, 2, 3);
+        expect([t.position.x, t.position.y, t.position.z]).toEqual([
             1, 2, 3,
         ]);
     });
 
     test('CJS entry matches ESM behavior', () => {
-        const v = cjs.Vec3.add(new cjs.Vec3(1, 2, 3), new cjs.Vec3(4, 5, 6));
+        const v = cjs.Vec3.Add(new cjs.Vec3(1, 2, 3), new cjs.Vec3(4, 5, 6));
         expect([v.x, v.y, v.z]).toEqual([5, 7, 9]);
         expect(cjs.Mathf.PI).toBeCloseTo(Math.PI, 6);
 
         const t = new cjs.Transform();
-        expect(t.translation.x).toBe(0);
+        expect(t.position.x).toBe(0);
         expect(t.hasChanged).toBe(false);
     });
 });

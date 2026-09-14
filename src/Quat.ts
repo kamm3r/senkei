@@ -22,11 +22,11 @@ export class Quaternion {
 
     get eulerAngles(): Vec3 {
         return Quaternion.Internal_MakePositive(
-            Vec3.mult(Quaternion.Internal_ToEuler(this), Mathf.Rad2Deg)
+            Vec3.Multiply(Quaternion.Internal_ToEuler(this), Mathf.Rad2Deg)
         );
     }
     set eulerAngles(value: Vec3) {
-        this.copy(Quaternion.Internal_FromEuler(Vec3.mult(value, Mathf.Deg2Rad)));
+        this.copy(Quaternion.Internal_FromEuler(Vec3.Multiply(value, Mathf.Deg2Rad)));
     }
     get normalized(): Quaternion {
         return Quaternion.Normalize(this);
@@ -49,9 +49,17 @@ export class Quaternion {
     }
 
     /**
-     * Multiply the quaternion with an other quaternion.
+     * Combines rotations lhs and rhs, or rotates a point by a rotation.
      */
-    static mult(lhs: Quaternion, rhs: Quaternion): Quaternion {
+    static Multiply(lhs: Quaternion, rhs: Quaternion): Quaternion;
+    static Multiply(rotation: Quaternion, point: Vec3): Vec3;
+    static Multiply(
+        lhs: Quaternion,
+        rhs: Quaternion | Vec3
+    ): Quaternion | Vec3 {
+        if (rhs instanceof Vec3) {
+            return Quaternion.rotatePoint(lhs, rhs);
+        }
         return new Quaternion(
             lhs.w * rhs.x + lhs.x * rhs.w + lhs.y * rhs.z - lhs.z * rhs.y,
             lhs.w * rhs.y + lhs.y * rhs.w + lhs.z * rhs.x - lhs.x * rhs.z,
@@ -63,7 +71,7 @@ export class Quaternion {
     /**
      * Rotates the point point with rotation.
      */
-    static multiplyWithVec3(rotation: Quaternion, point: Vec3): Vec3 {
+    private static rotatePoint(rotation: Quaternion, point: Vec3): Vec3 {
         const x = rotation.x * 2;
         const y = rotation.y * 2;
         const z = rotation.z * 2;
@@ -143,7 +151,7 @@ export class Quaternion {
      */
     static ToAxisAngle(q: Quaternion): { axis: Vec3; angle: number } {
         const n = Quaternion.Normalize(q);
-        const w = Mathf.clamp(n.w, -1.0, 1.0);
+        const w = Mathf.Clamp(n.w, -1.0, 1.0);
         const angle = 2.0 * Math.acos(w);
         const den = Math.sqrt(Math.max(0, 1.0 - w * w));
         if (den < Mathf.kEpsilon) {
@@ -259,7 +267,7 @@ export class Quaternion {
     }
 
     static Euler(euler: Vec3): Quaternion {
-        return Quaternion.Internal_FromEuler(Vec3.mult(euler, Mathf.Deg2Rad));
+        return Quaternion.Internal_FromEuler(Vec3.Multiply(euler, Mathf.Deg2Rad));
     }
     /**
      * Performs a linear interpolation between two quat
@@ -271,10 +279,10 @@ export class Quaternion {
      */
     static Lerp(a: Quaternion, b: Quaternion, t: number): Quaternion {
         const res = Quaternion.identity;
-        res.x = Mathf.LerpClamped(a.x, b.x, t);
-        res.y = Mathf.LerpClamped(a.y, b.y, t);
-        res.z = Mathf.LerpClamped(a.z, b.z, t);
-        res.w = Mathf.LerpClamped(a.w, b.w, t);
+        res.x = Mathf.Lerp(a.x, b.x, t);
+        res.y = Mathf.Lerp(a.y, b.y, t);
+        res.z = Mathf.Lerp(a.z, b.z, t);
+        res.w = Mathf.Lerp(a.w, b.w, t);
         return res;
     }
     /**
@@ -287,10 +295,10 @@ export class Quaternion {
      */
     static LerpUnclamped(a: Quaternion, b: Quaternion, t: number): Quaternion {
         const res = Quaternion.identity;
-        res.x = Mathf.Lerp(a.x, b.x, t);
-        res.y = Mathf.Lerp(a.y, b.y, t);
-        res.z = Mathf.Lerp(a.z, b.z, t);
-        res.w = Mathf.Lerp(a.w, b.w, t);
+        res.x = Mathf.LerpUnclamped(a.x, b.x, t);
+        res.y = Mathf.LerpUnclamped(a.y, b.y, t);
+        res.z = Mathf.LerpUnclamped(a.z, b.z, t);
+        res.w = Mathf.LerpUnclamped(a.w, b.w, t);
         return res;
     }
     /**
@@ -342,7 +350,7 @@ export class Quaternion {
      * @returns {Quaternion} A quaternion spherically interpolated between quaternions a and b
      */
     static Slerp(a: Quaternion, b: Quaternion, t: number): Quaternion {
-        return Quaternion.slerp(a, b, Mathf.clamp01(t));
+        return Quaternion.slerp(a, b, Mathf.Clamp01(t));
     }
     static SlerpUnclamped(a: Quaternion, b: Quaternion, t: number): Quaternion {
         return Quaternion.slerp(a, b, t);

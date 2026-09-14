@@ -49,13 +49,13 @@ describe('Quaternion', () => {
 
     test('q * Inverse(q) is identity for unit quaternions', () => {
         const q = Quaternion.AngleAxis(90, new Vec3(0, 1, 0));
-        expectQuatClose(Quaternion.mult(q, Quaternion.Inverse(q)), 0, 0, 0, 1);
+        expectQuatClose(Quaternion.Multiply(q, Quaternion.Inverse(q)), 0, 0, 0, 1);
     });
 
     test('mult with identity is a no-op', () => {
         const q = new Quaternion(1, 2, 3, 4);
-        expectQuatClose(Quaternion.mult(Quaternion.identity, q), 1, 2, 3, 4);
-        expectQuatClose(Quaternion.mult(q, Quaternion.identity), 1, 2, 3, 4);
+        expectQuatClose(Quaternion.Multiply(Quaternion.identity, q), 1, 2, 3, 4);
+        expectQuatClose(Quaternion.Multiply(q, Quaternion.identity), 1, 2, 3, 4);
     });
 
     test('AngleAxis takes degrees and leaves the axis alone', () => {
@@ -66,7 +66,7 @@ describe('Quaternion', () => {
 
         // +90 degrees about +Y sends +X to -Z.
         expectVec3Close(
-            Quaternion.multiplyWithVec3(q, new Vec3(1, 0, 0)),
+            Quaternion.Multiply(q, new Vec3(1, 0, 0)),
             0, 0, -1
         );
     });
@@ -83,7 +83,7 @@ describe('Quaternion', () => {
         // At pitch +/-90 roll and yaw are ambiguous (gimbal lock), so only
         // the mapped direction is asserted, like Unity's eulerAngles.
         expectVec3Close(
-            Quaternion.multiplyWithVec3(q, new Vec3(0, 0, 1)),
+            Quaternion.Multiply(q, new Vec3(0, 0, 1)),
             1, 0, 0
         );
     });
@@ -92,7 +92,7 @@ describe('Quaternion', () => {
         const q = new Quaternion();
         q.eulerAngles = new Vec3(0, 90, 0);
         expectVec3Close(
-            Quaternion.multiplyWithVec3(q, new Vec3(0, 0, 1)),
+            Quaternion.Multiply(q, new Vec3(0, 0, 1)),
             1, 0, 0
         );
     });
@@ -140,7 +140,7 @@ describe('Quaternion', () => {
     test('FromToRotation maps one direction to another', () => {
         const q = Quaternion.FromToRotation(new Vec3(0, 1, 0), new Vec3(0, 0, 1));
         expectVec3Close(
-            Quaternion.multiplyWithVec3(q, new Vec3(0, 1, 0)),
+            Quaternion.Multiply(q, new Vec3(0, 1, 0)),
             0, 0, 1
         );
     });
@@ -148,7 +148,7 @@ describe('Quaternion', () => {
     test('FromToRotation handles opposite vectors', () => {
         const q = Quaternion.FromToRotation(new Vec3(1, 0, 0), new Vec3(-1, 0, 0));
         expectVec3Close(
-            Quaternion.multiplyWithVec3(q, new Vec3(1, 0, 0)),
+            Quaternion.Multiply(q, new Vec3(1, 0, 0)),
             -1, 0, 0
         );
     });
@@ -159,11 +159,11 @@ describe('Quaternion', () => {
 
         const q2 = Quaternion.LookRotation(new Vec3(1, 0, 0));
         expectVec3Close(
-            Quaternion.multiplyWithVec3(q2, Vec3.forward),
+            Quaternion.Multiply(q2, Vec3.forward),
             1, 0, 0
         );
         expectVec3Close(
-            Quaternion.multiplyWithVec3(q2, Vec3.up),
+            Quaternion.Multiply(q2, Vec3.up),
             0, 1, 0
         );
     });

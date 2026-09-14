@@ -11,14 +11,15 @@ npm install senkei
 ```
 
 ```ts
-import * as Vec3 from 'senkie';
+import { Vec3, Quaternion, Mat4, Transform } from 'senkei';
 
-// default to be Vec3 { 0, 0, 0}
-const point = Vec3.create()
+// Unity-like API with PascalCase members.
+const point = new Vec3(2, 4, 10);
 
-point[0] = 2
-point[1] = 4
-point[2] = 10
+console.log('add two vectors', Vec3.Add(point, new Vec3(34, 3, 2)));
 
-console.log('add two vector', Vec3.add(point, Vec3.create(34,3,2))
+const t = new Transform();
+t.position = new Vec3(0, 1, 0);
+t.LookAt(new Vec3(0, 1, 5));
+console.log('forward', t.forward);
 ```

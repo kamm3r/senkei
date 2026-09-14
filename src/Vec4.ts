@@ -44,33 +44,35 @@ export class Vec4 {
     /**
      * Vector addition
      */
-    static add(a: Vec4, b: Vec4): Vec4 {
+    static Add(a: Vec4, b: Vec4): Vec4 {
         return new Vec4(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w);
     }
 
     /**
      * Vector subtraction
-     * @param target Optional target to save in.
      */
-    static sub(a: Vec4, b: Vec4): Vec4 {
+    static Subtract(a: Vec4, b: Vec4): Vec4 {
         return new Vec4(a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w);
     }
+
     /**
-     * Multiply the vector with an other vector, component-wise.
-     * @deprecated Use Scale instead.
+     * Multiply by a scalar or component-wise by another vector.
      */
-    static MultiplyWithVector(a: Vec4, b: Vec4): Vec4 {
-        return Vec4.Scale(a, b);
+    static Multiply(a: Vec4, b: Vec4 | number): Vec4 {
+        return typeof b === 'number'
+            ? new Vec4(a.x * b, a.y * b, a.z * b, a.w * b)
+            : new Vec4(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w);
     }
 
-    static mult(a: Vec4, d: number): Vec4 {
-        return new Vec4(a.x * d, a.y * d, a.z * d, a.w * d);
+    /**
+     * Divide by a scalar or component-wise by another vector.
+     */
+    static Divide(a: Vec4, b: Vec4 | number): Vec4 {
+        return typeof b === 'number'
+            ? new Vec4(a.x / b, a.y / b, a.z / b, a.w / b)
+            : new Vec4(a.x / b.x, a.y / b.y, a.z / b.z, a.w / b.w);
     }
-
-    static div(a: Vec4, d: number): Vec4 {
-        return new Vec4(a.x / d, a.y / d, a.z / d, a.w / d);
-    }
-    static negate(a: Vec4): Vec4 {
+    static Negate(a: Vec4): Vec4 {
         return new Vec4(-a.x, -a.y, -a.z, -a.w);
     }
 
@@ -123,18 +125,18 @@ export class Vec4 {
     }
     static Lerp(a: Vec4, b: Vec4, t: number): Vec4 {
         const res = Vec4.zero;
-        res.x = Mathf.LerpClamped(a.x, b.x, t);
-        res.y = Mathf.LerpClamped(a.y, b.y, t);
-        res.z = Mathf.LerpClamped(a.z, b.z, t);
-        res.w = Mathf.LerpClamped(a.w, b.w, t);
-        return res;
-    }
-    static LerpUnclamped(a: Vec4, b: Vec4, t: number): Vec4 {
-        const res = Vec4.zero;
         res.x = Mathf.Lerp(a.x, b.x, t);
         res.y = Mathf.Lerp(a.y, b.y, t);
         res.z = Mathf.Lerp(a.z, b.z, t);
         res.w = Mathf.Lerp(a.w, b.w, t);
+        return res;
+    }
+    static LerpUnclamped(a: Vec4, b: Vec4, t: number): Vec4 {
+        const res = Vec4.zero;
+        res.x = Mathf.LerpUnclamped(a.x, b.x, t);
+        res.y = Mathf.LerpUnclamped(a.y, b.y, t);
+        res.z = Mathf.LerpUnclamped(a.z, b.z, t);
+        res.w = Mathf.LerpUnclamped(a.w, b.w, t);
         return res;
     }
     static MoveTowards(
@@ -180,7 +182,7 @@ export class Vec4 {
     static Normalize(value: Vec4): Vec4 {
         const mag = this.Magnitude(value);
         if (mag > 0.000001) {
-            return this.div(value, this.Magnitude(value));
+            return this.Divide(value, this.Magnitude(value));
         } else {
             // Make something up
             return Vec4.zero;
@@ -212,7 +214,7 @@ export class Vec4 {
      * Get distance from this point to another point
      */
     static Distance(a: Vec4, b: Vec4): number {
-        return this.Magnitude(this.sub(a, b));
+        return this.Magnitude(this.Subtract(a, b));
     }
 
     /**
@@ -231,19 +233,20 @@ export class Vec4 {
         return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
     }
     static Project(a: Vec4, b: Vec4): Vec4 {
-        return Vec4.mult(b, this.Dot(a, b) / this.Dot(b, b));
+        return Vec4.Multiply(b, this.Dot(a, b) / this.Dot(b, b));
     }
 
-    static Vec3toVec4(v: Vec3): Vec4 {
-        return new Vec4(v.x, v.y, v.z, 0.0);
+    static ToVec4(v: Vec2): Vec4;
+    static ToVec4(v: Vec3): Vec4;
+    static ToVec4(v: Vec2 | Vec3): Vec4 {
+        return v instanceof Vec2
+            ? new Vec4(v.x, v.y, 0.0, 0.0)
+            : new Vec4(v.x, v.y, v.z, 0.0);
     }
-    static Vec2toVec4(v: Vec2): Vec4 {
-        return new Vec4(v.x, v.y, 0.0, 0.0);
-    }
-    static toVec3(v: Vec4): Vec3 {
+    static ToVec3(v: Vec4): Vec3 {
         return new Vec3(v.x, v.y, v.z);
     }
-    static toVec2(v: Vec4): Vec2 {
+    static ToVec2(v: Vec4): Vec2 {
         return new Vec2(v.x, v.y);
     }
 }
