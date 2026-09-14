@@ -136,9 +136,27 @@ export class Quaternion {
     SetLookRotation(view: Vec3): void {
         this.copy(Quaternion.LookRotation(view, Vec3.up));
     }
-    ToAngleAxis(angle: number, axis: Vec3): void {
-        Quaternion.Internal_ToAxisAngle(this, angle, axis);
-        angle *= Mathf.Deg2Rad;
+    /**
+     * Get the rotation angle and axis for a given quaternion.
+     * Does not modify the input.
+     * @returns axis (unit vector) and angle in radians.
+     */
+    static ToAxisAngle(q: Quaternion): { axis: Vec3; angle: number } {
+        const n = Quaternion.Normalize(q);
+        const w = Mathf.clamp(n.w, -1.0, 1.0);
+        const angle = 2.0 * Math.acos(w);
+        const den = Math.sqrt(Math.max(0, 1.0 - w * w));
+        if (den < Mathf.kEpsilon) {
+            // Zero rotation: the axis is arbitrary.
+            return { axis: new Vec3(1, 0, 0), angle: 0 };
+        }
+        return {
+            axis: new Vec3(n.x / den, n.y / den, n.z / den),
+            angle,
+        };
+    }
+    toAxisAngle(): { axis: Vec3; angle: number } {
+        return Quaternion.ToAxisAngle(this);
     }
 
     /**
@@ -466,43 +484,6 @@ export class Quaternion {
         res.w = x0 * y0 * z0 + x1 * y1 * z1;
 
         return res;
-    }
-    /**
-     * Get the rotation angle and axis for a given quaternion
-     */
-    private static Internal_ToAxisAngle(
-        q: Quaternion,
-        _angle: number,
-        _axis: Vec3
-    ): void {
-        if (Math.abs(q.w) > 1.0) {
-            // QuaternionNormalize(q);
-            let length = Math.sqrt(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w);
-            if (length === 0.0) length = 1.0;
-            const ilength = 1.0 / length;
-
-            q.x = q.x * ilength;
-            q.y = q.y * ilength;
-            q.z = q.z * ilength;
-            q.w = q.w * ilength;
-        }
-
-        const resAxis = new Vec3(0.0, 0.0, 0.0);
-        let resAngle = 2.0 * Math.acos(q.w);
-        let den = Math.sqrt(1.0 - q.w * q.w);
-
-        if (den > Mathf.kEpsilon) {
-            resAxis.x = q.x / den;
-            resAxis.y = q.y / den;
-            resAxis.z = q.z / den;
-        } else {
-            // This occurs when the angle is zero.
-            // Not a problem: just set an arbitrary normalized axis.
-            resAxis.x = 1.0;
-        }
-
-        _axis = resAxis;
-        _angle = resAngle;
     }
     /**
      * Get rotation quaternion for an angle and axis

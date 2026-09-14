@@ -199,6 +199,20 @@ describe('Quaternion', () => {
         expect(len).toBeCloseTo(1, 6);
     });
 
+    test('ToAxisAngle round-trips AngleAxis', () => {
+        const axis = Vec3.Normalize(new Vec3(1, 1, 1));
+        const q = Quaternion.AngleAxis(60, axis);
+        const { axis: back, angle } = Quaternion.ToAxisAngle(q);
+        expect(angle).toBeCloseTo(Math.PI / 3, 4);
+        expectVec3Close(back, axis.x, axis.y, axis.z);
+    });
+
+    test('ToAxisAngle of identity is zero about an arbitrary axis', () => {
+        const { axis, angle } = Quaternion.identity.toAxisAngle();
+        expect(angle).toBe(0);
+        expectVec3Close(axis, 1, 0, 0);
+    });
+
     test('Set, copy, clone and toArray', () => {
         const q = new Quaternion();
         q.Set(1, 2, 3, 4);

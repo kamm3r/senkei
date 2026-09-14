@@ -118,8 +118,12 @@ describe('Mat4', () => {
         expect(roundTo(inv.m33, 4)).toBe(0.0313);
     });
 
-    test('matrix times its inverse is identity', () => {
-        const mat = Mat4.TRS(
+    test('inverse of a singular matrix throws instead of NaN', () => {
+        expect(() => Mat4.zero.inverse).toThrow();
+        expect(() => Mat4.scale(new Vec3(0, 0, 0)).inverse).toThrow();
+    });
+
+    test('matrix times its inverse is identity', () => {        const mat = Mat4.TRS(
             new Vec3(20, 1, 5),
             Quaternion.Euler(new Vec3(10, 20, 30)),
             new Vec3(2, 2, 2)

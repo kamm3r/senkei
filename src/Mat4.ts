@@ -138,11 +138,10 @@ export class Mat4 {
         return this.getDeterminant();
     }
     /**
-        * Invert provided matrix
-        * If determinant is zero, the matrix will be set to zero matrix.
-        * TODO:if determinant is zero return current matrix (do not change it)
-        * throw your nan when only positive numbers (determinant is zero)
-    */
+     * Invert provided matrix.
+     * @throws When the determinant is zero (or not finite): there is
+     * no inverse to return, and a NaN matrix is never silently produced.
+     */
     static inverse(m: Mat4): Mat4 {
         const res = Mat4.zero;
 
@@ -165,8 +164,13 @@ export class Mat4 {
         const b10 = a21 * a33 - a23 * a31;
         const b11 = a22 * a33 - a23 * a32;
 
+        const det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;
+        if (!Number.isFinite(det) || Math.abs(det) < 1e-12) {
+            throw new Error('Cannot invert matrix with zero determinant');
+        }
+
         // Calculate the invert determinant (inlined to avoid double-caching)
-        const invDet = 1.0 / (b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06);
+        const invDet = 1.0 / det;
 
         res.m00 = (a11 * b11 - a12 * b10 + a13 * b09) * invDet;
         res.m01 = (-a01 * b11 + a02 * b10 - a03 * b09) * invDet;
