@@ -57,10 +57,10 @@ export class Vec4 {
     }
     /**
      * Multiply the vector with an other vector, component-wise.
-     * @param target The vector to save the result in.
+     * @deprecated Use Scale instead.
      */
     static MultiplyWithVector(a: Vec4, b: Vec4): Vec4 {
-        return new Vec4(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w);
+        return Vec4.Scale(a, b);
     }
 
     static mult(a: Vec4, d: number): Vec4 {
@@ -88,6 +88,14 @@ export class Vec4 {
             Math.max(a.y, b.y),
             Math.max(a.z, b.z),
             Math.max(a.w, b.w)
+        );
+    }
+    static Clamp(v: Vec4, min: Vec4, max: Vec4): Vec4 {
+        return new Vec4(
+            v.x < min.x ? min.x : v.x > max.x ? max.x : v.x,
+            v.y < min.y ? min.y : v.y > max.y ? max.y : v.y,
+            v.z < min.z ? min.z : v.z > max.z ? max.z : v.z,
+            v.w < min.w ? min.w : v.w > max.w ? max.w : v.w
         );
     }
 

@@ -1,4 +1,6 @@
 import { Mathf } from './Utils';
+import { Vec2 } from './Vec2';
+import { Vec4 } from './Vec4';
 
 /**
  * Vector3
@@ -104,9 +106,10 @@ export class Vec3 {
     }
     /**
      * Multiply the vector with an other vector, component-wise.
+     * @deprecated Use Scale instead.
      */
     static MultiplyWithVector(a: Vec3, b: Vec3): Vec3 {
-        return new Vec3(a.x * b.x, a.y * b.y, a.z * b.z);
+        return Vec3.Scale(a, b);
     }
 
     static mult(a: Vec3, d: number): Vec3 {
@@ -510,5 +513,12 @@ export class Vec3 {
      */
     clone(): Vec3 {
         return new Vec3(this.x, this.y, this.z);
+    }
+
+    static toVec2(v: Vec3): Vec2 {
+        return new Vec2(v.x, v.y);
+    }
+    static toVec4(v: Vec3): Vec4 {
+        return new Vec4(v.x, v.y, v.z, 0);
     }
 }

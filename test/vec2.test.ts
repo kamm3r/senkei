@@ -63,8 +63,23 @@ describe('Vec2', () => {
         expect(Vec2.SqrMagnitude(new Vec2(9, 2))).toBe(85);
     });
 
-    test('normalize returns unit vector', () => {
+    test('static Normalize and normalized getter match normalize', () => {
+        expectVec2Close(Vec2.Normalize(new Vec2(3, 1)), 0.9487, 0.3162);
+        expectVec2Close(new Vec2(3, 1).normalized, 0.9487, 0.3162);
         expectVec2Close(new Vec2(3, 1).normalize, 0.9487, 0.3162);
+        expect(Vec2.Magnitude(new Vec2(9, 2))).toBeCloseTo(9.22, 2);
+    });
+
+    test('deprecated mult still multiplies component-wise like Scale', () => {
+        expectVec2Close(Vec2.mult(new Vec2(2, 3), new Vec2(4, 5)), 8, 15);
+    });
+
+    test('SqrDistance and Clamp', () => {
+        expect(Vec2.SqrDistance(new Vec2(2, 3), new Vec2(5, 7))).toBe(25);
+        expectVec2Close(
+            Vec2.Clamp(new Vec2(5, -1), new Vec2(0, 0), new Vec2(1, 1)),
+            1, 0
+        );
     });
 
     test('instance Normalize writes back', () => {
@@ -132,11 +147,16 @@ describe('Vec2', () => {
         expectVec2Close(d, 4, 5);
     });
 
-    test('toVec2 / toVec3 conversions', () => {
+    test('toVec2 / toVec3 / toVec4 conversions', () => {
         expectVec2Close(Vec2.toVec2(new Vec3(1, 2, 3)), 1, 2);
         const v3 = Vec2.toVec3(new Vec2(1, 2));
         expect(v3.x).toBe(1);
         expect(v3.y).toBe(2);
         expect(v3.z).toBe(0);
+        const v4 = Vec2.toVec4(new Vec2(1, 2));
+        expect(v4.x).toBe(1);
+        expect(v4.y).toBe(2);
+        expect(v4.z).toBe(0);
+        expect(v4.w).toBe(0);
     });
 });

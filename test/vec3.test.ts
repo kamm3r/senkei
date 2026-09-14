@@ -166,6 +166,23 @@ describe('Vec3', () => {
         expectVec3Close(v, 2, 6, 12);
     });
 
+    test('MultiplyWithVector matches Scale', () => {
+        expectVec3Close(
+            Vec3.MultiplyWithVector(new Vec3(1, 2, 3), new Vec3(4, 5, 6)),
+            4, 10, 18
+        );
+    });
+
+    test('toVec2 / toVec4 conversions', () => {
+        const v2 = Vec3.toVec2(new Vec3(1, 2, 3));
+        expect(v2.x).toBe(1);
+        expect(v2.y).toBe(2);
+        const v4 = Vec3.toVec4(new Vec3(1, 2, 3));
+        expect(v4.x).toBe(1);
+        expect(v4.z).toBe(3);
+        expect(v4.w).toBe(0);
+    });
+
     test('Set, copy, clone and predicates', () => {
         const v = new Vec3();
         v.Set(1, 2, 3);

@@ -113,6 +113,21 @@ describe('Vec4', () => {
         );
     });
 
+    test('MultiplyWithVector matches Scale, Clamp works', () => {
+        expectVec4Close(
+            Vec4.MultiplyWithVector(new Vec4(1, 2, 3, 4), new Vec4(2, 2, 2, 2)),
+            2, 4, 6, 8
+        );
+        expectVec4Close(
+            Vec4.Clamp(
+                new Vec4(5, -1, 0.5, 2),
+                new Vec4(0, 0, 0, 0),
+                new Vec4(1, 1, 1, 1)
+            ),
+            1, 0, 0.5, 1
+        );
+    });
+
     test('Set, copy and clone', () => {
         const v = new Vec4();
         v.Set(1, 2, 3, 4);

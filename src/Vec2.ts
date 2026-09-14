@@ -1,4 +1,5 @@
 import { Vec3 } from './Vec3';
+import { Vec4 } from './Vec4';
 import { Mathf } from './Utils';
 
 export class Vec2 {
@@ -40,8 +41,12 @@ export class Vec2 {
     static sub(a: Vec2, b: Vec2): Vec2 {
         return new Vec2(a.x - b.x, a.y - b.y);
     }
+    /**
+     * @deprecated Component-wise multiplication conflicts with the scalar
+     * mult on Vec3/Vec4. Use Scale instead.
+     */
     static mult(a: Vec2, b: Vec2): Vec2 {
-        return new Vec2(a.x * b.x, a.y * b.y);
+        return Vec2.Scale(a, b);
     }
     static div(a: Vec2, b: Vec2): Vec2 {
         return new Vec2(a.x / b.x, a.y / b.y);
@@ -132,10 +137,35 @@ export class Vec2 {
             this.y = Vec2.zero.y;
         }
     }
-    get normalize() {
-        const v = new Vec2(this.x, this.y);
-        v.Normalize();
-        return v;
+    /**
+     * Returns this vector with a magnitude of 1.
+     * Canonical name, matching Vec3/Vec4.
+     */
+    get normalized(): Vec2 {
+        return Vec2.Normalize(this);
+    }
+    /**
+     * @deprecated Use normalized instead.
+     */
+    get normalize(): Vec2 {
+        return this.normalized;
+    }
+    /**
+     * Returns this vector with a magnitude of 1.
+     * Does not modify the input.
+     */
+    static Normalize(value: Vec2): Vec2 {
+        const mag = value.magnitude;
+        if (mag > Mathf.kEpsilon) {
+            return Vec2.scalarDiv(value, mag);
+        }
+        return Vec2.zero;
+    }
+    /**
+     * Get the length of the vector.
+     */
+    static Magnitude(vector: Vec2): number {
+        return vector.magnitude;
     }
     static Reflect(inDirection: Vec2, inNormal: Vec2): Vec2 {
         const factor = -2.0 * Vec2.Dot(inNormal, inDirection);
@@ -167,6 +197,17 @@ export class Vec2 {
         const diff_x = a.x - b.x;
         const diff_y = a.y - b.y;
         return Math.sqrt(diff_x * diff_x + diff_y * diff_y);
+    }
+    static SqrDistance(a: Vec2, b: Vec2): number {
+        const diff_x = a.x - b.x;
+        const diff_y = a.y - b.y;
+        return diff_x * diff_x + diff_y * diff_y;
+    }
+    static Clamp(v: Vec2, min: Vec2, max: Vec2): Vec2 {
+        return new Vec2(
+            v.x < min.x ? min.x : v.x > max.x ? max.x : v.x,
+            v.y < min.y ? min.y : v.y > max.y ? max.y : v.y
+        );
     }
     static ClampMagnitude(vector: Vec2, maxLength: number): Vec2 {
         const sqrMagnitude = vector.sqrMagnitude;
@@ -255,5 +296,8 @@ export class Vec2 {
     }
     static toVec3(v: Vec2): Vec3 {
         return new Vec3(v.x, v.y, 0);
+    }
+    static toVec4(v: Vec2): Vec4 {
+        return new Vec4(v.x, v.y, 0, 0);
     }
 }
