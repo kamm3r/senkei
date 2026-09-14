@@ -229,6 +229,11 @@ export class Vec2 {
     SqrMagnitude(): number {
         return this.x * this.x + this.y * this.y;
     }
+    /**
+     * Gradually changes a vector towards a desired goal over time.
+     * Pure: inputs are never modified. Thread the returned velocity
+     * back into the next call to keep the spring state.
+     */
     static SmoothDamp(
         current: Vec2,
         target: Vec2,
@@ -236,7 +241,7 @@ export class Vec2 {
         smoothTime: number,
         maxSpeed: number,
         deltaTime: number
-    ) {
+    ): { value: Vec2; velocity: Vec2 } {
         // Based on Game Programming Gems 4 Chapter 1.10
         smoothTime = Mathf.Max(0.0001, smoothTime);
         const omega = 2 / smoothTime;
@@ -246,7 +251,8 @@ export class Vec2 {
 
         let change_x = current.x - target.x;
         let change_y = current.y - target.y;
-        const originalTo = target;
+        const originalTo_x = target.x;
+        const originalTo_y = target.y;
 
         // Clamp maximum speed
         const maxChange = maxSpeed * smoothTime;
@@ -259,36 +265,39 @@ export class Vec2 {
             change_y = (change_y / mag) * maxChange;
         }
 
-        target.x = current.x - change_x;
-        target.y = current.y - change_y;
+        const target_x = current.x - change_x;
+        const target_y = current.y - change_y;
 
         const temp_x = (currentVelocity.x + omega * change_x) * deltaTime;
         const temp_y = (currentVelocity.y + omega * change_y) * deltaTime;
 
-        currentVelocity.x = (currentVelocity.x - omega * temp_x) * exp;
-        currentVelocity.y = (currentVelocity.y - omega * temp_y) * exp;
+        let vel_x = (currentVelocity.x - omega * temp_x) * exp;
+        let vel_y = (currentVelocity.y - omega * temp_y) * exp;
 
-        let output_x = target.x + (change_x + temp_x) * exp;
-        let output_y = target.y + (change_y + temp_y) * exp;
+        let output_x = target_x + (change_x + temp_x) * exp;
+        let output_y = target_y + (change_y + temp_y) * exp;
 
         // Prevent overshooting
-        const origMinusCurrent_x = originalTo.x - current.x;
-        const origMinusCurrent_y = originalTo.y - current.y;
-        const outMinusOrig_x = output_x - originalTo.x;
-        const outMinusOrig_y = output_y - originalTo.y;
+        const origMinusCurrent_x = originalTo_x - current.x;
+        const origMinusCurrent_y = originalTo_y - current.y;
+        const outMinusOrig_x = output_x - originalTo_x;
+        const outMinusOrig_y = output_y - originalTo_y;
 
         if (
             origMinusCurrent_x * outMinusOrig_x +
             origMinusCurrent_y * outMinusOrig_y >
             0
         ) {
-            output_x = originalTo.x;
-            output_y = originalTo.y;
+            output_x = originalTo_x;
+            output_y = originalTo_y;
 
-            currentVelocity.x = (output_x - originalTo.x) / deltaTime;
-            currentVelocity.y = (output_y - originalTo.y) / deltaTime;
+            vel_x = (output_x - originalTo_x) / deltaTime;
+            vel_y = (output_y - originalTo_y) / deltaTime;
         }
-        return new Vec2(output_x, output_y);
+        return {
+            value: new Vec2(output_x, output_y),
+            velocity: new Vec2(vel_x, vel_y),
+        };
     }
 
     static toVec2(v: Vec3): Vec2 {

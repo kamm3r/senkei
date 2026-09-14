@@ -147,17 +147,35 @@ describe('Vec3', () => {
         );
     });
 
-    test('SmoothDamp moves towards the target', () => {
-        const out = Vec3.SmoothDamp(
+    test('SmoothDamp moves towards the target without touching inputs', () => {
+        const target = new Vec3(10, 0, 0);
+        const velocity = new Vec3(0, 0, 0);
+        const { value: out, velocity: vel } = Vec3.SmoothDamp(
             new Vec3(0, 0, 0),
-            new Vec3(10, 0, 0),
-            new Vec3(0, 0, 0),
+            target,
+            velocity,
             0.3,
             Infinity,
             1 / 60
         );
         expect(out.x).toBeGreaterThan(0);
         expect(out.x).toBeLessThan(10);
+        expect(vel.x).toBeGreaterThan(0);
+        expectVec3Close(target, 10, 0, 0);
+        expectVec3Close(velocity, 0, 0, 0);
+    });
+
+    test('SmoothDamp clamps overshoot and zeroes velocity', () => {
+        const { value: out, velocity: vel } = Vec3.SmoothDamp(
+            new Vec3(0, 0, 0),
+            new Vec3(10, 0, 0),
+            new Vec3(1000, 0, 0),
+            0.3,
+            Infinity,
+            1 / 60
+        );
+        expect(out.x).toBe(10);
+        expect(vel.x).toBe(0);
     });
 
     test('instance Scale writes back', () => {

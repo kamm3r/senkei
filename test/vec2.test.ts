@@ -119,11 +119,13 @@ describe('Vec2', () => {
         expectVec2Close(Vec2.MoveTowards(new Vec2(0, 0), new Vec2(10, 0), 100), 10, 0);
     });
 
-    test('SmoothDamp moves towards the target', () => {
-        const out = Vec2.SmoothDamp(
+    test('SmoothDamp moves towards the target without touching inputs', () => {
+        const target = new Vec2(10, 0);
+        const velocity = new Vec2(0, 0);
+        const { value: out, velocity: vel } = Vec2.SmoothDamp(
             new Vec2(0, 0),
-            new Vec2(10, 0),
-            new Vec2(0, 0),
+            target,
+            velocity,
             0.3,
             Infinity,
             1 / 60
@@ -131,6 +133,23 @@ describe('Vec2', () => {
         expect(out.x).toBeGreaterThan(0);
         expect(out.x).toBeLessThan(10);
         expect(out.y).toBeCloseTo(0, 6);
+        expect(vel.x).toBeGreaterThan(0);
+        // Inputs are untouched: state travels in the return value.
+        expectVec2Close(target, 10, 0);
+        expectVec2Close(velocity, 0, 0);
+    });
+
+    test('SmoothDamp clamps overshoot and zeroes velocity', () => {
+        const { value: out, velocity: vel } = Vec2.SmoothDamp(
+            new Vec2(0, 0),
+            new Vec2(10, 0),
+            new Vec2(1000, 0),
+            0.3,
+            Infinity,
+            1 / 60
+        );
+        expect(out.x).toBe(10);
+        expect(vel.x).toBe(0);
     });
 
     test('Set, copy and clone', () => {

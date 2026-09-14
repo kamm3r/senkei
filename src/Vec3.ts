@@ -373,6 +373,11 @@ export class Vec3 {
             current.z + (toVector_z / dist) * maxDistanceDelta
         );
     }
+    /**
+     * Gradually changes a vector towards a desired goal over time.
+     * Pure: inputs are never modified. Thread the returned velocity
+     * back into the next call to keep the spring state.
+     */
     static SmoothDamp(
         current: Vec3,
         target: Vec3,
@@ -380,11 +385,7 @@ export class Vec3 {
         smoothTime: number,
         maxSpeed: number,
         deltaTime: number
-    ) {
-        let output_x = 0;
-        let output_y = 0;
-        let output_z = 0;
-
+    ): { value: Vec3; velocity: Vec3 } {
         // Based on Game Programming Gems 4 Chapter 1.10
         smoothTime = Math.max(0.0001, smoothTime);
         const omega = 2 / smoothTime;
@@ -395,7 +396,9 @@ export class Vec3 {
         let change_x = current.x - target.x;
         let change_y = current.y - target.y;
         let change_z = current.z - target.z;
-        let originalTo = target;
+        const originalTo_x = target.x;
+        const originalTo_y = target.y;
+        const originalTo_z = target.z;
 
         // Clamp maximum speed
         const maxChange = maxSpeed * smoothTime;
@@ -410,29 +413,29 @@ export class Vec3 {
             change_z = (change_z / mag) * maxChange;
         }
 
-        target.x = current.x - change_x;
-        target.y = current.y - change_y;
-        target.z = current.z - change_z;
+        const target_x = current.x - change_x;
+        const target_y = current.y - change_y;
+        const target_z = current.z - change_z;
 
         const temp_x = (currentVelocity.x + omega * change_x) * deltaTime;
         const temp_y = (currentVelocity.y + omega * change_y) * deltaTime;
         const temp_z = (currentVelocity.z + omega * change_z) * deltaTime;
 
-        currentVelocity.x = (currentVelocity.x - omega * temp_x) * exp;
-        currentVelocity.y = (currentVelocity.y - omega * temp_y) * exp;
-        currentVelocity.z = (currentVelocity.z - omega * temp_z) * exp;
+        let vel_x = (currentVelocity.x - omega * temp_x) * exp;
+        let vel_y = (currentVelocity.y - omega * temp_y) * exp;
+        let vel_z = (currentVelocity.z - omega * temp_z) * exp;
 
-        output_x = target.x + (change_x + temp_x) * exp;
-        output_y = target.y + (change_y + temp_y) * exp;
-        output_z = target.z + (change_z + temp_z) * exp;
+        let output_x = target_x + (change_x + temp_x) * exp;
+        let output_y = target_y + (change_y + temp_y) * exp;
+        let output_z = target_z + (change_z + temp_z) * exp;
 
         // Prevent overshooting
-        const origMinusCurrent_x = originalTo.x - current.x;
-        const origMinusCurrent_y = originalTo.y - current.y;
-        const origMinusCurrent_z = originalTo.z - current.z;
-        let outMinusOrig_x = output_x - originalTo.x;
-        let outMinusOrig_y = output_y - originalTo.y;
-        let outMinusOrig_z = output_z - originalTo.z;
+        const origMinusCurrent_x = originalTo_x - current.x;
+        const origMinusCurrent_y = originalTo_y - current.y;
+        const origMinusCurrent_z = originalTo_z - current.z;
+        const outMinusOrig_x = output_x - originalTo_x;
+        const outMinusOrig_y = output_y - originalTo_y;
+        const outMinusOrig_z = output_z - originalTo_z;
 
         if (
             origMinusCurrent_x * outMinusOrig_x +
@@ -440,16 +443,19 @@ export class Vec3 {
             origMinusCurrent_z * outMinusOrig_z >
             0
         ) {
-            output_x = originalTo.x;
-            output_y = originalTo.y;
-            output_z = originalTo.z;
+            output_x = originalTo_x;
+            output_y = originalTo_y;
+            output_z = originalTo_z;
 
-            currentVelocity.x = (output_x - originalTo.x) / deltaTime;
-            currentVelocity.y = (output_y - originalTo.y) / deltaTime;
-            currentVelocity.z = (output_z - originalTo.z) / deltaTime;
+            vel_x = (output_x - originalTo_x) / deltaTime;
+            vel_y = (output_y - originalTo_y) / deltaTime;
+            vel_z = (output_z - originalTo_z) / deltaTime;
         }
 
-        return new Vec3(output_x, output_y, output_z);
+        return {
+            value: new Vec3(output_x, output_y, output_z),
+            velocity: new Vec3(vel_x, vel_y, vel_z),
+        };
     }
 
     isZero(): boolean {
