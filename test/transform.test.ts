@@ -1,6 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { Transform, Space } from '../src/Transform';
-import { Vec3 } from '../src/Vec3';
+import { Transform, Space } from '../src/Transform';import { Vec3 } from '../src/Vec3';
 import { Quaternion } from '../src/Quat';
 import { expectQuatClose, expectVec3Close } from './helpers';
 
@@ -16,6 +15,12 @@ describe('Transform', () => {
         expect(t.parent).toBeNull();
         expect(t.childCount).toBe(0);
         expect(t.hasChanged).toBe(false);
+    });
+
+    test('Space enum is frozen', () => {
+        expect(Object.isFrozen(Space)).toBe(true);
+        expect(Space.Self).toBe('Self');
+        expect(Space.World).toBe('World');
     });
 
     test('getters return copies, setters copy in', () => {

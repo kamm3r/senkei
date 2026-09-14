@@ -97,6 +97,20 @@ describe('Vec3', () => {
         );
     });
 
+    test('ProjectOnPlane with a degenerate normal returns the vector', () => {
+        const v = new Vec3(2, 3, 0);
+        const out = Vec3.ProjectOnPlane(v, new Vec3(0, 0, 0));
+        expectVec3Close(out, 2, 3, 0);
+        expect(out).not.toBe(v);
+    });
+
+    test('AngleBetween returns radians and zero for degenerate input', () => {
+        expect(
+            Vec3.AngleBetween(new Vec3(1, 0, 0), new Vec3(0, 1, 0))
+        ).toBeCloseTo(Math.PI / 2, 4);
+        expect(Vec3.AngleBetween(new Vec3(0, 0, 0), new Vec3(1, 0, 0))).toBe(0);
+    });
+
     test('Angle, SignedAngle and AngleBetween in degrees/radians', () => {
         expect(Vec3.Angle(new Vec3(1, 0, 0), new Vec3(0, 1, 0))).toBeCloseTo(90, 4);
         expect(
@@ -110,9 +124,12 @@ describe('Vec3', () => {
         ).toBeCloseTo(Math.PI / 2, 4);
     });
 
-    test('ClampMagnitude shortens long vectors only', () => {
+    test('ClampMagnitude shortens long vectors and copies short ones', () => {
         expectVec3Close(Vec3.ClampMagnitude(new Vec3(0, 0, 10), 3), 0, 0, 3);
-        expectVec3Close(Vec3.ClampMagnitude(new Vec3(0, 0, 1), 3), 0, 0, 1);
+        const short = new Vec3(0, 0, 1);
+        const out = Vec3.ClampMagnitude(short, 3);
+        expectVec3Close(out, 0, 0, 1);
+        expect(out).not.toBe(short);
     });
 
     test('Lerp clamps, LerpUnclamped extrapolates', () => {
@@ -136,15 +153,15 @@ describe('Vec3', () => {
         expectVec3Close(Vec3.SlerpUnclamped(a, b, 2), -1, 0, 0);
     });
 
-    test('MoveTowards steps and snaps', () => {
+    test('MoveTowards steps, snaps and never aliases the target', () => {
         expectVec3Close(
             Vec3.MoveTowards(new Vec3(0, 0, 0), new Vec3(10, 0, 0), 3),
             3, 0, 0
         );
-        expectVec3Close(
-            Vec3.MoveTowards(new Vec3(0, 0, 0), new Vec3(10, 0, 0), 100),
-            10, 0, 0
-        );
+        const target = new Vec3(10, 0, 0);
+        const snapped = Vec3.MoveTowards(new Vec3(0, 0, 0), target, 100);
+        expectVec3Close(snapped, 10, 0, 0);
+        expect(snapped).not.toBe(target);
     });
 
     test('SmoothDamp moves towards the target without touching inputs', () => {

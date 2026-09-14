@@ -102,9 +102,12 @@ describe('Vec2', () => {
         expect(Vec2.Distance(new Vec2(2, 3), new Vec2(5, 7))).toBe(5);
     });
 
-    test('ClampMagnitude shortens long vectors only', () => {
+    test('ClampMagnitude shortens long vectors and copies short ones', () => {
         expectVec2Close(Vec2.ClampMagnitude(new Vec2(3, 4), 2), 1.2, 1.6);
-        expectVec2Close(Vec2.ClampMagnitude(new Vec2(1, 0), 2), 1, 0);
+        const short = new Vec2(1, 0);
+        const out = Vec2.ClampMagnitude(short, 2);
+        expectVec2Close(out, 1, 0);
+        expect(out).not.toBe(short);
     });
 
     test('Lerp clamps, LerpUnclamped extrapolates', () => {
@@ -113,9 +116,12 @@ describe('Vec2', () => {
         expectVec2Close(Vec2.LerpUnclamped(new Vec2(0, 0), new Vec2(10, 10), 2), 20, 20);
     });
 
-    test('MoveTowards steps and snaps', () => {
+    test('MoveTowards steps, snaps and never aliases the target', () => {
         expectVec2Close(Vec2.MoveTowards(new Vec2(0, 0), new Vec2(10, 0), 3), 3, 0);
-        expectVec2Close(Vec2.MoveTowards(new Vec2(0, 0), new Vec2(10, 0), 100), 10, 0);
+        const target = new Vec2(10, 0);
+        const snapped = Vec2.MoveTowards(new Vec2(0, 0), target, 100);
+        expectVec2Close(snapped, 10, 0);
+        expect(snapped).not.toBe(target);
     });
 
     test('SmoothDamp moves towards the target without touching inputs', () => {

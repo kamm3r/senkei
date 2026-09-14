@@ -232,7 +232,7 @@ export class Vec3 {
     static ProjectOnPlane(vector: Vec3, planeNormal: Vec3): Vec3 {
         const sqrMag = Vec3.Dot(planeNormal, planeNormal);
         if (sqrMag < Mathf.Epsilon) {
-            return Vec3.zero;
+            return vector.clone();
         } else {
             const dot = Vec3.Dot(vector, planeNormal);
             return new Vec3(
@@ -289,11 +289,15 @@ export class Vec3 {
                 normalized_z * maxLength
             );
         }
-        return vector;
+        return vector.clone();
     }
     static AngleBetween(from: Vec3, to: Vec3): number {
+        const denominator = Math.sqrt(from.sqrMagnitude * to.sqrMagnitude);
+        if (denominator < Mathf.kEpsilonNormalSqrt) {
+            return 0;
+        }
         return Math.acos(
-            Mathf.Clamp(Vec3.Dot(from.normalized, to.normalized), -1.0, 1.0)
+            Mathf.Clamp(Vec3.Dot(from, to) / denominator, -1.0, 1.0)
         );
     }
     /**
@@ -379,7 +383,7 @@ export class Vec3 {
             sqdist == 0 ||
             (maxDistanceDelta >= 0 && sqdist <= maxDistanceDelta * maxDistanceDelta)
         )
-            return target;
+            return target.clone();
         const dist = Math.sqrt(sqdist);
 
         return new Vec3(

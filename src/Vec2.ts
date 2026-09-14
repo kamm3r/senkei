@@ -111,7 +111,7 @@ export class Vec2 {
             sqDist == 0 ||
             (maxDistanceDelta >= 0 && sqDist <= maxDistanceDelta * maxDistanceDelta)
         )
-            return target;
+            return target.clone();
 
         const dist = Math.sqrt(sqDist);
 
@@ -221,7 +221,7 @@ export class Vec2 {
             const normalized_y = vector.y / mag;
             return new Vec2(normalized_x * maxLength, normalized_y * maxLength);
         }
-        return vector;
+        return vector.clone();
     }
     static SqrMagnitude(a: Vec2): number {
         return a.x * a.x + a.y * a.y;

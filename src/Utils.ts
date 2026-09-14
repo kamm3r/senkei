@@ -66,7 +66,7 @@ export class Mathf {
     return (
       this.Abs(b - a) <
       this.Max(
-        this.kEpsilon * this.Max(this.Abs(a), this.Abs(a)),
+        this.kEpsilon * this.Max(this.Abs(a), this.Abs(b)),
         this.kEpsilon * 8
       )
     );

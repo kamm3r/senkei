@@ -7,10 +7,10 @@ import { Mat4 } from './Mat4';
  * The coordinate space to operate in.
  * Mirrors Unity's Space enum (World / Self).
  */
-export const Space = {
+export const Space = Object.freeze({
     World: 'World',
     Self: 'Self',
-} as const;
+} as const);
 
 export type Space = (typeof Space)[keyof typeof Space];
 

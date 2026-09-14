@@ -91,6 +91,12 @@ describe('Vec4', () => {
         );
     });
 
+    test('Project onto a zero vector returns zero, not NaN', () => {
+        const out = Vec4.Project(new Vec4(2, 5, 0, 0), new Vec4(0, 0, 0, 0));
+        expectVec4Close(out, 0, 0, 0, 0);
+        expect(Number.isNaN(out.x)).toBe(false);
+    });
+
     test('Lerp clamps, LerpUnclamped extrapolates every component', () => {
         expectVec4Close(
             Vec4.Lerp(new Vec4(0, 0, 0, 0), new Vec4(4, 4, 4, 4), 0.5),
@@ -102,15 +108,15 @@ describe('Vec4', () => {
         );
     });
 
-    test('MoveTowards steps and snaps', () => {
+    test('MoveTowards steps, snaps and never aliases the target', () => {
         expectVec4Close(
             Vec4.MoveTowards(new Vec4(0, 0, 0, 0), new Vec4(10, 0, 0, 0), 3),
             3, 0, 0, 0
         );
-        expectVec4Close(
-            Vec4.MoveTowards(new Vec4(0, 0, 0, 0), new Vec4(10, 0, 0, 0), 100),
-            10, 0, 0, 0
-        );
+        const target = new Vec4(10, 0, 0, 0);
+        const snapped = Vec4.MoveTowards(new Vec4(0, 0, 0, 0), target, 100);
+        expectVec4Close(snapped, 10, 0, 0, 0);
+        expect(snapped).not.toBe(target);
     });
 
     test('Multiply and Divide accept scalars and vectors', () => {

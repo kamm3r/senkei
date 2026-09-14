@@ -159,7 +159,7 @@ export class Vec4 {
             sqdist == 0 ||
             (maxDistanceDelta >= 0 && sqdist <= maxDistanceDelta * maxDistanceDelta)
         )
-            return target;
+            return target.clone();
 
         const dist = Math.sqrt(sqdist);
 
@@ -233,7 +233,11 @@ export class Vec4 {
         return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
     }
     static Project(a: Vec4, b: Vec4): Vec4 {
-        return Vec4.Multiply(b, this.Dot(a, b) / this.Dot(b, b));
+        const sqrMag = this.Dot(b, b);
+        if (sqrMag < Mathf.Epsilon) {
+            return Vec4.zero;
+        }
+        return Vec4.Multiply(b, this.Dot(a, b) / sqrMag);
     }
 
     static ToVec4(v: Vec2): Vec4;
