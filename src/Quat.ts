@@ -26,7 +26,7 @@ export class Quaternion {
         );
     }
     set eulerAngles(value: Vec3) {
-        Quaternion.Internal_FromEuler(Vec3.mult(value, Mathf.Rad2Deg));
+        this.copy(Quaternion.Internal_FromEuler(Vec3.mult(value, Mathf.Deg2Rad)));
     }
     get normalized(): Quaternion {
         return Quaternion.Normalize(this);
@@ -100,50 +100,41 @@ export class Quaternion {
             : Math.acos(dot) * 2.0 * Mathf.Rad2Deg;
     }
     /**
-     * Creates a rotation which rotates angle degrees around axis
+     * Creates a rotation which rotates angle degrees around axis.
+     * Does not modify the input axis.
      */
     static AngleAxis(angle: number, axis: Vec3): Quaternion {
-        return Quaternion.Internal_FromAxisAngle(Mathf.Rad2Deg * angle, axis);
+        return Quaternion.Internal_FromAxisAngle(Mathf.Deg2Rad * angle, axis);
     }
     /**
-     * Set the quaternion value given two vectors. The resulting rotation will be the needed rotation to rotate u to v.
+     * Set the quaternion value given two vectors. The resulting rotation rotates u to v.
+     * Handles opposite vectors by picking an orthogonal axis. Does not modify the inputs.
      */
     static FromToRotation(from: Vec3, to: Vec3): Quaternion {
-        const res = Quaternion.identity;
+        const f = Vec3.Normalize(from);
+        const t = Vec3.Normalize(to);
+        const dot = Vec3.Dot(f, t);
 
-        const cos2Theta = from.x * to.x + from.y * to.y + from.z * to.z; // Vector3DotProduct(from, to)
-        const cross = new Vec3(
-            from.y * to.z - from.z * to.y,
-            from.z * to.x - from.x * to.z,
-            from.x * to.y - from.y * to.x
-        ); // Vector3CrossProduct(from, to)
+        if (dot < -1.0 + Mathf.kEpsilon) {
+            // Opposite directions: pick any axis orthogonal to f.
+            const ortho =
+                Math.abs(f.x) < Math.abs(f.z)
+                    ? new Vec3(1, 0, 0)
+                    : new Vec3(0, 0, 1);
+            const axis = Vec3.Normalize(Vec3.Cross(f, ortho));
+            return new Quaternion(axis.x, axis.y, axis.z, 0);
+        }
 
-        res.x = cross.x;
-        res.y = cross.y;
-        res.z = cross.z;
-        res.w = 1.0 + cos2Theta;
-
-        // QuaternionNormalize(q);
-        // NOTE: Normalize to essentially nlerp the original and identity to 0.5
-        let q = res;
-        let length = Math.sqrt(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w);
-        if (length === 0.0) length = 1.0;
-        const ilength = 1.0 / length;
-
-        res.x = q.x * ilength;
-        res.y = q.y * ilength;
-        res.z = q.z * ilength;
-        res.w = q.w * ilength;
-
-        return res;
+        const cross = Vec3.Cross(f, t);
+        const res = new Quaternion(cross.x, cross.y, cross.z, 1.0 + dot);
+        return Quaternion.Normalize(res);
     }
 
     SetFromToRotation(fromDirection: Vec3, toDirection: Vec3): void {
-        Quaternion.FromToRotation(fromDirection, toDirection);
+        this.copy(Quaternion.FromToRotation(fromDirection, toDirection));
     }
     SetLookRotation(view: Vec3): void {
-        const up = Vec3.up;
-        Quaternion.LookRotation(view, up);
+        this.copy(Quaternion.LookRotation(view, Vec3.up));
     }
     ToAngleAxis(angle: number, axis: Vec3): void {
         Quaternion.Internal_ToAxisAngle(this, angle, axis);
@@ -151,60 +142,87 @@ export class Quaternion {
     }
 
     /**
-     * Get the inverse quaternion rotation. TODO:NEEDS TESTING
+     * Get the inverse quaternion rotation. Does not modify the input.
      */
     static Inverse(rotation: Quaternion): Quaternion {
-        let res = rotation;
-
         const magnitudeSq =
             rotation.x * rotation.x +
             rotation.y * rotation.y +
             rotation.z * rotation.z +
             rotation.w * rotation.w;
-        if (magnitudeSq !== 0.0) {
-            let invMagnitude = 1.0 / magnitudeSq;
-            res.x *= -invMagnitude;
-            res.y *= -invMagnitude;
-            res.z *= -invMagnitude;
-            res.w *= -invMagnitude;
+        if (magnitudeSq < Mathf.kEpsilon) {
+            return Quaternion.identity;
         }
-
-        return res;
+        const invMagnitude = 1.0 / magnitudeSq;
+        return new Quaternion(
+            -rotation.x * invMagnitude,
+            -rotation.y * invMagnitude,
+            -rotation.z * invMagnitude,
+            rotation.w * invMagnitude
+        );
     }
     /**
-     * 	Creates a rotation with the specified forward and upwards directions TODO:NEED testing
+     * Creates a rotation with the specified forward and upwards directions.
+     * The resulting rotation maps +Z to forward. Does not modify the inputs.
      * @param forward The direction to look in
      * @param upwards The vector that defines in which direction up is
      */
     static LookRotation(forward: Vec3, upwards = Vec3.up): Quaternion {
-        const res = Quaternion.identity;
+        const f = Vec3.Normalize(forward);
+        if (f.sqrMagnitude < Mathf.kEpsilon) {
+            return Quaternion.identity;
+        }
+        let r = Vec3.Cross(upwards, f);
+        if (r.sqrMagnitude < Mathf.kEpsilon) {
+            // forward is parallel to up: pick any orthogonal right vector.
+            const ortho =
+                Math.abs(f.x) < Math.abs(f.z)
+                    ? new Vec3(1, 0, 0)
+                    : new Vec3(0, 0, 1);
+            r = Vec3.Cross(ortho, f);
+        }
+        r = Vec3.Normalize(r);
+        const u = Vec3.Cross(f, r);
 
-        const cos2Theta =
-            forward.x * upwards.x + forward.y * upwards.y + forward.z * upwards.z; // Vector3DotProduct(forward, upwards)
-        const cross = new Vec3(
-            forward.y * upwards.z - forward.z * upwards.y,
-            forward.z * upwards.x - forward.x * upwards.z,
-            forward.x * upwards.y - forward.y * upwards.x
-        ); // Vector3CrossProduct(forward, upwards)
-
-        res.x = cross.x;
-        res.y = cross.y;
-        res.z = cross.z;
-        res.w = 1.0 + cos2Theta;
-
-        // QuaternionNormalize(q);
-        // NOTE: Normalize to essentially nlerp the original and identity to 0.5
-        let q = res;
-        let length = Math.sqrt(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w);
-        if (length === 0.0) length = 1.0;
-        const ilength = 1.0 / length;
-
-        res.x = q.x * ilength;
-        res.y = q.y * ilength;
-        res.z = q.z * ilength;
-        res.w = q.w * ilength;
-
-        return res;
+        // Rotation columns are (r, u, f); convert to quaternion (Shepperd).
+        const m00 = r.x, m01 = u.x, m02 = f.x;
+        const m10 = r.y, m11 = u.y, m12 = f.y;
+        const m20 = r.z, m21 = u.z, m22 = f.z;
+        const trace = m00 + m11 + m22;
+        if (trace > 0) {
+            const s = Math.sqrt(trace + 1.0) * 2;
+            return new Quaternion(
+                (m21 - m12) / s,
+                (m02 - m20) / s,
+                (m10 - m01) / s,
+                s * 0.25
+            );
+        }
+        if (m00 > m11 && m00 > m22) {
+            const s = Math.sqrt(1.0 + m00 - m11 - m22) * 2;
+            return new Quaternion(
+                s * 0.25,
+                (m01 + m10) / s,
+                (m02 + m20) / s,
+                (m21 - m12) / s
+            );
+        }
+        if (m11 > m22) {
+            const s = Math.sqrt(1.0 + m11 - m00 - m22) * 2;
+            return new Quaternion(
+                (m01 + m10) / s,
+                s * 0.25,
+                (m12 + m21) / s,
+                (m02 - m20) / s
+            );
+        }
+        const s = Math.sqrt(1.0 + m22 - m00 - m11) * 2;
+        return new Quaternion(
+            (m02 + m20) / s,
+            (m12 + m21) / s,
+            s * 0.25,
+            (m10 - m01) / s
+        );
     }
     /**
      * Normalize the quaternion. Note that this changes the values of the quaternion.
@@ -219,7 +237,7 @@ export class Quaternion {
     }
 
     Normalize(): void {
-        Quaternion.Normalize(this);
+        this.copy(Quaternion.Normalize(this));
     }
 
     static Euler(euler: Vec3): Quaternion {
@@ -297,85 +315,59 @@ export class Quaternion {
         );
     }
     /**
-     * Performs a spherical linear interpolation between two quat
+     * Performs a spherical linear interpolation between two quat.
+     * Does not modify the inputs.
      *
      * @param a Start value, returned when t = 0
      * @param b End value, returned when t = 1
-     * @param t Interpolation ratio be created
+     * @param t Interpolation ratio, clamped to 0-1
      * @returns {Quaternion} A quaternion spherically interpolated between quaternions a and b
      */
     static Slerp(a: Quaternion, b: Quaternion, t: number): Quaternion {
-        let res = Quaternion.identity;
-        let cosHalfTheta = a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
-
-        if (cosHalfTheta < 0) {
-            b.x = -b.x;
-            b.y = -b.y;
-            b.z = -b.z;
-            b.w = -b.w;
-            cosHalfTheta = -cosHalfTheta;
-        }
-
-        if (Math.abs(cosHalfTheta) >= 1.0) res = a;
-        else if (cosHalfTheta > 0.95) res = this.Nlerp(a, b, t);
-        else {
-            const halfTheta = Math.acos(cosHalfTheta);
-            const sinHalfTheta = Math.sqrt(1.0 - cosHalfTheta * cosHalfTheta);
-
-            if (Math.abs(sinHalfTheta) < 0.001) {
-                res.x = a.x * 0.5 + b.x * 0.5;
-                res.y = a.y * 0.5 + b.y * 0.5;
-                res.z = a.z * 0.5 + b.z * 0.5;
-                res.w = a.w * 0.5 + b.w * 0.5;
-            } else {
-                const ratioA = Math.sin((1 - t) * halfTheta) / sinHalfTheta;
-                const ratioB = Math.sin(t * halfTheta) / sinHalfTheta;
-
-                res.x = a.x * ratioA + b.x * ratioB;
-                res.y = a.y * ratioA + b.y * ratioB;
-                res.z = a.z * ratioA + b.z * ratioB;
-                res.w = a.w * ratioA + b.w * ratioB;
-            }
-        }
-
-        return res;
+        return Quaternion.slerp(a, b, Mathf.clamp01(t));
     }
-    // TODO:AKSUALLY unclamped
     static SlerpUnclamped(a: Quaternion, b: Quaternion, t: number): Quaternion {
-        let res = Quaternion.identity;
-        let cosHalfTheta = a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
+        return Quaternion.slerp(a, b, t);
+    }
+    private static slerp(a: Quaternion, b: Quaternion, t: number): Quaternion {
+        let bx = b.x, by = b.y, bz = b.z, bw = b.w;
+        let cosHalfTheta = a.x * bx + a.y * by + a.z * bz + a.w * bw;
 
         if (cosHalfTheta < 0) {
-            b.x = -b.x;
-            b.y = -b.y;
-            b.z = -b.z;
-            b.w = -b.w;
+            bx = -bx;
+            by = -by;
+            bz = -bz;
+            bw = -bw;
             cosHalfTheta = -cosHalfTheta;
         }
 
-        if (Math.abs(cosHalfTheta) >= 1.0) res = a;
-        else if (cosHalfTheta > 0.95) res = this.Nlerp(a, b, t);
-        else {
-            const halfTheta = Math.acos(cosHalfTheta);
-            const sinHalfTheta = Math.sqrt(1.0 - cosHalfTheta * cosHalfTheta);
-
-            if (Math.abs(sinHalfTheta) < 0.001) {
-                res.x = a.x * 0.5 + b.x * 0.5;
-                res.y = a.y * 0.5 + b.y * 0.5;
-                res.z = a.z * 0.5 + b.z * 0.5;
-                res.w = a.w * 0.5 + b.w * 0.5;
-            } else {
-                const ratioA = Math.sin((1 - t) * halfTheta) / sinHalfTheta;
-                const ratioB = Math.sin(t * halfTheta) / sinHalfTheta;
-
-                res.x = a.x * ratioA + b.x * ratioB;
-                res.y = a.y * ratioA + b.y * ratioB;
-                res.z = a.z * ratioA + b.z * ratioB;
-                res.w = a.w * ratioA + b.w * ratioB;
-            }
+        if (Math.abs(cosHalfTheta) >= 1.0) return a.clone();
+        if (cosHalfTheta > 0.95) {
+            return Quaternion.Nlerp(
+                a,
+                new Quaternion(bx, by, bz, bw),
+                t
+            );
         }
+        const halfTheta = Math.acos(cosHalfTheta);
+        const sinHalfTheta = Math.sqrt(1.0 - cosHalfTheta * cosHalfTheta);
 
-        return res;
+        if (Math.abs(sinHalfTheta) < 0.001) {
+            return new Quaternion(
+                a.x * 0.5 + bx * 0.5,
+                a.y * 0.5 + by * 0.5,
+                a.z * 0.5 + bz * 0.5,
+                a.w * 0.5 + bw * 0.5
+            );
+        }
+        const ratioA = Math.sin((1 - t) * halfTheta) / sinHalfTheta;
+        const ratioB = Math.sin(t * halfTheta) / sinHalfTheta;
+        return new Quaternion(
+            a.x * ratioA + bx * ratioB,
+            a.y * ratioA + by * ratioB,
+            a.z * ratioA + bz * ratioB,
+            a.w * ratioA + bw * ratioB
+        );
     }
 
     /**
@@ -517,45 +509,28 @@ export class Quaternion {
      * NOTE: Angle must be provided in radians
      */
     private static Internal_FromAxisAngle(angle: number, axis: Vec3): Quaternion {
-        const res = Quaternion.identity;
         const axisLength = Math.sqrt(
             axis.x * axis.x + axis.y * axis.y + axis.z * axis.z
         );
 
-        if (axisLength != 0.0) {
-            angle *= 0.5;
-
-            let length = 0.0;
-            let ilength = 0.0;
-
-            // Vector3Normalize(axis)
-            let v = axis;
-            length = Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
-            if (length == 0.0) length = 1.0;
-            ilength = 1.0 / length;
-            axis.x *= ilength;
-            axis.y *= ilength;
-            axis.z *= ilength;
-
-            const sinres = Math.sin(angle);
-            const cosres = Math.cos(angle);
-
-            res.x = axis.x * sinres;
-            res.y = axis.y * sinres;
-            res.z = axis.z * sinres;
-            res.w = cosres;
-
-            // QuaternionNormalize(q);
-            let q = res;
-            length = Math.sqrt(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w);
-            if (length == 0.0) length = 1.0;
-            ilength = 1.0 / length;
-            res.x = q.x * ilength;
-            res.y = q.y * ilength;
-            res.z = q.z * ilength;
-            res.w = q.w * ilength;
+        if (axisLength < Mathf.kEpsilon) {
+            return Quaternion.identity;
         }
+        angle *= 0.5;
+        const ilength = 1.0 / axisLength;
+        const nx = axis.x * ilength;
+        const ny = axis.y * ilength;
+        const nz = axis.z * ilength;
 
-        return res;
+        const sinres = Math.sin(angle);
+        const cosres = Math.cos(angle);
+
+        const res = new Quaternion(
+            nx * sinres,
+            ny * sinres,
+            nz * sinres,
+            cosres
+        );
+        return Quaternion.Normalize(res);
     }
 }

@@ -25,13 +25,15 @@ export class Vec4 {
      * Returns the length of this vector
      */
     get magnitude(): number {
-        return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+        return Math.sqrt(
+            this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w
+        );
     }
     /**
      * Returns the squared length of this vector
      */
     get sqrMagnitude(): number {
-        return this.x * this.x + this.y * this.y + this.z * this.z;
+        return this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w;
     }
     /**
      * Returns this vector with a magnitude of 1
@@ -95,6 +97,22 @@ export class Vec4 {
         this.z = z;
         this.w = w;
     }
+    /**
+     * Copies value of source to this vector.
+     */
+    copy(vector: Vec4): Vec4 {
+        this.x = vector.x;
+        this.y = vector.y;
+        this.z = vector.z;
+        this.w = vector.w;
+        return this;
+    }
+    /**
+     * Clone the vector
+     */
+    clone(): Vec4 {
+        return new Vec4(this.x, this.y, this.z, this.w);
+    }
     static Lerp(a: Vec4, b: Vec4, t: number): Vec4 {
         const res = Vec4.zero;
         res.x = Mathf.LerpClamped(a.x, b.x, t);
@@ -108,7 +126,7 @@ export class Vec4 {
         res.x = Mathf.Lerp(a.x, b.x, t);
         res.y = Mathf.Lerp(a.y, b.y, t);
         res.z = Mathf.Lerp(a.z, b.z, t);
-        res.w = Mathf.LerpClamped(a.w, b.w, t);
+        res.w = Mathf.Lerp(a.w, b.w, t);
         return res;
     }
     static MoveTowards(
@@ -161,12 +179,7 @@ export class Vec4 {
         }
     }
     Normalize(): void {
-        const mag = Vec4.Magnitude(this);
-        if (mag > 0.000001) {
-            Vec4.div(this, Vec4.Magnitude(this));
-        } else {
-            Vec4.zero;
-        }
+        this.copy(Vec4.Normalize(this));
     }
     /**
      * Get the length of the vector
@@ -179,7 +192,12 @@ export class Vec4 {
      * Get the squared length of the vector.
      */
     static SqrMagnitude(vector: Vec4): number {
-        return vector.x * vector.x + vector.y * vector.y + vector.z * vector.z;
+        return (
+            vector.x * vector.x +
+            vector.y * vector.y +
+            vector.z * vector.z +
+            vector.w * vector.w
+        );
     }
 
     /**
@@ -192,11 +210,12 @@ export class Vec4 {
     /**
      * Get squared distance from this point to another point
      */
-    static SqrDistance(a: Vec3, b: Vec3): number {
+    static SqrDistance(a: Vec4, b: Vec4): number {
         return (
             (a.x - b.x) * (a.x - b.x) +
             (a.y - b.y) * (a.y - b.y) +
-            (a.z - b.z) * (a.z - b.z)
+            (a.z - b.z) * (a.z - b.z) +
+            (a.w - b.w) * (a.w - b.w)
         );
     }
 

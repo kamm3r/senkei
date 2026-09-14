@@ -65,6 +65,20 @@ export class Vec2 {
         this.x = x;
         this.y = y;
     }
+    /**
+     * Copies value of source to this vector.
+     */
+    copy(vector: Vec2): Vec2 {
+        this.x = vector.x;
+        this.y = vector.y;
+        return this;
+    }
+    /**
+     * Clone the vector
+     */
+    clone(): Vec2 {
+        return new Vec2(this.x, this.y);
+    }
     static Lerp(a: Vec2, b: Vec2, t: number): Vec2 {
         const res = Vec2.zero;
         res.x = Mathf.LerpClamped(a.x, b.x, t);

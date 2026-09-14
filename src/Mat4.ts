@@ -318,16 +318,40 @@ export class Mat4 {
     }
 
     SetColumn(index: number, col: Vec4): void {
-        this.GetColumn(index).x = col.x;
-        this.GetColumn(index).y = col.y;
-        this.GetColumn(index).z = col.z;
-        this.GetColumn(index).w = col.w;
+        switch (index) {
+            case 0:
+                this.m00 = col.x; this.m10 = col.y; this.m20 = col.z; this.m30 = col.w;
+                break;
+            case 1:
+                this.m01 = col.x; this.m11 = col.y; this.m21 = col.z; this.m31 = col.w;
+                break;
+            case 2:
+                this.m02 = col.x; this.m12 = col.y; this.m22 = col.z; this.m32 = col.w;
+                break;
+            case 3:
+                this.m03 = col.x; this.m13 = col.y; this.m23 = col.z; this.m33 = col.w;
+                break;
+            default:
+                throw new Error('Invalid column index!');
+        }
     }
     SetRow(index: number, row: Vec4): void {
-        this.GetRow(index).x = row.x;
-        this.GetRow(index).y = row.y;
-        this.GetRow(index).z = row.z;
-        this.GetRow(index).w = row.w;
+        switch (index) {
+            case 0:
+                this.m00 = row.x; this.m01 = row.y; this.m02 = row.z; this.m03 = row.w;
+                break;
+            case 1:
+                this.m10 = row.x; this.m11 = row.y; this.m12 = row.z; this.m13 = row.w;
+                break;
+            case 2:
+                this.m20 = row.x; this.m21 = row.y; this.m22 = row.z; this.m23 = row.w;
+                break;
+            case 3:
+                this.m30 = row.x; this.m31 = row.y; this.m32 = row.z; this.m33 = row.w;
+                break;
+            default:
+                throw new Error('Invalid row index!');
+        }
     }
 
     /**
@@ -504,13 +528,15 @@ export class Mat4 {
         return m;
     }
     /**
-     * Creates a translation matrix
+     * Creates a translation matrix.
+     * Translation lives in the last column (m03, m13, m23),
+     * matching GetPosition, multiplyPoint and TRS.
      */
     static translate(vector: Vec3): Mat4 {
         const m = Mat4.identity;
-        m.m30 = vector.x;
-        m.m31 = vector.y;
-        m.m32 = vector.z;
+        m.m03 = vector.x;
+        m.m13 = vector.y;
+        m.m23 = vector.z;
         return m;
     }
     /**
@@ -685,7 +711,6 @@ export class Mat4 {
     * @param translation - The translation to apply.
     * @param rotation - The rotation to apply.
     * @param scale - The scale to apply.
-    * TODO:Make sure this work correctly
     */
     static TRS(translation: Vec3, rotation: Quaternion, scale: Vec3): Mat4 {
         return Mat4.mult(
@@ -693,9 +718,11 @@ export class Mat4 {
             this.scale(scale)
         );
     }
-    // TODO:makesure this work correctly
     SetTRS(translation: Vec3, rotation: Quaternion, scale: Vec3): void {
-        Mat4.TRS(translation, rotation, scale);
-        console.log(Mat4.TRS(translation, rotation, scale));
+        const m = Mat4.TRS(translation, rotation, scale);
+        this.m00 = m.m00; this.m01 = m.m01; this.m02 = m.m02; this.m03 = m.m03;
+        this.m10 = m.m10; this.m11 = m.m11; this.m12 = m.m12; this.m13 = m.m13;
+        this.m20 = m.m20; this.m21 = m.m21; this.m22 = m.m22; this.m23 = m.m23;
+        this.m30 = m.m30; this.m31 = m.m31; this.m32 = m.m32; this.m33 = m.m33;
     }
 }

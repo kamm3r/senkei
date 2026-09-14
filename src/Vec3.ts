@@ -146,12 +146,7 @@ export class Vec3 {
         }
     }
     Normalize(): void {
-        const mag = Vec3.Magnitude(this);
-        if (mag > 0.000001) {
-            Vec3.div(this, Vec3.Magnitude(this));
-        } else {
-            Vec3.zero;
-        }
+        this.copy(Vec3.Normalize(this));
     }
 
     /**
@@ -193,9 +188,9 @@ export class Vec3 {
         return new Vec3(a.x * b.x, a.y * b.y, a.z * b.z);
     }
     Scale(scale: Vec3): void {
-        this.x * scale.x;
-        this.y * scale.y;
-        this.z * scale.z;
+        this.x *= scale.x;
+        this.y *= scale.y;
+        this.z *= scale.z;
     }
     /**
      * Vector cross product
@@ -311,40 +306,32 @@ export class Vec3 {
         res.z = Mathf.Lerp(a.z, b.z, t);
         return res;
     }
-    // TODO:TEST THAT IT WORKS CORRECTLY
     static Slerp(a: Vec3, b: Vec3, t: number): Vec3 {
+        return Vec3.slerp(a, b, Mathf.clamp01(t));
+    }
+    static SlerpUnclamped(a: Vec3, b: Vec3, t: number): Vec3 {
+        return Vec3.slerp(a, b, t);
+    }
+    private static slerp(a: Vec3, b: Vec3, t: number): Vec3 {
         // Dot product - the cosine of the angle between 2 vectors.
-        const dot = Vec3.Dot(a, b);
         // Clamp it to be in the range of Acos()
         // This may be unnecessary, but floating point
         // precision can be a fickle mistress.
-        Mathf.clamp(dot, -1.0, 1.0);
+        const dot = Mathf.clamp(Vec3.Dot(a, b), -1.0, 1.0);
         // Acos(dot) returns the angle between start and end,
         // And multiplying that by percent returns the angle between
         // start and the final result.
         const theta = Math.acos(dot) * t;
-        const RelativeVec = Vec3.sub(a, Vec3.mult(b, dot));
-        RelativeVec.Normalize(); // Orthonormal basis
+        const relativeVec = Vec3.sub(b, Vec3.mult(a, dot));
+        if (relativeVec.sqrMagnitude < 1e-10) {
+            // Parallel vectors: fall back to lerp.
+            return Vec3.LerpUnclamped(a, b, t);
+        }
+        relativeVec.Normalize(); // Orthonormal basis
         // The final result.
         return Vec3.add(
             Vec3.mult(a, Math.cos(theta)),
-            Vec3.mult(RelativeVec, Math.sin(theta))
-        );
-    }
-    // TODO:TEST THAT IT WORKS CORRECTLY
-    static SlerpUnclamped(a: Vec3, b: Vec3, t: number): Vec3 {
-        // Dot product - the cosine of the angle between 2 vectors.
-        const dot = Vec3.Dot(a, b);
-        // Acos(dot) returns the angle between start and end,
-        // And multiplying that by percent returns the angle between
-        // start and the final result.
-        const theta = Math.acos(dot) * t;
-        const RelativeVec = Vec3.sub(a, Vec3.mult(b, dot));
-        RelativeVec.Normalize(); // Orthonormal basis
-        // The final result.
-        return Vec3.add(
-            Vec3.mult(a, Math.cos(theta)),
-            Vec3.mult(RelativeVec, Math.sin(theta))
+            Vec3.mult(relativeVec, Math.sin(theta))
         );
     }
 
