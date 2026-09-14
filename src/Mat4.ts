@@ -721,10 +721,29 @@ export class Mat4 {
     * @param scale - The scale to apply.
     */
     static TRS(translation: Vec3, rotation: Quaternion, scale: Vec3): Mat4 {
-        return Mat4.Multiply(
-            Mat4.Multiply(this.Translate(translation), this.Rotate(rotation)),
-            this.Scale(scale)
-        );
+        // Fused T * R * S: one allocation instead of three matrices
+        // plus two full multiplies. Assumes a unit quaternion.
+        const x = rotation.x, y = rotation.y, z = rotation.z, w = rotation.w;
+        const a2 = x * x, b2 = y * y, c2 = z * z;
+        const ab = x * y, ac = x * z, bc = y * z;
+        const ad = w * x, bd = w * y, cd = w * z;
+
+        const r00 = 1 - 2 * (b2 + c2);
+        const r10 = 2 * (ab + cd);
+        const r20 = 2 * (ac - bd);
+        const r01 = 2 * (ab - cd);
+        const r11 = 1 - 2 * (a2 + c2);
+        const r21 = 2 * (bc + ad);
+        const r02 = 2 * (ac + bd);
+        const r12 = 2 * (bc - ad);
+        const r22 = 1 - 2 * (a2 + b2);
+
+        const m = Mat4.zero;
+        m.m00 = r00 * scale.x; m.m01 = r01 * scale.y; m.m02 = r02 * scale.z; m.m03 = translation.x;
+        m.m10 = r10 * scale.x; m.m11 = r11 * scale.y; m.m12 = r12 * scale.z; m.m13 = translation.y;
+        m.m20 = r20 * scale.x; m.m21 = r21 * scale.y; m.m22 = r22 * scale.z; m.m23 = translation.z;
+        m.m33 = 1.0;
+        return m;
     }
     SetTRS(translation: Vec3, rotation: Quaternion, scale: Vec3): void {
         const m = Mat4.TRS(translation, rotation, scale);

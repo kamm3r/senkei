@@ -35,7 +35,7 @@
     "build": "tsup src/index.ts --format cjs,esm --dts",
     "release": "pnpm run build && changeset publish",
     "lint": "tsc",
-    "benchmark": "./benchmark"
+    "benchmark": "pnpm run build && node bench/perf.mjs"
   },
   "devDependencies": {
     "@changesets/cli": "2.26.2",

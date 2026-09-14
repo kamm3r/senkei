@@ -143,9 +143,9 @@ export class Vec3 {
      * @return Returns the norm of the vector
      */
     static Normalize(value: Vec3): Vec3 {
-        const mag = this.Magnitude(value);
+        const mag = Vec3.Magnitude(value);
         if (mag > 0.000001) {
-            return this.Divide(value, this.Magnitude(value));
+            return Vec3.Divide(value, mag);
         } else {
             // Make something up
             return Vec3.zero;

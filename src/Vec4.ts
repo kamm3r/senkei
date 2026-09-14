@@ -180,9 +180,9 @@ export class Vec4 {
         this.w *= scale.w;
     }
     static Normalize(value: Vec4): Vec4 {
-        const mag = this.Magnitude(value);
+        const mag = Vec4.Magnitude(value);
         if (mag > 0.000001) {
-            return this.Divide(value, this.Magnitude(value));
+            return Vec4.Divide(value, mag);
         } else {
             // Make something up
             return Vec4.zero;
