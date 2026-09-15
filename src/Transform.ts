@@ -17,9 +17,12 @@ export type Space = (typeof Space)[keyof typeof Space];
 /**
  * Position, rotation and scale of an object, mirroring Unity's Transform.
  *
- * Local TRS is stored; world values are derived by walking the parent chain.
- * Getters return copies (like Unity's value-type properties), so mutating a
- * returned vector never bends the Transform behind the seam. Setters copy in.
+ * Local TRS is stored; world values compose the parent chain into cached
+ * localToWorld/worldToLocal matrices, invalidated through dirty-flag
+ * propagation whenever any ancestor changes. Cycles are rejected at
+ * SetParent. Getters return copies (like Unity's value-type properties), so
+ * mutating a returned vector/matrix never bends the Transform behind the
+ * seam. Setters copy in.
  */
 export class Transform {
     private _localPosition: Vec3 = Vec3.zero;
@@ -28,6 +31,8 @@ export class Transform {
     private _parent: Transform | null = null;
     private _children: Transform[] = [];
     private _hasChanged = false;
+    private _cachedLocalToWorld: Mat4 | null = null;
+    private _cachedWorldToLocal: Mat4 | null = null;
 
     /** The position of the transform in world space */
     get position(): Vec3 {
@@ -57,7 +62,7 @@ export class Transform {
     }
     set localScale(value: Vec3) {
         this._localScale = value.clone();
-        this._hasChanged = true;
+        this.markChanged();
     }
     /** The global scale of the object (read-only, like Unity's lossyScale) */
     get lossyScale(): Vec3 {
@@ -77,7 +82,7 @@ export class Transform {
     }
     set localPosition(value: Vec3) {
         this._localPosition = value.clone();
-        this._hasChanged = true;
+        this.markChanged();
     }
     /** The rotation of the transform relative to the parent transform's rotation */
     get localRotation(): Quaternion {
@@ -85,7 +90,7 @@ export class Transform {
     }
     set localRotation(value: Quaternion) {
         this._localRotation = value.clone();
-        this._hasChanged = true;
+        this.markChanged();
     }
     /** The rotation as Euler angles in degrees */
     get eulerAngles(): Vec3 {
@@ -129,20 +134,24 @@ export class Transform {
         );
     }
     get worldToLocalMatrix(): Mat4 {
-        return this.localToWorldMatrix.inverse;
+        if (this._cachedWorldToLocal === null) {
+            this._cachedWorldToLocal = this.localToWorldMatrix.inverse;
+        }
+        return this._cachedWorldToLocal.clone();
     }
     get localToWorldMatrix(): Mat4 {
-        if (this._parent === null) {
-            return Mat4.TRS(
+        if (this._cachedLocalToWorld === null) {
+            const local = Mat4.TRS(
                 this._localPosition,
                 this._localRotation,
                 this._localScale
             );
+            this._cachedLocalToWorld =
+                this._parent === null
+                    ? local
+                    : Mat4.Multiply(this._parent.localToWorldMatrix, local);
         }
-        return Mat4.Multiply(
-            this._parent.localToWorldMatrix,
-            Mat4.TRS(this._localPosition, this._localRotation, this._localScale)
-        );
+        return this._cachedLocalToWorld.clone();
     }
     /** Has the transform changed since the last time the flag was set to false? */
     get hasChanged(): boolean {
@@ -175,6 +184,11 @@ export class Transform {
         if (parent === this._parent) {
             return;
         }
+        if (parent !== null && this.isAncestorOf(parent)) {
+            throw new Error(
+                'Cannot parent a transform to one of its own descendants.'
+            );
+        }
         if (worldPositionStays) {
             const worldPos = this.position;
             const worldRot = this.rotation;
@@ -186,7 +200,7 @@ export class Transform {
         } else {
             this.attach(parent);
         }
-        this._hasChanged = true;
+        this.markChanged();
     }
     /** Unparents all children, keeping their world transforms */
     DetachChildren(): void {
@@ -211,7 +225,7 @@ export class Transform {
     SetLocalPositionAndRotation(position: Vec3, rotation: Quaternion): void {
         this._localPosition = position.clone();
         this._localRotation = rotation.clone();
-        this._hasChanged = true;
+        this.markChanged();
     }
 
     Translate(position: Vec3, relativeTo: Space = Space.Self): void {
@@ -302,7 +316,7 @@ export class Transform {
             this._localPosition =
                 this._parent.worldToLocalMatrix.MultiplyPoint3x4(value);
         }
-        this._hasChanged = true;
+        this.markChanged();
     }
 
     private SetRotation(value: Quaternion): void {
@@ -314,7 +328,7 @@ export class Transform {
                 value
             );
         }
-        this._hasChanged = true;
+        this.markChanged();
     }
 
     private restoreLossyScale(worldScale: Vec3): void {
@@ -340,6 +354,27 @@ export class Transform {
         this._parent = parent;
         if (parent !== null && !parent._children.includes(this)) {
             parent._children.push(this);
+        }
+    }
+
+    /** True if this transform is an ancestor of (or identical to) the node. */
+    private isAncestorOf(node: Transform | null): boolean {
+        let current: Transform | null = node;
+        while (current !== null) {
+            if (current === this) {
+                return true;
+            }
+            current = current._parent;
+        }
+        return false;
+    }
+
+    private markChanged(): void {
+        this._cachedLocalToWorld = null;
+        this._cachedWorldToLocal = null;
+        this._hasChanged = true;
+        for (const child of this._children) {
+            child.markChanged();
         }
     }
 }

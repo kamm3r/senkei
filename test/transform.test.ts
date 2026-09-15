@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { Transform, Space } from '../src/Transform';import { Vec3 } from '../src/Vec3';
+import { Transform, Space } from '../src/Transform';
+import { Vec3 } from '../src/Vec3';
 import { Quaternion } from '../src/Quat';
 import { expectQuatClose, expectVec3Close } from './helpers';
 
@@ -250,5 +251,81 @@ describe('Transform', () => {
         const m = t.localToWorldMatrix;
         expectVec3Close(m.GetPosition(), 1, 2, 3);
         expectVec3Close(t.worldToLocalMatrix.MultiplyPoint3x4(new Vec3(1, 2, 3)), 0, 0, 0);
+    });
+
+    test('parent mutation invalidates the child cache', () => {
+        const parent = new Transform();
+        const child = new Transform();
+        parent.localPosition = new Vec3(10, 0, 0);
+        child.SetParent(parent, false);
+        const before = child.localToWorldMatrix.GetPosition();
+        expectVec3Close(before, 10, 0, 0);
+
+        parent.localPosition = new Vec3(40, 0, 0);
+        const after = child.localToWorldMatrix.GetPosition();
+        expectVec3Close(after, 40, 0, 0);
+        expect(after.x).toBe(40);
+    });
+
+    test('hasChanged propagates down the hierarchy', () => {
+        const parent = new Transform();
+        const child = new Transform();
+        const grandchild = new Transform();
+        child.SetParent(parent, false);
+        grandchild.SetParent(child, false);
+        parent.hasChanged = false;
+        child.hasChanged = false;
+        grandchild.hasChanged = false;
+
+        parent.localPosition = new Vec3(5, 0, 0);
+
+        expect(parent.hasChanged).toBe(true);
+        expect(child.hasChanged).toBe(true);
+        expect(grandchild.hasChanged).toBe(true);
+    });
+
+    test('self-mutation only flags the subtree, not the parent', () => {
+        const parent = new Transform();
+        const child = new Transform();
+        child.SetParent(parent, false);
+        parent.hasChanged = false;
+        child.hasChanged = false;
+
+        child.localPosition = new Vec3(1, 0, 0);
+
+        expect(child.hasChanged).toBe(true);
+        expect(parent.hasChanged).toBe(false);
+    });
+
+    test('localToWorldMatrix returns copies, mutations never corrupt the cache', () => {
+        const t = new Transform();
+        t.position = new Vec3(1, 2, 3);
+        const m = t.localToWorldMatrix;
+        m.m03 = 99;
+        const again = t.localToWorldMatrix;
+        expectVec3Close(again.GetPosition(), 1, 2, 3);
+    });
+
+    test('SetParent rejects a cycle', () => {
+        const a = new Transform();
+        const b = new Transform();
+        b.SetParent(a, false);
+        expect(() => a.SetParent(b, false)).toThrow(/descendant/);
+        expect(a.parent).toBe(null);
+        expect(b.parent).toBe(a);
+    });
+
+    test('SetParent rejects assigning to itself', () => {
+        const a = new Transform();
+        expect(() => a.SetParent(a, false)).toThrow(/descendant/);
+    });
+
+    test('deep cycle is rejected, not just direct ones', () => {
+        const a = new Transform();
+        const b = new Transform();
+        const c = new Transform();
+        b.SetParent(a, false);
+        c.SetParent(b, false);
+        expect(() => a.SetParent(c, false)).toThrow(/descendant/);
     });
 });

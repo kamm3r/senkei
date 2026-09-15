@@ -752,4 +752,13 @@ export class Mat4 {
         this.m20 = m.m20; this.m21 = m.m21; this.m22 = m.m22; this.m23 = m.m23;
         this.m30 = m.m30; this.m31 = m.m31; this.m32 = m.m32; this.m33 = m.m33;
     }
+    /** Returns a copy of this matrix */
+    clone(): Mat4 {
+        return new Mat4(
+            new Vec4(this.m00, this.m10, this.m20, this.m30),
+            new Vec4(this.m01, this.m11, this.m21, this.m31),
+            new Vec4(this.m02, this.m12, this.m22, this.m32),
+            new Vec4(this.m03, this.m13, this.m23, this.m33)
+        );
+    }
 }
