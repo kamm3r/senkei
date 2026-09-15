@@ -1,0 +1,50 @@
+# Mathf
+
+Single-precision-friendly helpers for everyday math
+
+---
+
+## Use the constants
+
+TAU, PI, E, GOLDEN_RATIO, SQRT2, and RSQRT2 cover the usual suspects. Deg2Rad and Rad2Deg convert angles, and the epsilons tune float tolerance checks. Infinity and NegativeInfinity round out the set.
+
+```ts
+const radians = 90 * Mathf.Deg2Rad
+const tolerance = Mathf.kEpsilon
+```
+
+---
+
+## Clamp and clamp01
+
+Clamp() pins a value between two bounds and Clamp01() pins it to the 0..1 range. Abs(), Min(), and Max() are the remaining one-liners.
+
+```ts
+const t = Mathf.Clamp01(x)
+const bounded = Mathf.Clamp(value, 0, 100)
+```
+
+---
+
+## Blend with lerp
+
+Lerp() follows Unity semantics and clamps t before blending. LerpUnclamped() and FastLerp() skip the clamp for raw extrapolation.
+
+```ts
+const mid = Mathf.Lerp(a, b, 0.5) // t clamped to 0..1
+const overshoot = Mathf.LerpUnclamped(a, b, 1.5)
+```
+
+---
+
+## Compare floats safely
+
+Approximately() returns true when two floats are close enough, scaling the tolerance against the larger of the two operands.
+
+```ts
+if (Mathf.Approximately(a, b)) {
+  // treat as equal
+}
+```
+
+Floats need room to breathe; absolute equality is a trap.

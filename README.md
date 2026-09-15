@@ -23,3 +23,7 @@ t.position = new Vec3(0, 1, 0);
 t.LookAt(new Vec3(0, 1, 5));
 console.log('forward', t.forward);
 ```
+
+## Documentation
+
+Guides for every class live in [docs/](docs/).

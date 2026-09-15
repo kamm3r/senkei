@@ -1,0 +1,76 @@
+# Quaternions
+
+Rotate objects without gimbal lock or distortion
+
+---
+
+## Represent rotations
+
+Constructors take x, y, z, and w — and unlike vectors, w defaults to 1, which is the identity rotation. The identity getter is the explicit way to ask for it.
+
+```ts
+const q = new Quaternion(0, 0, 0.7071, 0.7071)
+const flat = Quaternion.identity
+```
+
+Euler() builds from degrees and applies them in ZYX order. AngleAxis() takes degrees and an axis, and never modifies that axis. FromToRotation() matches one direction to another, and LookRotation() aligns +Z to a forward vector with an optional up.
+
+```ts
+const spin = Quaternion.Euler(new Vec3(0, 45, 0))
+const tilt = Quaternion.AngleAxis(30, Vec3.right)
+const look = Quaternion.LookRotation(target, Vec3.up)
+```
+
+SetFromToRotation() and SetLookRotation() write the same rotations into an existing instance.
+
+---
+
+## Rotate a point
+
+Multiply is overloaded: two quaternions compose into a new rotation, and a quaternion times a Vec3 rotates that point around the origin.
+
+```ts
+const spun = Quaternion.Multiply(q, v)
+const combined = Quaternion.Multiply(turn, tilt)
+```
+
+Composition order matters: the right-hand rotation applies first. To undo a rotation, apply its inverse on the same side.
+
+---
+
+## Blend between rotations
+
+Slerp and Lerp clamp t, so the endpoints always hold. The Unclamped variants overshoot freely. Nlerp is the cheap lerp-then-normalize shortcut, and RotateTowards advances by a fixed number of degrees.
+
+```ts
+const blend = Quaternion.Slerp(start, end, deltaTime)
+const step = Quaternion.RotateTowards(start, end, 5)
+```
+
+Angle reports the gap in degrees. Slerp takes the short way around, so interpolating never spins the long way.
+
+---
+
+## Invert and normalize
+
+Inverse() returns a new quaternion and leaves the original alone; a rotation with no measurable magnitude yields identity. Normalize() comes in a static, non-mutating form and an instance form that rewrites in place. The normalized getter returns a copy.
+
+```ts
+const undo = Quaternion.Inverse(q)
+q.Normalize()
+const unit = q.normalized
+```
+
+copy() and clone() trade ownership, and toArray() drops the values into a plain tuple.
+
+---
+
+## Convert to and from Euler
+
+eulerAngles reads and writes degrees, while Euler() turns degrees into a quaternion. ToAxisAngle() (and the instance toAxisAngle()) unwrap into an axis plus an angle — in radians, not degrees.
+
+```ts
+q.eulerAngles = new Vec3(0, 45, 0)
+const eulers = q.eulerAngles
+const { axis, angle } = q.toAxisAngle() // angle in radians
+```
