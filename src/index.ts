@@ -1,5 +1,7 @@
-export * as quat from './quat'
-export * as mat4 from './mat4'
-export * as vec2 from './vec2'
-export * as vec3 from './vec3'
-export * as vec4 from './vec4'
+export {Vec2} from "./Vec2"
+export {Vec3} from "./Vec3"
+export {Vec4} from "./Vec4"
+export {Quaternion} from "./Quat"
+export {Mat4} from "./Mat4"
+export {Transform, Space} from "./Transform"
+export {Mathf} from "./Utils"

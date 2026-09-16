@@ -1,0 +1,68 @@
+# Transforms
+
+Compose hierarchies and move objects in space
+
+---
+
+## Compose a hierarchy
+
+SetParent() reparents a node and, by default, keeps its world position, rotation, and scale. It throws if you try to parent a node onto its own descendant, so cycles can't form.
+
+```ts
+const child = new Transform()
+child.SetParent(parent) // world transform is preserved
+child.parent = parent   // same, with worldPositionStays = true
+```
+
+DetachChildren() unparents everything while keeping world transforms. root climbs to the top of the chain, and GetChild() indexes into the children directly (throwing on an invalid index). Both childCount and parent round out the tree API.
+
+Cached localToWorld and worldToLocal matrices are invalidated by dirty-flag propagation, so any ancestor edit refreshes the whole branch. hasChanged flags edits; set it back to false after consuming.
+
+---
+
+## Move and orient
+
+position and rotation read and write world space; the local* versions stay relative to the parent. localScale scales against the parent, and lossyScale is the read-only world-space result. eulerAngles and localEulerAngles speak degrees.
+
+```ts
+t.position = new Vec3(0, 1, 0)
+t.rotation = Quaternion.Euler(new Vec3(0, 45, 0))
+t.localScale = new Vec3(2, 2, 2)
+```
+
+forward, right, and up expose world axes and are settable. Translate() and Rotate() default to Space.Self, RotateAround() takes its angle in degrees and orbits a world point, and LookAt() points forward at a target object or plain point (with optional worldUp defaulting to Vec3.up; a no-op when target coincides with position).
+
+```ts
+t.Translate(new Vec3(0, 0, -1), Space.World)
+t.Rotate(new Vec3(0, 10, 0), Space.Self)
+t.RotateAround(pivot, Vec3.up, 90)
+t.LookAt(target)
+```
+
+SetPositionAndRotation() and SetLocalPositionAndRotation() update both values in one call.
+
+---
+
+## Convert between spaces
+
+TransformPoint() and InverseTransformPoint() move a point in and out of local space. TransformDirection() and InverseTransformDirection() convert directions and ignore scale. TransformVector() and InverseTransformVector() include scale for full vector conversion.
+
+```ts
+const world = t.TransformPoint(local)
+const back = t.InverseTransformPoint(world)
+const gaze = t.TransformDirection(Vec3.forward)
+const stretch = t.TransformVector(new Vec3(1, 0, 0))
+```
+
+---
+
+## Handle matrix access safely
+
+localToWorldMatrix and worldToLocalMatrix are getters that return fresh clones, so mutating what you receive never corrupts the node. The same value semantics apply everywhere: getters hand out copies, and setters copy their input in.
+
+```ts
+const m = t.localToWorldMatrix // safe to modify
+t.position = Vec3.Add(t.position, delta)
+```
+
+Feed a setter a vector you keep using — nothing aliases behind your back.

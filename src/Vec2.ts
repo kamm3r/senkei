@@ -1,0 +1,312 @@
+import { Vec3 } from './Vec3';
+import { Vec4 } from './Vec4';
+import { Mathf } from './Utils';
+
+export class Vec2 {
+    x: number;
+    y: number;
+
+    constructor(x = 0.0, y = 0.0) {
+        this.x = x;
+        this.y = y;
+    }
+    static get up(): Vec2 {
+        return new Vec2(0, 1);
+    }
+    static get down(): Vec2 {
+        return new Vec2(0, -1);
+    }
+    static get left(): Vec2 {
+        return new Vec2(-1, 0);
+    }
+    static get right(): Vec2 {
+        return new Vec2(1, 0);
+    }
+    static get zero(): Vec2 {
+        return new Vec2(0, 0);
+    }
+    static get one(): Vec2 {
+        return new Vec2(1, 1);
+    }
+    get magnitude(): number {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+    }
+    get sqrMagnitude(): number {
+        return this.x * this.x + this.y * this.y;
+    }
+
+    static Add(a: Vec2, b: Vec2): Vec2 {
+        return new Vec2(a.x + b.x, a.y + b.y);
+    }
+    static Subtract(a: Vec2, b: Vec2): Vec2 {
+        return new Vec2(a.x - b.x, a.y - b.y);
+    }
+    /**
+     * Multiply by a scalar or component-wise by another vector.
+     */
+    static Multiply(a: Vec2, b: Vec2 | number): Vec2 {
+        return typeof b === 'number'
+            ? new Vec2(a.x * b, a.y * b)
+            : new Vec2(a.x * b.x, a.y * b.y);
+    }
+    /**
+     * Divide by a scalar or component-wise by another vector.
+     */
+    static Divide(a: Vec2, b: Vec2 | number): Vec2 {
+        return typeof b === 'number'
+            ? new Vec2(a.x / b, a.y / b)
+            : new Vec2(a.x / b.x, a.y / b.y);
+    }
+    static Negate(a: Vec2): Vec2 {
+        return new Vec2(-a.x, -a.y);
+    }
+    static Min(a: Vec2, b: Vec2): Vec2 {
+        return new Vec2(Math.min(a.x, b.x), Math.min(a.y, b.y));
+    }
+    static Max(a: Vec2, b: Vec2): Vec2 {
+        return new Vec2(Math.max(a.x, b.x), Math.max(a.y, b.y));
+    }
+    Set(x: number, y: number): void {
+        this.x = x;
+        this.y = y;
+    }
+    /**
+     * Copies value of source to this vector.
+     */
+    copy(vector: Vec2): Vec2 {
+        this.x = vector.x;
+        this.y = vector.y;
+        return this;
+    }
+    /**
+     * Clone the vector
+     */
+    clone(): Vec2 {
+        return new Vec2(this.x, this.y);
+    }
+    static Lerp(a: Vec2, b: Vec2, t: number): Vec2 {
+        const res = Vec2.zero;
+        res.x = Mathf.Lerp(a.x, b.x, t);
+        res.y = Mathf.Lerp(a.y, b.y, t);
+        return res;
+    }
+    static LerpUnclamped(a: Vec2, b: Vec2, t: number): Vec2 {
+        const res = Vec2.zero;
+        res.x = Mathf.LerpUnclamped(a.x, b.x, t);
+        res.y = Mathf.LerpUnclamped(a.y, b.y, t);
+        return res;
+    }
+    static MoveTowards(
+        current: Vec2,
+        target: Vec2,
+        maxDistanceDelta: number
+    ): Vec2 {
+        // avoid vector ops because current scripting backends are terrible at inlining
+        const toVector_x = target.x - current.x;
+        const toVector_y = target.y - current.y;
+
+        const sqDist = toVector_x * toVector_x + toVector_y * toVector_y;
+
+        if (
+            sqDist == 0 ||
+            (maxDistanceDelta >= 0 && sqDist <= maxDistanceDelta * maxDistanceDelta)
+        )
+            return target.clone();
+
+        const dist = Math.sqrt(sqDist);
+
+        return new Vec2(
+            current.x + (toVector_x / dist) * maxDistanceDelta,
+            current.y + (toVector_y / dist) * maxDistanceDelta
+        );
+    }
+    static Scale(a: Vec2, b: Vec2): Vec2 {
+        return new Vec2(a.x * b.x, a.y * b.y);
+    }
+    Scale(scale: Vec2): void {
+        this.x *= scale.x;
+        this.y *= scale.y;
+    }
+    Normalize(): void {
+        const mag = this.magnitude;
+        if (mag > Mathf.kEpsilon) {
+            this.x /= mag;
+            this.y /= mag;
+        } else {
+            this.x = Vec2.zero.x;
+            this.y = Vec2.zero.y;
+        }
+    }
+    /**
+     * Returns this vector with a magnitude of 1.
+     * Canonical name, matching Vec3/Vec4.
+     */
+    get normalized(): Vec2 {
+        return Vec2.Normalize(this);
+    }
+    /**
+     * @deprecated Use normalized instead.
+     */
+    get normalize(): Vec2 {
+        return this.normalized;
+    }
+    /**
+     * Returns this vector with a magnitude of 1.
+     * Does not modify the input.
+     */
+    static Normalize(value: Vec2): Vec2 {
+        const mag = value.magnitude;
+        if (mag > Mathf.kEpsilon) {
+            return Vec2.Divide(value, mag);
+        }
+        return Vec2.zero;
+    }
+    /**
+     * Get the length of the vector.
+     */
+    static Magnitude(vector: Vec2): number {
+        return vector.magnitude;
+    }
+    static Reflect(inDirection: Vec2, inNormal: Vec2): Vec2 {
+        const factor = -2.0 * Vec2.Dot(inNormal, inDirection);
+        return new Vec2(
+            factor * inNormal.x + inDirection.x,
+            factor * inNormal.y + inDirection.y
+        );
+    }
+    static Perpendicular(inDirection: Vec2): Vec2 {
+        return new Vec2(-inDirection.y, inDirection.x);
+    }
+    static Dot(lhs: Vec2, rhs: Vec2): number {
+        return lhs.x * rhs.x + lhs.y * rhs.y;
+    }
+    static Angle(from: Vec2, to: Vec2): number {
+        const denominator = Math.sqrt(from.sqrMagnitude * to.sqrMagnitude);
+        if (denominator < Mathf.kEpsilonNormalSqrt) {
+            return 0.0;
+        }
+        const dot = Mathf.Clamp(Vec2.Dot(from, to) / denominator, -1.0, 1.0);
+        return Math.acos(dot) * Mathf.Rad2Deg;
+    }
+    static SignedAngle(from: Vec2, to: Vec2): number {
+        const unsigned_angle = Vec2.Angle(from, to);
+        const sign = Math.sign(from.x * to.y - from.y * to.x);
+        return unsigned_angle * sign;
+    }
+    static Distance(a: Vec2, b: Vec2): number {
+        const diff_x = a.x - b.x;
+        const diff_y = a.y - b.y;
+        return Math.sqrt(diff_x * diff_x + diff_y * diff_y);
+    }
+    static SqrDistance(a: Vec2, b: Vec2): number {
+        const diff_x = a.x - b.x;
+        const diff_y = a.y - b.y;
+        return diff_x * diff_x + diff_y * diff_y;
+    }
+    static Clamp(v: Vec2, min: Vec2, max: Vec2): Vec2 {
+        return new Vec2(
+            v.x < min.x ? min.x : v.x > max.x ? max.x : v.x,
+            v.y < min.y ? min.y : v.y > max.y ? max.y : v.y
+        );
+    }
+    static ClampMagnitude(vector: Vec2, maxLength: number): Vec2 {
+        const sqrMagnitude = vector.sqrMagnitude;
+        if (sqrMagnitude > maxLength * maxLength) {
+            const mag = Math.sqrt(sqrMagnitude);
+
+            //these intermediate variables force the intermediate result to be
+            //of float precision. without this, the intermediate result can be of higher
+            //precision, which changes behavior.
+            const normalized_x = vector.x / mag;
+            const normalized_y = vector.y / mag;
+            return new Vec2(normalized_x * maxLength, normalized_y * maxLength);
+        }
+        return vector.clone();
+    }
+    static SqrMagnitude(a: Vec2): number {
+        return a.x * a.x + a.y * a.y;
+    }
+    SqrMagnitude(): number {
+        return this.x * this.x + this.y * this.y;
+    }
+    /**
+     * Gradually changes a vector towards a desired goal over time.
+     * Pure: inputs are never modified. Thread the returned velocity
+     * back into the next call to keep the spring state.
+     */
+    static SmoothDamp(
+        current: Vec2,
+        target: Vec2,
+        currentVelocity: Vec2,
+        smoothTime: number,
+        maxSpeed: number,
+        deltaTime: number
+    ): { value: Vec2; velocity: Vec2 } {
+        // Based on Game Programming Gems 4 Chapter 1.10
+        smoothTime = Mathf.Max(0.0001, smoothTime);
+        const omega = 2 / smoothTime;
+
+        const x = omega * deltaTime;
+        const exp = 1 / (1 + x + 0.48 * x * x + 0.235 * x * x * x);
+
+        let change_x = current.x - target.x;
+        let change_y = current.y - target.y;
+        const originalTo_x = target.x;
+        const originalTo_y = target.y;
+
+        // Clamp maximum speed
+        const maxChange = maxSpeed * smoothTime;
+
+        const maxChangeSq = maxChange * maxChange;
+        const sqDist = change_x * change_x + change_y * change_y;
+        if (sqDist > maxChangeSq) {
+            const mag = Math.sqrt(sqDist);
+            change_x = (change_x / mag) * maxChange;
+            change_y = (change_y / mag) * maxChange;
+        }
+
+        const target_x = current.x - change_x;
+        const target_y = current.y - change_y;
+
+        const temp_x = (currentVelocity.x + omega * change_x) * deltaTime;
+        const temp_y = (currentVelocity.y + omega * change_y) * deltaTime;
+
+        let vel_x = (currentVelocity.x - omega * temp_x) * exp;
+        let vel_y = (currentVelocity.y - omega * temp_y) * exp;
+
+        let output_x = target_x + (change_x + temp_x) * exp;
+        let output_y = target_y + (change_y + temp_y) * exp;
+
+        // Prevent overshooting
+        const origMinusCurrent_x = originalTo_x - current.x;
+        const origMinusCurrent_y = originalTo_y - current.y;
+        const outMinusOrig_x = output_x - originalTo_x;
+        const outMinusOrig_y = output_y - originalTo_y;
+
+        if (
+            origMinusCurrent_x * outMinusOrig_x +
+            origMinusCurrent_y * outMinusOrig_y >
+            0
+        ) {
+            output_x = originalTo_x;
+            output_y = originalTo_y;
+
+            vel_x = (output_x - originalTo_x) / deltaTime;
+            vel_y = (output_y - originalTo_y) / deltaTime;
+        }
+        return {
+            value: new Vec2(output_x, output_y),
+            velocity: new Vec2(vel_x, vel_y),
+        };
+    }
+
+    static ToVec2(v: Vec3): Vec2 {
+        return new Vec2(v.x, v.y);
+    }
+    static ToVec3(v: Vec2): Vec3 {
+        return new Vec3(v.x, v.y, 0);
+    }
+    static ToVec4(v: Vec2): Vec4 {
+        return new Vec4(v.x, v.y, 0, 0);
+    }
+}

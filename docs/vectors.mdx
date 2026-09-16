@@ -1,0 +1,108 @@
+# Vectors
+
+Build and blend 2D, 3D, and 4D points
+
+---
+
+## Create instances
+
+Constructors take plain numbers and default every component to zero.
+
+```ts
+const v = new Vec3(2, 4, 10)
+const empty = new Vec3()          // (0, 0, 0)
+const wide = new Vec4(1, 0, 0, 1)
+const point4 = new Vec4(1, 2, 3)  // w defaults to 0
+```
+
+Shorthand constants exist as static getters. Vec2 has up, down, left, right, zero, and one. Vec3 adds forward, back, and the rest; Vec4 sticks to zero and one.
+
+```ts
+const origin = Vec3.zero
+const nose = Vec2.right
+const gaze = Vec3.forward
+```
+
+Set(x, y[, z[, w]]) overwrites components in place. toString()/toArray() exist on Vec3 (Quaternion has them too); Vec2 and Vec4 don't.
+
+---
+
+## Do the math
+
+Every static operation returns a new vector and leaves its inputs alone. Add and Subtract take another vector; Multiply and Divide accept another vector or a plain scalar.
+
+```ts
+const sum = Vec3.Add(a, b)
+const doubled = Vec3.Multiply(a, 2)
+const perComponent = Vec3.Multiply(a, b)
+```
+
+Min, Max, Clamp, and Scale round out the set. Dot, Angle, and the distance helpers measure relationships. Vec3.Angle returns degrees; AngleBetween returns radians. Vec2.SignedAngle takes two arguments; the Vec3 version also takes the axis to sign against.
+
+---
+
+## Reflect and project
+
+Vec3.Reflect (and Vec2.Reflect) bounces a direction off a surface normal. Perpendicular (Vec2) returns a right-angle vector, and Cross (Vec3) builds one from two inputs.
+
+```ts
+const bounce = Vec3.Reflect(dir, normal)
+const sideways = Vec2.Perpendicular(dir)
+const normal = Vec3.Cross(a, b)
+```
+
+Vec3.Project and ProjectOnPlane are available for sliding movement along a plane. Vec4.Project(a, b) projects a onto b.
+
+---
+
+## Move and blend
+
+Lerp clamps t to the 0..1 range and exists on all three vector types; Slerp is Vec3-only and its Unclamped twins don't clamp. MoveTowards steps at a fixed speed, and ClampMagnitude (Vec2/Vec3 only) caps the length without changing direction.
+
+```ts
+const half = Vec3.Lerp(a, b, 0.5)
+const step = Vec3.MoveTowards(current, target, 0.1)
+const capped = Vec3.ClampMagnitude(vel, 5)
+```
+
+SmoothDamp (Vec2/Vec3 only) eases toward a target and returns both the value and the springy velocity. It never mutates its inputs — thread the returned velocity into the next call.
+
+```ts
+const { value, velocity } = Vec3.SmoothDamp(
+  current,
+  target,
+  vel,
+  0.3,
+  10,
+  deltaTime
+)
+```
+
+---
+
+## Normalize safely
+
+Normalize comes in three flavors with different side effects. The static version returns a new vector, the instance version mutates in place, and the normalized getter hands back a copy.
+
+```ts
+const unit = Vec3.Normalize(v) // v untouched
+v.Normalize()                  // v is changed
+const copy = v.normalized      // v untouched
+```
+
+The same contract covers the rest of the API: statics allocate, instance methods like Scale() mutate, and getters like magnitude never hand out internal state. This beats the aliasing bugs that plague mutable math libraries. isZero() (Vec3 only) is an exact === 0 check, while almostEquals() and almostZero() (Vec3 only) compare with a tolerance. Vec3.OrthoNormalize is the one deliberate exception — it normalizes and orthogonalizes both inputs in place.
+
+---
+
+## Convert between dimensions
+
+Vectors shuffle components between sizes with static To* helpers. clone() returns a fresh copy, and copy() folds another vector into this one.
+
+```ts
+const flat = Vec3.ToVec2(v3)
+const wide = Vec3.ToVec4(v3)
+const back = Vec4.ToVec3(wide)
+const twin = v.clone()
+```
+
+Vec2.ToVec3 and Vec2.ToVec4 widen upward; Vec4.ToVec2 trims back down.
