@@ -25,7 +25,7 @@ const view = Mat4.LookAt(eye, target, Vec3.up)
 const proj = Mat4.Perspective(60 * Mathf.Deg2Rad, 16 / 9, 0.1, 100)
 ```
 
-Translate(), Rotate(), and Scale() build the individual pieces, and Perspective(), Ortho(), and Frustum() produce projection matrices.
+Translate(), Rotate(), and Scale() build the individual pieces, and Perspective(), Ortho(), and Frustum() produce projection matrices. Perspective() takes fov in radians — multiply degrees by Mathf.Deg2Rad, as above.
 
 ---
 
@@ -43,7 +43,7 @@ const dir = m.MultiplyVector(direction)
 
 ## Read the parts back
 
-GetPosition() pulls the translation column. GetColumn() and GetRow() copy any line out, while SetColumn() and SetRow() write one back — all of them throw on an out-of-range index. The transpose, determinant, and rotation getters decompose the matrix without touching it.
+GetPosition() pulls the translation column. GetColumn() and GetRow() copy any line out, while SetColumn() and SetRow() write one back — all of them throw on an out-of-range index. The transpose, determinant, and rotation getters decompose the matrix without touching it. Static Mat4.transpose(m), Mat4.determinant(m), and Mat4.inverse(m) forms exist too.
 
 ```ts
 const pos = m.GetPosition()
@@ -58,7 +58,7 @@ SetTRS() rebuilds the whole matrix in place, and clone() duplicates it.
 
 ## Deal with singular inversion
 
-inverse is a documented failure point: a zero or non-finite determinant means no inverse exists, and the library throws rather than hand back a matrix full of NaNs.
+inverse is a documented failure point: a zero (|det| < 1e-12) or non-finite determinant means no inverse exists, and the library throws rather than hand back a matrix full of NaNs.
 
 ```ts
 try {
@@ -68,4 +68,4 @@ try {
 }
 ```
 
-Check for zero before trusting a bottom-heavy matrix.
+Guard with try/catch or check determinant before inverting a degenerate matrix.

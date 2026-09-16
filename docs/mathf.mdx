@@ -6,7 +6,7 @@ Single-precision-friendly helpers for everyday math
 
 ## Use the constants
 
-TAU, PI, E, GOLDEN_RATIO, SQRT2, and RSQRT2 cover the usual suspects. Deg2Rad and Rad2Deg convert angles, and the epsilons tune float tolerance checks. Infinity and NegativeInfinity round out the set.
+TAU, PI, E, GOLDEN_RATIO, SQRT2, and RSQRT2 cover the usual suspects. Deg2Rad and Rad2Deg convert angles, and Epsilon (= Number.EPSILON), kEpsilon (1e-6), and kEpsilonNormalSqrt (1e-15) tune float tolerance checks. Infinity and NegativeInfinity round out the set.
 
 ```ts
 const radians = 90 * Mathf.Deg2Rad
@@ -17,7 +17,7 @@ const tolerance = Mathf.kEpsilon
 
 ## Clamp and clamp01
 
-Clamp() pins a value between two bounds and Clamp01() pins it to the 0..1 range. Abs(), Min(), and Max() are the remaining one-liners.
+Clamp() pins a value between two bounds and Clamp01() pins it to the 0..1 range. Abs(), Min(), and Max() are the remaining one-liners; Min() and Max() take exactly two values.
 
 ```ts
 const t = Mathf.Clamp01(x)

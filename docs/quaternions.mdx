@@ -21,7 +21,7 @@ const tilt = Quaternion.AngleAxis(30, Vec3.right)
 const look = Quaternion.LookRotation(target, Vec3.up)
 ```
 
-SetFromToRotation() and SetLookRotation() write the same rotations into an existing instance.
+SetFromToRotation(from, to) writes the same rotation into an existing instance. SetLookRotation(view) does the same for a view direction but always uses Vec3.up — pass a custom up to the static LookRotation().
 
 ---
 
@@ -40,7 +40,7 @@ Composition order matters: the right-hand rotation applies first. To undo a rota
 
 ## Blend between rotations
 
-Slerp and Lerp clamp t, so the endpoints always hold. The Unclamped variants overshoot freely. Nlerp is the cheap lerp-then-normalize shortcut, and RotateTowards advances by a fixed number of degrees.
+Slerp and Lerp clamp t, so the endpoints always hold. The Unclamped variants overshoot freely. Nlerp is the cheap lerp-then-normalize shortcut and does not clamp t, and RotateTowards advances by a fixed number of degrees.
 
 ```ts
 const blend = Quaternion.Slerp(start, end, deltaTime)
