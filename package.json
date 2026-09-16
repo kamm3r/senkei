@@ -5,7 +5,7 @@
     "access": "public"
   },
   "version": "0.1.1",
-  "description": "Gamedev math libary",
+  "description": "Unity-like gamedev math for JavaScript and TypeScript",
   "type": "module",
   "keywords": [
     "math",
